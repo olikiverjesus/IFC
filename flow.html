@@ -160,7 +160,15 @@
             color: #2563eb;
             font-weight: 500;
         }
-        .modal-content input[type="file"] {
+        .modal-content input[type="file"], .modal-content select {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .modal-content input[type="file"].hidden-input { /* Keep original file input hidden */
             display: none;
         }
         .attached-file-info-display {
@@ -172,12 +180,12 @@
             border-radius: 0.375rem;
             margin-top: 0.5rem;
         }
-        .attached-file-info-display i.file-icon { /* Specific class for file icon */
+        .attached-file-info-display i.file-icon {
             color: #4b5563;
             margin-right: 0.75rem;
             font-size: 1.25rem;
         }
-        .attached-file-info-display span.file-name { /* Specific class for file name */
+        .attached-file-info-display span.file-name {
             font-size: 0.875rem;
             color: #1f2937;
             font-weight: 500;
@@ -227,7 +235,7 @@
                         <button class="action-icon-button" title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-alt"></i></button>
                         <button class="action-icon-button" title="Upload" id="headerUploadButton"><i class="fas fa-upload"></i></button>
                         <button class="action-icon-button" title="Link" id="headerLinkButton"><i class="fas fa-link"></i></button>
-                        <button class="action-icon-button" title="Add" id="addCardButton"><i class="fas fa-plus"></i></button>
+                        <button class="action-icon-button" title="Add Flow Item" id="addFlowItemHeaderButton"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -267,7 +275,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="flow-card rounded-lg p-4" data-trade="@roof" data-card-id="card2">
                 <div class="flex justify-between items-start mb-2">
                     <div>
@@ -293,14 +300,56 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
     </main>
+
+    <div id="addFlowItemModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">Add New Flow Item</h3>
+                <button id="closeAddFlowItemModalButton" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <div>
+                <label for="flowItemTypeSelect" class="block text-sm font-medium text-gray-700 mb-1">Item Type</label>
+                <select id="flowItemTypeSelect">
+                    <option value="">Select type...</option>
+                    <option value="Bid Request">Bid Request</option>
+                    <option value="Punchlist">Punchlist Item</option>
+                    <option value="Warranty">Warranty Item</option>
+                    <option value="Project Document">Project Document</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div id="tradeSelectContainer" class="hidden mt-4">
+                <label for="tradeSelect" class="block text-sm font-medium text-gray-700 mb-1">Trade</label>
+                <select id="tradeSelect">
+                    <option value="">Select trade...</option>
+                    <option value="@roof">@roof</option>
+                    <option value="@gutter">@gutter</option>
+                    <option value="@siding">@siding</option>
+                    <option value="@paint">@paint</option>
+                    <option value="@mof">@mof (Material Order Form)</option>
+                    </select>
+            </div>
+             <div class="mt-4">
+                <label for="flowItemNotes" class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+                <textarea id="flowItemNotes" rows="3" class="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter any notes for this item..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancelAddFlowItemButton" class="flow-button-secondary px-4 py-2">Cancel</button>
+                <button id="confirmAddFlowItemButton" class="flow-button-primary px-4 py-2">Create Card</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="uploadModal" class="modal-overlay">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800" id="modalTitle">Upload Original @trade Bid</h3>
-                <button id="closeModalButton" class="text-gray-400 hover:text-gray-600">
+                <h3 class="text-lg font-semibold text-gray-800" id="uploadModalTitle">Upload Original @trade Bid</h3>
+                <button id="closeUploadModalButton" class="text-gray-400 hover:text-gray-600">
                     <i class="fas fa-times fa-lg"></i>
                 </button>
             </div>
@@ -312,7 +361,7 @@
                 <p><span>Click to browse</span> or drag and drop file here</p>
                 <p class="text-xs text-gray-500 mt-1">PDF, DOCX, PNG, JPG (MAX. 10MB)</p>
             </label>
-            <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <input type="file" id="fileUploadInput" class="hidden-input" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
             <div id="selectedFilePreview" class="hidden mb-4"> </div>
             <div class="flex justify-end space-x-3">
                 <button id="cancelUploadButton" class="flow-button-secondary px-4 py-2">Cancel</button>
@@ -322,74 +371,162 @@
     </div>
 
     <script>
-        // Get references to modal and card elements
+        // --- Get references to ALL modal and card elements ---
+        const addFlowItemModal = document.getElementById('addFlowItemModal');
+        const closeAddFlowItemModalButton = document.getElementById('closeAddFlowItemModalButton');
+        const cancelAddFlowItemButton = document.getElementById('cancelAddFlowItemButton');
+        const confirmAddFlowItemButton = document.getElementById('confirmAddFlowItemButton');
+        const flowItemTypeSelect = document.getElementById('flowItemTypeSelect');
+        const tradeSelectContainer = document.getElementById('tradeSelectContainer');
+        const tradeSelect = document.getElementById('tradeSelect');
+        const flowItemNotes = document.getElementById('flowItemNotes');
+
         const uploadModal = document.getElementById('uploadModal');
-        const closeModalButton = document.getElementById('closeModalButton');
+        const closeUploadModalButton = document.getElementById('closeUploadModalButton');
         const cancelUploadButton = document.getElementById('cancelUploadButton');
         const confirmUploadButton = document.getElementById('confirmUploadButton');
-        const modalTitle = document.getElementById('modalTitle');
+        const uploadModalTitle = document.getElementById('uploadModalTitle');
         const fileUploadInput = document.getElementById('fileUploadInput');
         const selectedFilePreview = document.getElementById('selectedFilePreview');
         const flowCardContainer = document.getElementById('flowCardContainer');
 
-        // Get references to header action buttons
-        const addCardButton = document.getElementById('addCardButton');
+        const addFlowItemHeaderButton = document.getElementById('addFlowItemHeaderButton');
         const headerCalendarButton = document.getElementById('headerCalendarButton');
         const headerUploadButton = document.getElementById('headerUploadButton');
         const headerLinkButton = document.getElementById('headerLinkButton');
 
-        let currentCardElement = null;
-        let currentFileObject = null; // To store the actual File object
+        let currentCardElementForUpload = null; // Specifically for the card being targeted by the upload modal
+        let currentFileObjectForUpload = null;
 
-        // Function to open the upload modal
-        function openUploadModal(trade, cardElement) {
-            currentCardElement = cardElement;
-            currentFileObject = null; // Reset file
-            modalTitle.textContent = `Upload Original ${trade} Bid`;
-            selectedFilePreview.classList.add('hidden');
-            selectedFilePreview.innerHTML = '';
-            fileUploadInput.value = null; // Reset file input
-            uploadModal.classList.add('active');
-        }
+        // --- "Add Flow Item" Modal Logic ---
+        addFlowItemHeaderButton.addEventListener('click', () => {
+            flowItemTypeSelect.value = '';
+            tradeSelect.value = '';
+            flowItemNotes.value = '';
+            tradeSelectContainer.classList.add('hidden');
+            addFlowItemModal.classList.add('active');
+        });
 
-        // Event listener for upload buttons on cards
-        flowCardContainer.addEventListener('click', function(event) {
-            const uploadButton = event.target.closest('.btn-upload');
-            if (uploadButton) {
-                const cardElem = uploadButton.closest('.flow-card');
-                const trade = cardElem.dataset.trade || '@trade'; // Get trade from data attribute
-                openUploadModal(trade, cardElem);
+        closeAddFlowItemModalButton.addEventListener('click', () => addFlowItemModal.classList.remove('active'));
+        cancelAddFlowItemButton.addEventListener('click', () => addFlowItemModal.classList.remove('active'));
+
+        flowItemTypeSelect.addEventListener('change', function() {
+            if (this.value === 'Bid Request') {
+                tradeSelectContainer.classList.remove('hidden');
+            } else {
+                tradeSelectContainer.classList.add('hidden');
             }
         });
 
-        // Function to close the modal
-        function closeModal() {
-            uploadModal.classList.remove('active');
-            // currentCardElement = null; // Keep currentCardElement if modal is just hidden
-            // currentFileObject = null; // Keep file object if modal is just hidden
+        confirmAddFlowItemButton.addEventListener('click', () => {
+            const itemType = flowItemTypeSelect.value;
+            const itemTrade = (itemType === 'Bid Request' && tradeSelect.value) ? tradeSelect.value : '';
+            const notes = flowItemNotes.value.trim();
+
+            if (!itemType) {
+                alert("Please select an item type.");
+                return;
+            }
+            if (itemType === 'Bid Request' && !itemTrade) {
+                alert("Please select a trade for the Bid Request.");
+                return;
+            }
+
+            // Simulate adding a new card
+            const newCardId = `card${Date.now()}`; // Unique ID for the new card
+            const newCard = document.createElement('div');
+            newCard.className = 'flow-card rounded-lg p-4';
+            newCard.dataset.cardId = newCardId;
+            if (itemTrade) {
+                newCard.dataset.trade = itemTrade;
+            }
+
+            let cardTitle = itemType;
+            if (itemTrade) {
+                cardTitle += ` - ${itemTrade}`;
+            }
+
+            const currentDate = new Date().toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+
+            newCard.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">${itemType.toUpperCase()}</h3>
+                        <h4 class="text-lg font-bold text-gray-800">${itemTrade || 'General'}</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">${currentDate}</p>
+                    </div>
+                    <span class="status-badge status-requested">new</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-3">Not Scheduled</p>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">NOTES</p>
+                    <p class="text-sm text-gray-700">${notes || 'No notes provided.'}</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex-grow bid-attachment-info mr-2">
+                        <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=N&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
+                        <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>
+                    </div>
+                    <div class="flex space-x-2 card-actions flex-shrink-0">
+                        <button class="flow-button-secondary btn-schedule"><i class="fas fa-calendar-alt mr-1.5"></i>Schedule</button>
+                        <button class="flow-button-primary btn-upload"><i class="fas fa-upload mr-1.5"></i>Upload</button>
+                    </div>
+                </div>
+            `;
+            flowCardContainer.appendChild(newCard);
+            addFlowItemModal.classList.remove('active');
+            alert(`New "${cardTitle}" card added to Flow! You can now upload documents to it.`);
+        });
+
+
+        // --- Upload Modal Logic (for individual cards) ---
+        function openUploadModalForCard(tradeForUpload, cardElementForUpload) {
+            currentCardElementForUpload = cardElementForUpload;
+            currentFileObjectForUpload = null;
+            uploadModalTitle.textContent = `Upload Original ${tradeForUpload} Bid`;
+            selectedFilePreview.classList.add('hidden');
+            selectedFilePreview.innerHTML = '';
+            fileUploadInput.value = null;
+            uploadModal.classList.add('active');
         }
 
-        // Event listeners for modal close/cancel buttons
-        closeModalButton.addEventListener('click', closeModal);
-        cancelUploadButton.addEventListener('click', closeModal);
+        flowCardContainer.addEventListener('click', function(event) {
+            const uploadButtonOnCard = event.target.closest('.btn-upload');
+            if (uploadButtonOnCard) {
+                const cardElem = uploadButtonOnCard.closest('.flow-card');
+                const trade = cardElem.dataset.trade || '@document'; // Use a generic if no trade
+                openUploadModalForCard(trade, cardElem);
+            }
+        });
 
-        // Event listener for file input change
+        closeUploadModalButton.addEventListener('click', () => uploadModal.classList.remove('active'));
+        cancelUploadButton.addEventListener('click', () => uploadModal.classList.remove('active'));
+
         fileUploadInput.addEventListener('change', function(event) {
             if (event.target.files && event.target.files[0]) {
-                currentFileObject = event.target.files[0];
+                currentFileObjectForUpload = event.target.files[0];
                 selectedFilePreview.innerHTML = `<div class="attached-file-info-display">
                                                   <i class="fas fa-file-alt file-icon"></i>
-                                                  <span class="file-name">${currentFileObject.name} (${(currentFileObject.size / 1024).toFixed(1)} KB)</span>
+                                                  <span class="file-name">${currentFileObjectForUpload.name} (${(currentFileObjectForUpload.size / 1024).toFixed(1)} KB)</span>
                                               </div>`;
                 selectedFilePreview.classList.remove('hidden');
             } else {
-                currentFileObject = null;
+                currentFileObjectForUpload = null;
                 selectedFilePreview.classList.add('hidden');
                 selectedFilePreview.innerHTML = '';
             }
         });
 
-        // Function to display the attached file info and actions on the card
         function displayAttachedFile(cardElement, file, isArchived = false) {
             const bidAttachmentInfo = cardElement.querySelector('.bid-attachment-info');
             const cardActions = cardElement.querySelector('.card-actions');
@@ -404,7 +541,7 @@
             }
 
             if (cardActions) {
-                cardActions.innerHTML = ''; // Clear existing buttons
+                cardActions.innerHTML = '';
 
                 if (isArchived) {
                     const unarchiveButton = document.createElement('button');
@@ -415,12 +552,11 @@
                         e.stopPropagation();
                         if (confirm(`Are you sure you want to unarchive ${file.name}?`)) {
                             alert(`Simulating: Unarchiving ${file.name}. File would become active again.`);
-                            displayAttachedFile(cardElement, file, false); // Re-display as active
+                            displayAttachedFile(cardElement, file, false);
                         }
                     };
                     cardActions.appendChild(unarchiveButton);
 
-                    // Add Remove button for archived file as well
                     const removeButton = document.createElement('button');
                     removeButton.className = 'flow-button-danger file-actions btn-remove';
                     removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
@@ -429,11 +565,10 @@
                         e.stopPropagation();
                         if (confirm(`Are you sure you want to remove (delete) the archived file ${file.name}? This will delete the file from Google Drive.`)) {
                             alert(`Simulating: Removing archived file ${file.name}.`);
-                            // Revert card to "No Bid Attached" state
                             bidAttachmentInfo.innerHTML = `
                                 <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
                                 <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
-                            cardActions.innerHTML = ''; // Clear actions
+                            cardActions.innerHTML = '';
                             const scheduleBtn = document.createElement('button');
                             scheduleBtn.className = 'flow-button-secondary btn-schedule';
                             scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1.5"></i>Schedule';
@@ -447,7 +582,6 @@
                     cardActions.appendChild(removeButton);
 
                 } else {
-                    // Actions for an active (non-archived) file
                     const viewButton = document.createElement('button');
                     viewButton.className = 'flow-button-secondary file-actions btn-view';
                     viewButton.innerHTML = '<i class="fas fa-eye"></i>';
@@ -463,7 +597,7 @@
                         e.stopPropagation();
                         if (confirm(`Are you sure you want to archive ${file.name}?`)) {
                             alert(`Simulating: Archiving ${file.name}.`);
-                            displayAttachedFile(cardElement, file, true); // Re-display as archived
+                            displayAttachedFile(cardElement, file, true);
                         }
                     };
                     cardActions.appendChild(archiveButton);
@@ -486,7 +620,7 @@
                             bidAttachmentInfo.innerHTML = `
                                 <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
                                 <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
-                            cardActions.innerHTML = ''; // Clear actions
+                            cardActions.innerHTML = '';
                             const scheduleBtn = document.createElement('button');
                             scheduleBtn.className = 'flow-button-secondary btn-schedule';
                             scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1.5"></i>Schedule';
@@ -502,52 +636,26 @@
             }
         }
 
-        // Event listener for confirm upload button in modal
         confirmUploadButton.addEventListener('click', function() {
-            if (currentCardElement && currentFileObject) {
-                displayAttachedFile(currentCardElement, currentFileObject, false); // Display as active initially
-                closeModal();
-            } else if (!currentFileObject) {
+            if (currentCardElementForUpload && currentFileObjectForUpload) {
+                displayAttachedFile(currentCardElementForUpload, currentFileObjectForUpload, false);
+                uploadModal.classList.remove('active'); // Close upload modal
+            } else if (!currentFileObjectForUpload) {
                 alert("Please select a file to upload.");
             }
         });
 
-        // Optional: Close modal on overlay click
         uploadModal.addEventListener('click', function(event) {
             if (event.target === uploadModal) {
-                // closeModal(); // Uncomment to enable closing modal by clicking outside
+                // uploadModal.classList.remove('active'); // Uncomment to close on overlay click
             }
         });
 
-        // --- Header Action Button Simulations ---
-        addCardButton.addEventListener('click', () => {
-            currentCardElement = null;
-            currentFileObject = null;
-            modalTitle.textContent = `Upload Document for New Flow Item`;
-            selectedFilePreview.classList.add('hidden');
-            selectedFilePreview.innerHTML = '';
-            fileUploadInput.value = null;
-            uploadModal.classList.add('active');
-        });
 
-        headerCalendarButton.addEventListener('click', () => {
-            alert("Simulating: Open Calendar View/Action");
-        });
-
-        headerUploadButton.addEventListener('click', () => {
-            alert("Simulating: Open Generic Upload Action (e.g., for project-level documents)");
-            currentCardElement = null;
-            currentFileObject = null;
-            modalTitle.textContent = `Upload Document to Project`;
-            selectedFilePreview.classList.add('hidden');
-            selectedFilePreview.innerHTML = '';
-            fileUploadInput.value = null;
-            uploadModal.classList.add('active');
-        });
-
-        headerLinkButton.addEventListener('click', () => {
-            alert("Simulating: Link Item / Add External Link Action");
-        });
+        // --- Header Action Button Simulations (Simplified) ---
+        headerCalendarButton.addEventListener('click', () => alert("Simulating: Open Calendar View/Action"));
+        headerUploadButton.addEventListener('click', () => alert("Simulating: Open Generic Project Upload Action"));
+        headerLinkButton.addEventListener('click', () => alert("Simulating: Link Item / Add External Link Action"));
 
     </script>
 </body>
