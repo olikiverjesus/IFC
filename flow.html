@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLOW App UI Replication - Main Content</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            background-color: #f8f9fa; /* Light gray background for the whole page if no sidebar */
+        }
+        .main-content-bg {
+            background-color: #f8f9fa; /* Light gray background for content area */
+        }
+        .project-header-bg {
+             background-color: #ffffff; /* White background for project header */
+        }
+        .project-header-tab {
+            border-bottom: 3px solid transparent; /* Thicker border for active tab */
+            color: #6b7280; /* Gray for inactive tabs */
+            padding-bottom: 0.75rem; /* Adjust padding for thicker border */
+            margin-bottom: -1px; /* Align with bottom border of nav container */
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .project-header-tab:hover {
+            color: #1f2937; /* Darker text on hover */
+        }
+        .project-header-tab.active {
+            border-bottom-color: #2563eb; /* Blue for active tab */
+            color: #2563eb; /* Blue text for active tab */
+            font-weight: 600; /* Bolder active tab */
+        }
+        .flow-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb; /* Subtle card border */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .flow-button-primary {
+            background-color: #2563eb; /* Flow blue for primary buttons */
+            color: white;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .flow-button-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .flow-button-secondary {
+            background-color: #f3f4f6; /* Lighter gray for secondary buttons */
+            color: #374151;
+            border: 1px solid #d1d5db;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .flow-button-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        .flow-button-danger {
+            background-color: #fee2e2; /* Light red for danger actions */
+            color: #b91c1c; /* Dark red text */
+            border: 1px solid #fecaca;
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .flow-button-danger:hover {
+            background-color: #fca5a5;
+            color: #7f1d1d;
+        }
+        .status-badge {
+            font-size: 0.75rem; /* 12px */
+            padding: 0.125rem 0.625rem; /* 2px 10px */
+            border-radius: 0.25rem; /* 4px */
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .status-requested {
+            background-color: #eff6ff; /* Light blue bg */
+            color: #2563eb;     /* Blue text */
+            border: 1px solid #bfdbfe; /* Blue border */
+        }
+        .action-icon-button {
+            color: #6b7280; /* Gray for icons */
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .action-icon-button:hover {
+            background-color: #f3f4f6; /* Light gray bg on hover */
+            color: #1f2937;
+        }
+        .header-pills button {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem; /* 24px */
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            width: 90%;
+            max-width: 500px; /* Max width for the modal */
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .file-input-container {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.375rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .file-input-container:hover {
+            border-color: #2563eb;
+        }
+        .file-input-container i {
+            font-size: 2rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+        .file-input-container p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .file-input-container span {
+            color: #2563eb;
+            font-weight: 500;
+        }
+        .modal-content input[type="file"] {
+            display: none;
+        }
+        .attached-file-info-display {
+            display: flex;
+            align-items: center;
+            background-color: #f9fafb;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+        }
+        .attached-file-info-display i.file-icon { /* Specific class for file icon */
+            color: #4b5563;
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        .attached-file-info-display span.file-name { /* Specific class for file name */
+            font-size: 0.875rem;
+            color: #1f2937;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+        }
+         .file-actions button {
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <main class="main-content-bg flex-1 flex flex-col min-h-screen">
+        <header class="project-header-bg p-4 md:p-6 border-b border-gray-200 sticky top-0 z-10">
+            <div class="mb-4">
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                    <i class="fas fa-chevron-left mr-2"></i>
+                    Projects
+                </a>
+            </div>
+
+            <div class="md:flex md:items-start md:justify-between mb-4">
+                <div class="flex items-start space-x-4">
+                    <img src="https://placehold.co/80x80/e2e8f0/718096?text=TS&font=Inter" alt="Client Photo" class="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover border">
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900">Taylor Sandy</h2>
+                        <p class="text-xs text-gray-500 mt-1">Dec. 12</p>
+                        <p class="text-sm text-gray-600 mt-1">Sales rep: Will</p>
+                        <p class="text-sm text-gray-600">300 W Van Oaks dr, Colleyville, TX 76034</p>
+                        <a href="mailto:taylor.b.sandy@gmail.com" class="text-sm text-blue-600 hover:underline">taylor.b.sandy@gmail.com</a>
+                        <br>
+                        <a href="tel:6825527796" class="text-sm text-blue-600 hover:underline">(682) 552-7796</a>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-col items-start md:items-end space-y-2">
+                    <div class="flex space-x-2 header-pills">
+                        <button class="bg-blue-100 text-blue-700 border border-blue-300">3+ CONVO</button>
+                        <button class="bg-blue-600 text-white">FLOW</button>
+                        <button class="bg-gray-100 text-gray-700 border border-gray-300">STATUS</button>
+                    </div>
+                    <div class="flex space-x-1">
+                        <button class="action-icon-button" title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-alt"></i></button>
+                        <button class="action-icon-button" title="Upload" id="headerUploadButton"><i class="fas fa-upload"></i></button>
+                        <button class="action-icon-button" title="Link" id="headerLinkButton"><i class="fas fa-link"></i></button>
+                        <button class="action-icon-button" title="Add" id="addCardButton"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex space-x-1 md:space-x-4 border-b border-gray-200 -mb-px">
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">SNAPSHOTS</a>
+                <a href="#" class="project-header-tab active py-3 px-2 md:px-3 text-xs md:text-sm">FLOW</a>
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">STATUS</a>
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">TASKS</a>
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">TICKETS</a>
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">DETAILS</a>
+                <a href="#" class="project-header-tab py-3 px-2 md:px-3 text-xs md:text-sm">CONTACT</a>
+            </nav>
+        </header>
+
+        <div class="p-4 md:p-6 space-y-4" id="flowCardContainer">
+            <div class="flow-card rounded-lg p-4" data-trade="@roof" data-card-id="card1">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">BID REQUEST</h3>
+                        <h4 class="text-lg font-bold text-gray-800">@roof</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Mon, May 5, 2025, 5:22:32 PM</p>
+                    </div>
+                    <span class="status-badge status-requested">requested</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-3">Not Scheduled</p>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">NOTES</p>
+                    <p class="text-sm text-gray-700">@punchlist @roof</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex-grow bid-attachment-info mr-2"> <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
+                        <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>
+                    </div>
+                    <div class="flex space-x-2 card-actions flex-shrink-0"> <button class="flow-button-secondary btn-schedule"><i class="fas fa-calendar-alt mr-1.5"></i>Schedule</button>
+                        <button class="flow-button-primary btn-upload"><i class="fas fa-upload mr-1.5"></i>Upload</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-card rounded-lg p-4" data-trade="@roof" data-card-id="card2">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">BID REQUEST</h3>
+                        <h4 class="text-lg font-bold text-gray-800">@roof</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Mon, May 5, 2025, 5:21:49 PM</p>
+                    </div>
+                    <span class="status-badge status-requested">requested</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-3">Not Scheduled</p>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">NOTES</p>
+                    <p class="text-sm text-gray-700">@punchlist @roof</p>
+                </div>
+                <div class="flex justify-between items-center">
+                     <div class="flex-grow bid-attachment-info mr-2">
+                        <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
+                        <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>
+                    </div>
+                    <div class="flex space-x-2 card-actions flex-shrink-0">
+                        <button class="flow-button-secondary btn-schedule"><i class="fas fa-calendar-alt mr-1.5"></i>Schedule</button>
+                        <button class="flow-button-primary btn-upload"><i class="fas fa-upload mr-1.5"></i>Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800" id="modalTitle">Upload Original @trade Bid</h3>
+                <button id="closeModalButton" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times fa-lg"></i>
+                </button>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">
+                This will sync to the 'Original Bids' folder for this trade in Google Drive.
+            </p>
+            <label for="fileUploadInput" class="file-input-container block mb-4">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p><span>Click to browse</span> or drag and drop file here</p>
+                <p class="text-xs text-gray-500 mt-1">PDF, DOCX, PNG, JPG (MAX. 10MB)</p>
+            </label>
+            <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <div id="selectedFilePreview" class="hidden mb-4"> </div>
+            <div class="flex justify-end space-x-3">
+                <button id="cancelUploadButton" class="flow-button-secondary px-4 py-2">Cancel</button>
+                <button id="confirmUploadButton" class="flow-button-primary px-4 py-2">Upload File</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to modal and card elements
+        const uploadModal = document.getElementById('uploadModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const cancelUploadButton = document.getElementById('cancelUploadButton');
+        const confirmUploadButton = document.getElementById('confirmUploadButton');
+        const modalTitle = document.getElementById('modalTitle');
+        const fileUploadInput = document.getElementById('fileUploadInput');
+        const selectedFilePreview = document.getElementById('selectedFilePreview');
+        const flowCardContainer = document.getElementById('flowCardContainer');
+
+        // Get references to header action buttons
+        const addCardButton = document.getElementById('addCardButton');
+        const headerCalendarButton = document.getElementById('headerCalendarButton');
+        const headerUploadButton = document.getElementById('headerUploadButton');
+        const headerLinkButton = document.getElementById('headerLinkButton');
+
+        let currentCardElement = null;
+        let currentFileObject = null; // To store the actual File object
+
+        // Function to open the upload modal
+        function openUploadModal(trade, cardElement) {
+            currentCardElement = cardElement;
+            currentFileObject = null; // Reset file
+            modalTitle.textContent = `Upload Original ${trade} Bid`;
+            selectedFilePreview.classList.add('hidden');
+            selectedFilePreview.innerHTML = '';
+            fileUploadInput.value = null; // Reset file input
+            uploadModal.classList.add('active');
+        }
+
+        // Event listener for upload buttons on cards
+        flowCardContainer.addEventListener('click', function(event) {
+            const uploadButton = event.target.closest('.btn-upload');
+            if (uploadButton) {
+                const cardElem = uploadButton.closest('.flow-card');
+                const trade = cardElem.dataset.trade || '@trade'; // Get trade from data attribute
+                openUploadModal(trade, cardElem);
+            }
+        });
+
+        // Function to close the modal
+        function closeModal() {
+            uploadModal.classList.remove('active');
+            // currentCardElement = null; // Keep currentCardElement if modal is just hidden
+            // currentFileObject = null; // Keep file object if modal is just hidden
+        }
+
+        // Event listeners for modal close/cancel buttons
+        closeModalButton.addEventListener('click', closeModal);
+        cancelUploadButton.addEventListener('click', closeModal);
+
+        // Event listener for file input change
+        fileUploadInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                currentFileObject = event.target.files[0];
+                selectedFilePreview.innerHTML = `<div class="attached-file-info-display">
+                                                  <i class="fas fa-file-alt file-icon"></i>
+                                                  <span class="file-name">${currentFileObject.name} (${(currentFileObject.size / 1024).toFixed(1)} KB)</span>
+                                              </div>`;
+                selectedFilePreview.classList.remove('hidden');
+            } else {
+                currentFileObject = null;
+                selectedFilePreview.classList.add('hidden');
+                selectedFilePreview.innerHTML = '';
+            }
+        });
+
+        // Function to display the attached file info and actions on the card
+        function displayAttachedFile(cardElement, file, isArchived = false) {
+            const bidAttachmentInfo = cardElement.querySelector('.bid-attachment-info');
+            const cardActions = cardElement.querySelector('.card-actions');
+
+            if (bidAttachmentInfo) {
+                bidAttachmentInfo.innerHTML = `
+                    <div class="attached-file-info-display flex-grow">
+                        <i class="fas ${isArchived ? 'fa-archive text-yellow-500' : 'fa-paperclip text-green-500'} file-icon"></i>
+                        <span class="file-name">${file.name} ${isArchived ? '(Archived)' : ''}</span>
+                    </div>
+                `;
+            }
+
+            if (cardActions) {
+                cardActions.innerHTML = ''; // Clear existing buttons
+
+                if (isArchived) {
+                    const unarchiveButton = document.createElement('button');
+                    unarchiveButton.className = 'flow-button-secondary file-actions';
+                    unarchiveButton.innerHTML = '<i class="fas fa-undo mr-1"></i>Unarchive';
+                    unarchiveButton.title = "Unarchive Bid";
+                    unarchiveButton.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Are you sure you want to unarchive ${file.name}?`)) {
+                            alert(`Simulating: Unarchiving ${file.name}. File would become active again.`);
+                            displayAttachedFile(cardElement, file, false); // Re-display as active
+                        }
+                    };
+                    cardActions.appendChild(unarchiveButton);
+
+                    // Add Remove button for archived file as well
+                    const removeButton = document.createElement('button');
+                    removeButton.className = 'flow-button-danger file-actions btn-remove';
+                    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    removeButton.title = "Remove Archived Bid";
+                    removeButton.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Are you sure you want to remove (delete) the archived file ${file.name}? This will delete the file from Google Drive.`)) {
+                            alert(`Simulating: Removing archived file ${file.name}.`);
+                            // Revert card to "No Bid Attached" state
+                            bidAttachmentInfo.innerHTML = `
+                                <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
+                                <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
+                            cardActions.innerHTML = ''; // Clear actions
+                            const scheduleBtn = document.createElement('button');
+                            scheduleBtn.className = 'flow-button-secondary btn-schedule';
+                            scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1.5"></i>Schedule';
+                            const uploadBtn = document.createElement('button');
+                            uploadBtn.className = 'flow-button-primary btn-upload';
+                            uploadBtn.innerHTML = '<i class="fas fa-upload mr-1.5"></i>Upload';
+                            cardActions.appendChild(scheduleBtn);
+                            cardActions.appendChild(uploadBtn);
+                        }
+                    };
+                    cardActions.appendChild(removeButton);
+
+                } else {
+                    // Actions for an active (non-archived) file
+                    const viewButton = document.createElement('button');
+                    viewButton.className = 'flow-button-secondary file-actions btn-view';
+                    viewButton.innerHTML = '<i class="fas fa-eye"></i>';
+                    viewButton.title = "View Bid";
+                    viewButton.onclick = () => alert(`Simulating: Viewing ${file.name}`);
+                    cardActions.appendChild(viewButton);
+
+                    const archiveButton = document.createElement('button');
+                    archiveButton.className = 'flow-button-secondary file-actions btn-archive';
+                    archiveButton.innerHTML = '<i class="fas fa-archive"></i>';
+                    archiveButton.title = "Archive Bid";
+                    archiveButton.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Are you sure you want to archive ${file.name}?`)) {
+                            alert(`Simulating: Archiving ${file.name}.`);
+                            displayAttachedFile(cardElement, file, true); // Re-display as archived
+                        }
+                    };
+                    cardActions.appendChild(archiveButton);
+
+                    const editButton = document.createElement('button');
+                    editButton.className = 'flow-button-secondary file-actions btn-edit';
+                    editButton.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                    editButton.title = "Edit Bid (Opens in Drive)";
+                    editButton.onclick = () => alert(`Simulating: Opening ${file.name} in Google Drive for editing.`);
+                    cardActions.appendChild(editButton);
+
+                    const removeButton = document.createElement('button');
+                    removeButton.className = 'flow-button-danger file-actions btn-remove';
+                    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    removeButton.title = "Remove Bid";
+                    removeButton.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Are you sure you want to remove ${file.name}? This will delete the file from Google Drive.`)) {
+                            alert(`Simulating: Removing file ${file.name}.`);
+                            bidAttachmentInfo.innerHTML = `
+                                <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
+                                <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
+                            cardActions.innerHTML = ''; // Clear actions
+                            const scheduleBtn = document.createElement('button');
+                            scheduleBtn.className = 'flow-button-secondary btn-schedule';
+                            scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1.5"></i>Schedule';
+                            const uploadBtn = document.createElement('button');
+                            uploadBtn.className = 'flow-button-primary btn-upload';
+                            uploadBtn.innerHTML = '<i class="fas fa-upload mr-1.5"></i>Upload';
+                            cardActions.appendChild(scheduleBtn);
+                            cardActions.appendChild(uploadBtn);
+                        }
+                    };
+                    cardActions.appendChild(removeButton);
+                }
+            }
+        }
+
+        // Event listener for confirm upload button in modal
+        confirmUploadButton.addEventListener('click', function() {
+            if (currentCardElement && currentFileObject) {
+                displayAttachedFile(currentCardElement, currentFileObject, false); // Display as active initially
+                closeModal();
+            } else if (!currentFileObject) {
+                alert("Please select a file to upload.");
+            }
+        });
+
+        // Optional: Close modal on overlay click
+        uploadModal.addEventListener('click', function(event) {
+            if (event.target === uploadModal) {
+                // closeModal(); // Uncomment to enable closing modal by clicking outside
+            }
+        });
+
+        // --- Header Action Button Simulations ---
+        addCardButton.addEventListener('click', () => {
+            currentCardElement = null;
+            currentFileObject = null;
+            modalTitle.textContent = `Upload Document for New Flow Item`;
+            selectedFilePreview.classList.add('hidden');
+            selectedFilePreview.innerHTML = '';
+            fileUploadInput.value = null;
+            uploadModal.classList.add('active');
+        });
+
+        headerCalendarButton.addEventListener('click', () => {
+            alert("Simulating: Open Calendar View/Action");
+        });
+
+        headerUploadButton.addEventListener('click', () => {
+            alert("Simulating: Open Generic Upload Action (e.g., for project-level documents)");
+            currentCardElement = null;
+            currentFileObject = null;
+            modalTitle.textContent = `Upload Document to Project`;
+            selectedFilePreview.classList.add('hidden');
+            selectedFilePreview.innerHTML = '';
+            fileUploadInput.value = null;
+            uploadModal.classList.add('active');
+        });
+
+        headerLinkButton.addEventListener('click', () => {
+            alert("Simulating: Link Item / Add External Link Action");
+        });
+
+    </script>
+</body>
+</html>
+```
