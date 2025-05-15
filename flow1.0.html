@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart: Google Drive in Flow 1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* Lighter gray, closer to Flow's UI white */
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .flow-header {
+            background-color: #ffffff; /* White header like Flow's UI */
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .flow-header-logo {
+            height: 32px;
+            margin-right: 1rem;
+            /* Placeholder for logo */
+            width: 32px;
+            background-color: #3b82f6; /* Blue similar to Flow's UI */
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+         .flow-header-logo span {
+            font-size: 1rem;
+        }
+        .flow-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+```
+    .flowchart-main-container {
+        padding: 1rem md:p-6;
+    }
+
+    .flowchart-title-section h1 {
+        font-size: 1.875rem; /* 30px */
+        font-weight: 700;
+        color: #1f2937;
+    }
+    .flowchart-title-section p {
+        font-size: 1.125rem; /* 18px */
+        color: #4b5563;
+    }
+
+    .flowchart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 1rem;
+        gap: 1.5rem;
+    }
+    .flowchart-step {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb; /* Subtler border, like Flow cards */
+        border-radius: 0.5rem; /* Standard rounded corners */
+        padding: 1.25rem; /* Internal padding for cards */
+        text-align: left; /* Align text to the left like Flow cards */
+        width: 95%;
+        max-width: 450px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* Subtler shadow */
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .flowchart-step:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+    }
+    .flowchart-step h3 {
+        font-size: 1rem; /* Font size for step titles */
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 0.5rem; /* Smaller spacing below title */
+        display: flex;
+        align-items: center;
+    }
+    .flowchart-step p {
+        font-size: 0.875rem;
+        color: #374151; /* Slightly darker text for better contrast */
+        line-height: 1.5;
+    }
+    .flowchart-step p strong { /* To highlight parts of text like "Level 1" */
+        font-weight: 500;
+        color: #1f2937;
+    }
+    .flowchart-arrow {
+        font-size: 1.75rem; /* Arrow size */
+        color: #9ca3af; /* Subtler arrow color */
+        margin: 0.75rem 0;
+    }
+    .flowchart-icon {
+        font-size: 1.125rem; /* Slightly smaller icon, aligned with text */
+        margin-right: 0.625rem;
+        color: #3b82f6; /* Main blue for icons, like Flow buttons */
+        width: 20px; /* Fixed width for alignment */
+        text-align: center;
+    }
+
+    /* Responsiveness */
+    @media (min-width: 768px) { /* md breakpoint */
+        .flowchart-container {
+            flex-direction: row;
+            justify-content: center;
+            align-items: stretch; /* Aligns items to have the same height */
+            flex-wrap: wrap;
+        }
+        .flowchart-step {
+            width: 280px; /* Adjusted width */
+            margin: 0 0.75rem; /* Horizontal margin */
+            display: flex; /* For better control of internal height */
+            flex-direction: column;
+        }
+         .flowchart-step p {
+            flex-grow: 1; /* Makes the paragraph take available space, helping align footers if any */
+        }
+        .flowchart-arrow.horizontal-arrow { /* Specific class for arrows that should be horizontal on desktop */
+            transform: rotate(0deg); /* Default Tailwind long-arrow-right is already horizontal */
+             margin: auto 0.75rem; /* Adjust margin for horizontal layout */
+        }
+        .flowchart-arrow.vertical-arrow { /* Specific class for arrows that should remain vertical */
+            transform: rotate(0deg) !important; /* Override to keep vertical */
+            margin: 0.75rem auto !important;
+            writing-mode: vertical-rl; /* This can help if simple rotate isn't enough, but usually not needed for FontAwesome */
+            text-orientation: mixed;
+        }
+         /* Hide vertical arrows on desktop, show horizontal ones */
+        .md\:hidden.flowchart-arrow-vertical-mobile {
+            display: none !important;
+        }
+        .hidden.md\:block.flowchart-arrow-horizontal-desktop {
+            display: block !important;
+        }
+    }
+     /* Default mobile: horizontal arrows hidden, vertical arrows shown */
+    .flowchart-arrow-horizontal-desktop {
+        display: none;
+    }
+    .flowchart-arrow-vertical-mobile {
+        display: block; /* Or 'inline-block' or 'flex' depending on desired layout */
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="flow-header">
+        <div class="flow-header-logo"><span>F</span></div> <h1>IFC ROOFING</h1> </div>
+
+```
+<div class="flowchart-main-container">
+    <header class="text-center mb-8 md:mb-12 flowchart-title-section">
+        <h1>Visual Flowchart</h1>
+        <p>Google Drive Document Upload & Management (FLOW 1.0)</p>
+    </header>
+
+    <div class="flowchart-container">
+        <div class="flowchart-step">
+            <h3><i class="fas fa-play-circle flowchart-icon"></i>1. Initiate Upload</h3>
+            <p>User clicks the "+" button (for new card/backfilling) or "Upload" on an existing card.</p>
+        </div>
+        <div class="flowchart-arrow flowchart-arrow-horizontal-desktop hidden md:block"><i class="fas fa-long-arrow-alt-right"></i></div>
+        <div class="flowchart-arrow flowchart-arrow-vertical-mobile md:hidden"><i class="fas fa-long-arrow-alt-down"></i></div>
+
+        <div class="flowchart-step">
+            <h3><i class="fas fa-tasks flowchart-icon"></i>2. Categorize</h3>
+            <p>System presents nested selection: <br><strong>Level 1:</strong> Document Type (Ex: Bid Request). <br><strong>Level 2</strong> (if Bid Request): Trade (Ex: Gutter).</p>
+        </div>
+        <div class="flowchart-arrow flowchart-arrow-horizontal-desktop hidden md:block"><i class="fas fa-long-arrow-alt-right"></i></div>
+        <div class="flowchart-arrow flowchart-arrow-vertical-mobile md:hidden"><i class="fas fa-long-arrow-alt-down"></i></div>
+
+        <div class="flowchart-step">
+            <h3><i class="fas fa-folder-plus flowchart-icon"></i>3. Organize in Drive</h3>
+            <p>System dynamically identifies/creates folder structure in Google Drive: `[Job]/Original Bids/[Trade]/` (includes `Archived` subfolder).</p>
+        </div>
+        <div class="flowchart-arrow flowchart-arrow-horizontal-desktop hidden md:block"><i class="fas fa-long-arrow-alt-right"></i></div>
+        <div class="flowchart-arrow flowchart-arrow-vertical-mobile md:hidden"><i class="fas fa-long-arrow-alt-down"></i></div>
+
+        <div class="flowchart-step">
+            <h3><i class="fas fa-file-upload flowchart-icon"></i>4. Upload File</h3>
+            <p>User selects file from device. System saves file to the correct Drive folder. Success feedback is displayed.</p>
+        </div>
+    </div>
+
+    <div class="w-full text-center my-6 flowchart-arrow">
+        <i class="fas fa-long-arrow-alt-down"></i>
+    </div>
+
+    <div class="flowchart-container">
+        <div class="flowchart-step">
+            <h3><i class="fas fa-eye flowchart-icon"></i>5. View in FLOW</h3>
+            <p>File appears listed in the corresponding FLOW App card, with details (name, date) and status indication (active/archived).</p>
+        </div>
+        <div class="flowchart-arrow flowchart-arrow-horizontal-desktop hidden md:block"><i class="fas fa-long-arrow-alt-right"></i></div>
+        <div class="flowchart-arrow flowchart-arrow-vertical-mobile md:hidden"><i class="fas fa-long-arrow-alt-down"></i></div>
+
+        <div class="flowchart-step">
+            <h3><i class="fas fa-edit flowchart-icon"></i>6. Manage Files</h3>
+            <p>In FLOW App: <br>- <strong>Archive:</strong> Moves file to `Archived` folder in Drive. <br>- <strong>Delete:</strong> Removes file from Drive (with confirmation). <br>- <strong>View/Download:</strong> Deep link to file in Drive.</p>
+        </div>
+         <div class="flowchart-arrow flowchart-arrow-horizontal-desktop hidden md:block"><i class="fas fa-long-arrow-alt-right"></i></div>
+         <div class="flowchart-arrow flowchart-arrow-vertical-mobile md:hidden"><i class="fas fa-long-arrow-alt-down"></i></div>
+
+        <div class="flowchart-step">
+            <h3><i class="fas fa-check-circle flowchart-icon"></i>7. Process Complete</h3>
+            <p>Document uploaded, organized, and manageable through FLOW, synchronized with Google Drive.</p>
+        </div>
+    </div>
+
+    <footer class="text-center mt-12 py-6 border-t border-gray-200">
+        <p class="text-sm text-gray-500">&copy; 2025 IFC Roofing - Flow System. All rights reserved.</p>
+    </footer>
+</div>
+```
+
+</body>
+</html>
