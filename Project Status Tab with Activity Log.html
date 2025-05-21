@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Status & Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9; /* Light grayish-blue background */
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .top-nav-bar {
+            background-color: white;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .header-content-wrapper {
+            background-color: white;
+            padding: 1.5rem;
+        }
+        .project-primary-info-top {
+            display: flex;
+            flex-direction: column; 
+            md:flex-direction: row; 
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem; 
+        }
+        .project-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            md:margin-bottom: 0;
+        }
+        .project-avatar {
+            width: 4rem; height: 4rem; /* 64px */
+            border-radius: 0.5rem; /* 8px */
+            object-fit: cover;
+            margin-right: 1rem; /* 16px */
+        }
+        .project-name {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 600; /* semibold */
+            color: #1e293b; /* slate-800 */
+        }
+        .project-sub-details { 
+            font-size: 0.875rem; /* text-sm */
+            color: #475569; /* slate-600 */
+            margin-top: 0.25rem;
+        }
+        .project-sub-details p {
+            margin-bottom: 0.125rem;
+        }
+        .project-sub-details a {
+            color: #2563eb; /* blue-600 */
+        }
+        .project-sub-details a:hover {
+            text-decoration: underline;
+        }
+        .add-record-button {
+            background-color: transparent; color: #2563eb; /* blue-600 */
+            font-size: 0.875rem; font-weight: 500;
+            padding: 0.25rem 0; 
+            white-space: nowrap; align-self: flex-start;
+            margin-top: 0.25rem; 
+        }
+        .add-record-button:hover { color: #1d4ed8; }
+
+        .action-pills-bar {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem; 
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .action-pill {
+            background-color: #e9ecef; 
+            color: #495057; 
+            padding: 0.375rem 0.875rem; 
+            border-radius: 9999px; /* full */
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 0.5rem; /* 8px */
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .action-pill.highlight { 
+            background-color: #cfe2ff; 
+            color: #004085; 
+        }
+        .action-icon-buttons {
+            display: flex;
+            align-items: center;
+            margin-left: auto; 
+        }
+        .action-icon-buttons button {
+            color: #6b7280; /* gray-500 */
+            padding: 0.5rem; /* 8px */
+            border-radius: 9999px; 
+        }
+        .action-icon-buttons button:hover {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f293b; /* gray-800 */
+        }
+        .action-icon-buttons svg {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+        }
+
+        .tabs-container {
+            background-color: white; border-bottom: 1px solid #e2e8f0;
+            padding: 0 1.5rem; overflow-x: auto; white-space: nowrap;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .tab-button {
+            padding: 0.75rem 1rem; margin-right: 0.5rem;
+            border: none; background: none; color: #475569;
+            font-weight: 500; font-size: 0.875rem;
+            border-bottom: 3px solid transparent; cursor: pointer;
+            transition: color 0.2s, border-color 0.2s; display: inline-block;
+        }
+        .tab-button.active, .tab-button:hover {
+            color: #2563eb; border-bottom-color: #2563eb;
+        }
+        .tab-content-area { padding: 1.5rem; background-color: #e9ebee; } /* Match page bg */
+        .tab-pane.hidden { display: none; }
+
+        /* Status Tab Specific Styles */
+        .status-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .status-section-title {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+            color: #1f293b; /* gray-800 */
+            margin-bottom: 0.75rem;
+        }
+        .status-label {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* gray-500 */
+        }
+        .status-value {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            color: #10b981; /* green-500 for LEAD, adjust as needed */
+            margin-bottom: 0.125rem;
+        }
+        .status-duration {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280;
+        }
+        .workflow-dropdown {
+            width: 100%;
+            max-width: 300px; /* Limit width */
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* 6px */
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .owner-info p, .waiting-info p, .task-info p {
+            font-size: 0.875rem;
+            color: #374151; /* gray-700 */
+            margin-bottom: 0.25rem;
+        }
+        .owner-info strong, .waiting-info strong, .task-info strong {
+            font-weight: 500;
+            color: #111827; /* gray-900 */
+        }
+        .task-info .due-date.overdue {
+            color: #ef4444; /* red-500 */
+        }
+
+        .workflow-progress-bar-container { margin-top: 1rem; }
+        .workflow-steps { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .workflow-step {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #4b5563; /* gray-600 */
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 500;
+            text-align: center;
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+        .workflow-step:last-child { margin-right: 0; }
+        .workflow-step.active {
+            background-color: #dbeafe; /* blue-100 */
+            color: #1e40af; /* blue-800 */
+            font-weight: 600;
+        }
+        .progress-bar-bg {
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 9999px;
+            height: 0.5rem; /* 8px */
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #2563eb; /* blue-600 */
+            height: 100%;
+            width: 0%; /* Example: 0% progress */
+            transition: width 0.3s ease;
+        }
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Timeline styles from status_change_log_view */
+        .timeline {
+            position: relative;
+            /* margin-left: 1.5rem; /* Adjusted as it's inside a padded section */
+            padding-left: 1.5rem; /* Space after the timeline line */
+        }
+        .timeline::before { 
+            content: ''; position: absolute; left: 0;
+            top: 0.5rem; bottom: 0.5rem; width: 2px;
+            background-color: #cbd5e1; /* slate-300 */
+        }
+        .timeline-item { position: relative; margin-bottom: 1.5rem; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot {
+            position: absolute; left: -0.4375rem; /* (14px dot width / 2) + 2px line width / 2 - padding_left of timeline */
+            top: 0.5rem; width: 0.875rem; height: 0.875rem;
+            border-radius: 50%; background-color: #003366; /* Dark blue dot */
+            border: 2px solid white; z-index: 1;
+        }
+        .log-card {
+            background-color: white; border-radius: 0.375rem;
+            border: 1px solid #d1d5db; padding: 1rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .log-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .log-card-header .type { font-size: 0.75rem; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; }
+        .view-button { background-color: #003366; color: white; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.75rem; border-radius: 0.25rem; }
+        .view-button:hover { background-color: #002244; }
+        .log-title { font-size: 1rem; font-weight: 600; color: #1f293b; margin-bottom: 0.25rem; }
+        .log-timestamp { font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; }
+        .log-status-pill { display: inline-block; font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; border-radius: 0.75rem; margin-bottom: 0.5rem; }
+        .log-status-pill.completed { background-color: #dcfce7; color: #166534; }
+        .assigned-to-label, .status-change-label, .time-in-status-label { font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem; }
+        .assigned-to-value, .status-change-value, .time-in-status-value { font-size: 0.875rem; color: #1f293b; font-weight: 500; display: flex; align-items: center; }
+        .assigned-to-value img.avatar { width: 1.5rem; height: 1.5rem; border-radius: 50%; margin-right: 0.5rem; }
+        .status-change-value .arrow { margin: 0 0.5rem; color: #6b7280; }
+
+    </style>
+</head>
+<body>
+    <!-- 
+    ✅ Feature Request Template (Developer-Facing)
+    (Feature request comment block - remains the same)
+    -->
+
+    <div class="min-h-screen page-container">
+        <div class="top-nav-bar">
+            <a href="#" class="text-blue-600 hover:text-blue-700 flex items-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
+                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                </svg>
+                Projects
+            </a>
+        </div>
+
+        <div class="header-content-wrapper">
+            <div class="project-primary-info-top">
+                <div class="project-details">
+                    <img src="https://placehold.co/64x64/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
+                    <div>
+                        <h1 class="project-name">Julián Ortiz</h1>
+                        <button class="add-record-button ml-0 md:ml-2 mt-1 md:mt-0 inline-block md:inline">+ Add Record</button>
+                        <div class="project-sub-details mt-1"> 
+                            <p>Sales rep: Syris</p>
+                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                            <p><a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a></p>
+                            <p><a href="tel:6892674350">(689) 267-4350</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-pills-bar">
+            <div>
+                <span class="action-pill highlight">3+</span>
+                <span class="action-pill">CONVO</span>
+                <span class="action-pill">FLOW</span>
+                <span class="action-pill">STATUS</span>
+            </div>
+            <div class="action-icon-buttons">
+                <button title="Document">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-2 16H8v-2h4v2zm0-4H8v-2h4v2zm4-4H8V8h8v2z"/></svg>
+                </button>
+                <button title="Calendar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 14H5V9h14v9zM5 7V6h14v1H5z"/></svg>
+                </button>
+                <button title="Add">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button" data-tab="snapshots">SNAPSHOTS</button>
+            <button class="tab-button" data-tab="flow">FLOW</button>
+            <button class="tab-button active" data-tab="status">STATUS</button>
+            <button class="tab-button" data-tab="tasks">TASKS</button>
+            <button class="tab-button" data-tab="tickets">TICKETS</button>
+            <button class="tab-button" data-tab="details">DETAILS</button>
+            <button class="tab-button" data-tab="contact">CONTACT</button>
+            <button class="tab-button" data-tab="plus3">3+</button>
+            <button class="tab-button" data-tab="convo">CONVO</button>
+        </div>
+
+        <div class="tab-content-area">
+            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2></div>
+            <div id="flowContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Flow Content</h2></div>
+            
+            <div id="statusContent" class="tab-pane">
+                <div class="status-section">
+                    <h2 class="status-section-title">Current Status</h2>
+                    <p class="status-value">LEAD</p>
+                    <p class="status-duration">For 1 days</p>
+                    
+                    <div class="mt-4">
+                        <label for="attachedWorkflow" class="status-label">Attached workflow</label>
+                        <select id="attachedWorkflow" name="attachedWorkflow" class="workflow-dropdown">
+                            <option value="active_jobs">ACTIVE JOBS</option>
+                            <option value="other_workflow">Other Workflow</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4 owner-info">
+                        <p class="status-label">Current Owner</p>
+                        <p><strong>Syna</strong></p>
+                    </div>
+                    <div class="mt-2 waiting-info">
+                        <p>Waiting on: <strong>Syna</strong></p>
+                    </div>
+                    <div class="mt-2 task-info">
+                        <p>Task: <a href="#" class="text-blue-600 hover:underline">Contact the lead</a></p>
+                        <p class="due-date overdue">Due: May 20, 2025 at 10:29:59 AM (Overdue)</p>
+                    </div>
+                </div>
+
+                <div class="status-section">
+                    <h2 class="status-section-title">Workflow Progress</h2>
+                    <div class="workflow-steps">
+                        <span class="workflow-step active">LEAD</span>
+                        <span class="workflow-step">CONTACTED</span>
+                        <span class="workflow-step">INSPECTED</span>
+                        <span class="workflow-step">SIGNED</span>
+                        <span class="workflow-step">ADJ SCHEDULED</span>
+                    </div>
+                    <div class="workflow-progress-bar-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar" id="workflowProgressBar" style="width: 10%;"></div> </div>
+                        <div class="progress-labels">
+                            <span>Start</span>
+                            <span id="currentProgressPercentage">Current: 10%</span>
+                            <span>Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-section">
+                    <h2 class="status-section-title">Activity Timeline</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="log-card">
+                                <div class="log-card-header">
+                                    <span class="type">TASK</span>
+                                    <button class="view-button">VIEW</button>
+                                </div>
+                                <h2 class="log-title">Say Hello</h2>
+                                <p class="log-timestamp">Wed May 21 2025 12:40:50 PM</p>
+                               
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="log-card">
+                                <p class="log-card-header type">STATUS CHANGED</p>
+                                <p class="status-change-label">FROM</p>
+                                <p class="status-change-value">
+                                    <span>OFFICE HANDS</span>
+                                    <span class="arrow">&rarr;</span>
+                                    <span>PA-LAW-APPRAISAL-EXPERT</span>
+                                </p>
+                                <p class="log-timestamp">Tue, Apr 22, 2025, 12:00:07 PM</p>
+                                <p class="text-xs text-gray-500 mt-1">Changed by: <span class="font-medium text-gray-700">Cherilyn Brister</span></p>
+                                <div class="mt-2">
+                                    <p class="time-in-status-label">TIME IN STATUS (Previous)</p>
+                                    <p class="time-in-status-value">0 days</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="log-card">
+                                <div class="log-card-header">
+                                    <span class="type">TASK</span>
+                                    <button class="view-button">VIEW</button>
+                                </div>
+                                <h2 class="log-title">Gray Trider - Building expert report</h2>
+                                <p class="log-timestamp">Tue, Apr 22, 2025, 12:00:07 PM</p>
+                                <span class="log-status-pill completed">Completed</span>
+                                <div class="mt-2">
+                                    <p class="assigned-to-label">ASSIGNED TO</p>
+                                    <p class="assigned-to-value">
+                                        <img src="https://placehold.co/24x24/A5B4FC/1E3A8A?text=CB" alt="Cherilyn Brister" class="avatar">
+                                        Cherilyn Brister
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="log-card">
+                                <p class="log-card-header type">STATUS CHANGED</p>
+                                <p class="status-change-label">FROM</p>
+                                <p class="status-change-value">
+                                    <span>VANESSA'S HANDS</span>
+                                    <span class="arrow">&rarr;</span>
+                                    <span>OFFICE HANDS</span>
+                                </p>
+                                <p class="log-timestamp">Wed, Apr 16, 2025, 7:17:05 PM</p>
+                                 <p class="text-xs text-gray-500 mt-1">Changed by: <span class="font-medium text-gray-700">Airah Salvador</span></p>
+                                <div class="mt-2">
+                                    <p class="time-in-status-label">TIME IN STATUS (Previous)</p>
+                                    <p class="time-in-status-value">0 days</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
+            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
+            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content</h2></div>
+            <div id="plus3Content" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">3+ Content</h2></div>
+            <div id="convoContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Convo Content</h2></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => {
+                        if (!pane.id.includes(this.dataset.tab + 'Content')) {
+                            pane.classList.add('hidden');
+                        }
+                    });
+
+                    this.classList.add('active');
+                    const targetPaneId = this.dataset.tab + 'Content';
+                    const targetPane = document.getElementById(targetPaneId);
+                    if (targetPane) {
+                        targetPane.classList.remove('hidden');
+                    } else {
+                         console.warn('Target pane not found for tab:', this.dataset.tab);
+                    }
+                });
+            });
+             // Ensure initial active tab is shown
+            const activeTabButton = document.querySelector('.tab-button.active');
+            if (activeTabButton) {
+                const activeTabPaneId = activeTabButton.dataset.tab + 'Content';
+                const activePane = document.getElementById(activeTabPaneId);
+                if (activePane) {
+                    activePane.classList.remove('hidden');
+                }
+                 // Hide all other panes explicitly on load
+                tabPanes.forEach(pane => {
+                    if (pane.id !== activeTabPaneId) {
+                        pane.classList.add('hidden');
+                    }
+                });
+            }
+
+
+            // Example: Update progress bar (can be dynamic)
+            const progressBar = document.getElementById('workflowProgressBar');
+            const progressPercentageText = document.getElementById('currentProgressPercentage');
+            const currentProgress = 10; // Example: 10% for LEAD stage
+            if(progressBar) progressBar.style.width = currentProgress + '%';
+            if(progressPercentageText) progressPercentageText.textContent = `Current: ${currentProgress}%`;
+        });
+    </script>
+
+</body>
+</html>
+

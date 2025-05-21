@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FLOW UX - Sprint S4 Planning & Key Decisions - May 19, 2025</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        h1 {
+            font-size: 2em;
+            color: #003366; /* Darker Blue for main title */
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.3em;
+            margin-bottom: 0.7em;
+        }
+        h2 {
+            font-size: 1.6em;
+            color: #004080; /* Slightly lighter blue */
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.2em;
+        }
+        h3 {
+            font-size: 1.3em;
+            color: #0059b3; /* Even lighter blue */
+            margin-top: 1.2em;
+            margin-bottom: 0.3em;
+        }
+        h4 {
+            font-size: 1.1em;
+            color: #333;
+            margin-top: 1em;
+            margin-bottom: 0.2em;
+            font-weight: bold;
+        }
+        p {
+            margin-bottom: 0.8em;
+        }
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 0.8em;
+        }
+        li {
+            margin-bottom: 0.4em;
+        }
+        strong {
+            font-weight: 600;
+        }
+        .note {
+            background-color: #e6f7ff; /* Light blue background for notes */
+            border-left: 4px solid #0077cc; /* Blue left border */
+            padding: 10px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .highlight {
+            background-color: #fffde7; /* Light yellow highlight */
+            padding: 0.1em 0.3em;
+            border-radius: 3px;
+        }
+        .badge {
+            color: white;
+            padding: 0.2em 0.6em;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+        .new-badge { background-color: #4CAF50; /* Green */ }
+        .improvement-badge { background-color: #2196F3; /* Blue */ }
+        .planning-badge { background-color: #FF9800; /* Orange */ }
+        .fix-badge { background-color: #f44336; /* Red */ }
+        .process-badge { background-color: #673AB7; /* Purple */ }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 FLOW UX - Sprint S4 Vision & Action Plan</h1>
+        <p><strong>Date:</strong> May 19, 2025</p>
+        <p><strong>Version:</strong> S4 Planning</p>
+        <p>This document outlines the key decisions, planned features, improvements, and process changes for the upcoming Sprint S4, based on the P4 Vision meeting. The primary goal for S4 is to solidify the IFC platform for internal use, ensuring a smooth, efficient, and bug-free experience for the team, thereby enabling a strong focus on sales enablement in subsequent sprints.</p>
+
+        <hr>
+
+        <h2>🎯 Sprint S4 Overview & Goals</h2>
+        <p><strong>Main Goal for S4 (Next Two Weeks): "Launch IFC Plat" - Internal Office Efficiency & Stability.</strong></p>
+        <ul>
+            <li>Ensure the internal office is running smoothly on the IFC platform.</li>
+            <li>Achieve minimal bugs and a positive user experience for all internal users.</li>
+            <li>Complete and refine features from Flow 1.0 / P3 to ensure a cohesive platform.</li>
+            <li>Lay the groundwork for future sales enablement and partner onboarding epics.</li>
+        </ul>
+
+        <hr>
+
+        <h2>✨ Key Features & Enhancements for Sprint S4</h2>
+
+        <h3>1. Header Redesign & Consistent Information Display <span class="improvement-badge">IMPROVEMENT</span></h3>
+        <p><strong>Description:</strong> Redesign the project view header to consistently display primary information. This includes:
+            <ul>
+                <li>Client details (name, contact, address).</li>
+                <li>Sales representative.</li>
+                <li>Insurance information (Claim #, Insurer, Adjuster details).</li>
+            </ul>
+            The current blue pill buttons (CONVO, FLOW, STATUS) will be replaced by a standard tab system for navigation within a project.
+        <br><strong>Impact:</strong> Improves information accessibility, reduces clicks, and standardizes UI across desktop and mobile.</p>
+
+        <h3>2. Task Management: Checklists (Subtasks) <span class="new-badge">NEW</span></h3>
+        <p><strong>Description:</strong> Implement "Checklists" within Tasks.
+            <ul>
+                <li>A task can contain multiple checklists.</li>
+                <li>Completion of all checklist items will signify task completion.</li>
+                <li>Display percentage of task completed based on checklist items.</li>
+            </ul>
+        <br><strong>Impact:</strong> Critical for accountability (e.g., Vanessa's process for SOT/bid verification) and breaking down complex tasks into manageable steps. This is a priority to address current process gaps.</p>
+
+        <h3>3. Construction Plan UI & Logic Refinements <span class="improvement-badge">IMPROVEMENT</span></h3>
+        <p><strong>Description:</strong> Implement several key improvements to the existing construction plan / roof details form:
+            <ul>
+                <li><strong>Field Reordering:</strong> Reorganize fields for better chronological data entry (e.g., shingle style/color at the top), as per Michel Browder's template.</li>
+                <li><strong>Binary "Yes/No" for Added Items:</strong> Change the "added" indicator for supplemented items to a simple "Yes" or "No" (instead of "1+").</li>
+                <li><strong>Shingle Input Refinement:</strong> Add a "Class 4 (Yes/No)" option. (Future: More structured input with manufacturer, style, class 4, color dropdowns).</li>
+                <li><strong>New Fields:</strong> Add "HVAC" and "Personal Property" (for noting damaged items) fields.</li>
+                <li><strong>Garage Door Options:</strong> Add a dropdown with "Replace" or "Paint/Stain".</li>
+                <li><strong>Gutters Options:</strong> Add options like "Remove gutters prior to roof" or "Remove at install".</li>
+                <li><strong>Skylights:</strong> Add "Skylights (Yes/No)" option.</li>
+                <li><strong>Roofing Boot Terminology:</strong> Change "Rubber" to "Three in One". Add note for "Bullet Boots" (suitable for pitches 9 and below).</li>
+                <li><strong>Chimney Field:</strong> Rename to "Flashing" with yes/no options for chimney and skylights.</li>
+            </ul>
+        <br><strong>Impact:</strong> Improves clarity, data accuracy, and efficiency for the production and supplementing teams. Reduces scrolling and makes the form more intuitive.</p>
+
+        <h3>4. "Thumbs Up" Logic in Construction Plan <span class="fix-badge">FIX</span></h3>
+        <p><strong>Description:</strong> The default for the "Thumbs Up/Down" (indicating if work is being done) will be set to "Thumbs Down". It will only change to "Thumbs Up" when work is explicitly confirmed.
+        <br><strong>Impact:</strong> Prevents confusion where work appears to be approved for execution based only on funding, ensuring clarity on actual scope.</p>
+
+        <h3>5. Board Filtering Enhancements <span class="improvement-badge">IMPROVEMENT</span></h3>
+        <p><strong>Description:</strong> Add filtering capabilities to board views (e.g., Active Jobs).
+            <ul>
+                <li>Filter by Sales Representative.</li>
+                <li>Display "Last Client Contact Date" on cards.</li>
+                <li>Make filters "sticky" (persist across sessions or navigation).</li>
+            </ul>
+        <br><strong>Impact:</strong> Critical for customer service and sales management to track progress and engagement effectively.</p>
+
+        <h3>6. Notion API Integration - First Action: Warranty Inspection Protocol <span class="new-badge">NEW</span></h3>
+        <p><strong>Description:</strong> Implement the first Notion API integration. Triggering a "Warranty Inspection" from the FLOW app will:
+            <ul>
+                <li>Create a calendar invite (Google Calendar).</li>
+                <li>Create related pages/links in Notion for the inspection protocol.</li>
+            </ul>
+        <br><strong>Impact:</strong> Streamlines the warranty inspection process and serves as a pilot for further Notion integrations (e.g., material order forms).</p>
+
+        <hr>
+
+        <h2>⚙️ UI/UX & System Process Improvements (Ongoing for S4)</h2>
+        <ul>
+            <li><strong>Modal-Based Navigation:</strong> Continue re-architecting the UI to use modals for viewing/editing tasks, projects, and tickets, allowing users to remain in their current context. (Target for full rollout: S4).</li>
+            <li><strong>Card & Tag System Refinement:</strong>
+                <ul>
+                    <li>Clearly define Project (@IFC) and Trade (@roof, @gutters) items as primary "Cards" in the Flow.</li>
+                    <li>Other items (e.g., "pickup material") to be represented as "Tags" or statuses on these primary cards.</li>
+                </ul>
+            </li>
+            <li><strong>Automated Tag Updates:</strong> Implement logic where completing a task or ticket (e.g., "material pickup complete," "leak repair done") automatically updates the relevant tag or status on the parent Flow card. (Requires mapping session with Oli/Amadeu).</li>
+            <li><strong>Consolidated Conversations (Vision):</strong> Work towards a single "Convo" tab per project, where tasks and tickets can be referenced (opening in modals), rather than having siloed conversations.</li>
+        </ul>
+
+        <hr>
+
+        <h2>🎯 Focus & Philosophy for S4</h2>
+        <ul>
+            <li><strong>Internal Stability & Adoption:</strong> Ensure the IFC platform is robust and user-friendly for the internal team.</li>
+            <li><strong>Functionality First:</strong> Solve core user needs reliably.</li>
+            <li><strong>Iterative Improvement:</strong> Ship functional pieces quickly and refine based on feedback.</li>
+            <li><strong>Enabling Sales:</strong> Provide tools that give clarity and allow the sales team to focus on selling.</li>
+            <li><strong>Clear Communication:</strong> Use Notion boards and regular updates for transparency on sprint progress and backlog.</li>
+        </ul>
+
+        <hr>
+
+        <h2>⏩ Next Steps & Future Epics (Beyond S4)</h2>
+        <h4>Process & Planning:</h4>
+        <ul>
+            <li>Oli de Jesus Barros to update Notion board:
+                <ul>
+                    <li>Change "P" sprint naming to "S" (e.g., S4).</li>
+                    <li>Add "Date Requested" and "Scheduled Date" columns.</li>
+                    <li>Implement "Backlog" and "Draft" statuses for idea management.</li>
+                    <li>Share view-only access to the S4 board.</li>
+                </ul>
+            </li>
+            <li>Cat Chen to restructure Notion sprint view for better visibility.</li>
+            <li>Amadeu Tolentino & Oli de Jesus Barros to create a "spreadsheet of mappings" for tags, actions, and automated outcomes.</li>
+            <li>Follow-up meeting (Will, Oli, Amadeu, Michel) for a technical deep dive on triggers and workflow automation.</li>
+        </ul>
+
+        <h4>Future Development Epics:</h4>
+        <ul>
+            <li><strong>June (S5-S6): Sales Enablement</strong> - "Have sales reps leveraging momentum unceasingly." Focus on the "3 Plus algorithm" and potentially a subportal for easier link uploads by subs.</li>
+            <li><strong>July (S7-S8): Referral Partners</strong> - Onboard partners from real estate, property management, and insurance.</li>
+            <li><strong>August: Scale with Volume</strong> - "Break the machine with volume" by leveraging partners and sales efficiency.</li>
+            <li><strong>Future:</strong> Full Notion API integration for material orders, Production Status Dashboard, more granular itemization in bids within cards, full "Convo" system replacing comments.</li>
+        </ul>
+        <p class="note">The immediate next step after this meeting is for Oli to organize the conversation into actionable items for S4, followed by focused technical discussions.</p>
+
+        <hr>
+        <p><em>This plan aims to address critical needs for internal efficiency and prepare the platform for significant sales growth. Thank you to everyone for your input and collaboration!</em></p>
+    </div>
+</body>
+</html>
+```
+
+**Alteração Realizada:**
+
+* A seção "1. Global Search Implementation" foi completamente removida da lista "✨ Key Features & Enhancements for Sprint S4".
+* A numeração dos itens subsequentes foi ajustada (o antigo item 2 agora é o 1, e assim por diante).
+
+O restante do documento permanece o mesmo, pois reflete os outros planos e decisões para o Sprint 

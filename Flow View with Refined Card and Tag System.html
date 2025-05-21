@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Flow View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9; /* Light grayish-blue background */
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .top-nav-bar {
+            background-color: white;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .header-content-wrapper {
+            background-color: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        .project-primary-info-top {
+            display: flex;
+            flex-direction: column; 
+            md:flex-direction: row; 
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem; 
+        }
+        .project-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            md:margin-bottom: 0;
+        }
+        .project-avatar {
+            width: 4rem; height: 4rem; /* 64px */
+            border-radius: 0.5rem; /* 8px */
+            object-fit: cover;
+            margin-right: 1rem; /* 16px */
+        }
+        .project-name {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 600; /* semibold */
+            color: #1e293b; /* slate-800 */
+        }
+        .project-sub-details { 
+            font-size: 0.875rem; /* text-sm */
+            color: #475569; /* slate-600 */
+            margin-top: 0.25rem;
+        }
+        .project-sub-details p {
+            margin-bottom: 0.125rem;
+        }
+        .project-sub-details a {
+            color: #2563eb; /* blue-600 */
+        }
+        .project-sub-details a:hover {
+            text-decoration: underline;
+        }
+        .add-record-button {
+            background-color: transparent; color: #2563eb; /* blue-600 */
+            font-size: 0.875rem; font-weight: 500;
+            padding: 0.25rem 0; 
+            white-space: nowrap; align-self: flex-start;
+            margin-top: 0.25rem; 
+        }
+        .add-record-button:hover { color: #1d4ed8; }
+
+        .tabs-container {
+            background-color: white; border-bottom: 1px solid #e2e8f0;
+            padding: 0 1.5rem; overflow-x: auto; white-space: nowrap;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .tab-button {
+            padding: 0.75rem 1rem; margin-right: 0.5rem;
+            border: none; background: none; color: #475569;
+            font-weight: 500; font-size: 0.875rem;
+            border-bottom: 3px solid transparent; cursor: pointer;
+            transition: color 0.2s, border-color 0.2s; display: inline-block;
+        }
+        .tab-button.active, .tab-button:hover {
+            color: #2563eb; border-bottom-color: #2563eb;
+        }
+        .tab-content-area { padding: 1.5rem; }
+        .tab-pane.hidden { display: none; }
+
+        /* Flow Card Specific Styles */
+        .flow-card {
+            background-color: white;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem; /* 8px */
+            padding: 1rem; /* 16px */
+            margin-bottom: 1rem; /* 16px */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        }
+        .flow-card-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.25rem;
+        }
+        .drag-handle {
+            color: #9ca3af; /* gray-400 */
+            margin-right: 0.5rem; /* 8px */
+            cursor: grab;
+            padding-top: 0.125rem; /* Align with text */
+        }
+        .drag-handle svg {
+            width: 1rem; /* 16px */
+            height: 1rem; /* 16px */
+        }
+        .flow-card-main-content { 
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .flow-card-type {
+            font-size: 0.625rem; /* 10px */
+            font-weight: 600;
+            color: #4b5563; /* gray-600 */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            display: inline-block; 
+        }
+        .flow-card-title {
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            color: #1f293b; /* gray-800 */
+            margin-top: 0.125rem; 
+        }
+        .flow-card-primary-status-tag { /* For "Requested" tag at the top right */
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+            padding: 0.125rem 0.625rem; /* 2px 10px */
+            border-radius: 0.25rem; /* 4px */
+            background-color: #f3f4f6; /* gray-100 */
+            color: #4b5563; /* gray-600 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            white-space: nowrap;
+            display: inline-flex; 
+            align-items: center;
+        }
+        .flow-card-primary-status-tag svg { 
+            width: 0.75rem; height: 0.75rem; margin-left: 0.25rem;
+        }
+
+        .flow-card-options button { color: #9ca3af; margin-left: 0.5rem;}
+        .flow-card-options button:hover { color: #4b5563; }
+        .flow-card-timestamp {
+            font-size: 0.75rem; /* 12px */
+            color: #6b7280; /* gray-500 */
+            margin-bottom: 0.75rem; /* 12px */
+            padding-left: 1.5rem; 
+        }
+        .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.5rem; }
+        .flow-card-section-label {
+            font-size: 0.6875rem; /* ~11px */
+            font-weight: 500;
+            color: #6b7280; /* gray-500 */
+            text-transform: uppercase;
+            margin-bottom: 0.125rem; /* 2px */
+        }
+        .flow-card-section-content {
+            font-size: 0.875rem; /* 14px */
+            color: #374151; /* gray-700 */
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .flow-card-tags-display { /* Container for secondary tags */
+            margin-top: 0.75rem; 
+            padding-left: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem; /* 8px, increased gap for better separation */
+        }
+        .flow-card-tag { 
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+            padding: 0.25rem 0.75rem; /* 4px 12px, slightly larger padding */
+            border-radius: 0.375rem; /* 6px, slightly larger radius */
+            /* Default tag style */
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #4338ca; /* indigo-700 */
+            border: 1px solid #c7d2fe; /* indigo-200 */
+        }
+         .flow-card-tag.status-scheduled { /* Example for a specific type of tag */
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-700 */
+            border-color: #bbf7d0; /* green-200 */
+        }
+        .flow-card-tag.status-action { /* Example for action-oriented tags */
+            background-color: #ffedd5; /* orange-100 */
+            color: #9a3412; /* orange-700 */
+            border-color: #fed7aa; /* orange-200 */
+        }
+        .flow-card-tag.status-alert { /* Example for alert/issue tags */
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-700 */
+            border-color: #fecaca; /* red-200 */
+        }
+
+
+        .flow-card-attachment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f3f4f6; /* gray-100 */
+            padding-left: 1.5rem;
+        }
+         .flow-card-attachment-details {
+            display: flex;
+            align-items: center;
+        }
+        .flow-card-attachment-user img {
+            width: 1.5rem; /* 24px */
+            height: 1.5rem; /* 24px */
+            border-radius: 9999px; /* full */
+            margin-right: 0.5rem; 
+        }
+        .flow-card-filename {
+            font-size: 0.875rem;
+            color: #2563eb; /* blue-600 */
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .flow-card-view-files-btn {
+            font-size: 0.75rem; font-weight: 500;
+            color: #2563eb; background-color: #eff6ff;
+            padding: 0.25rem 0.625rem; border-radius: 0.25rem;
+            border: 1px solid #bfdbfe;
+        }
+        .flow-card-view-files-btn:hover { background-color: #dbeafe; }
+
+    </style>
+</head>
+<body>
+    <!-- 
+    ✅ Enhancement/UI Change Request Template (Developer-Facing)
+    (Enhancement request comment block - remains the same)
+    -->
+
+    <div class="min-h-screen page-container">
+        <div class="top-nav-bar">
+            <a href="#" class="text-blue-600 hover:text-blue-700 flex items-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
+                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                </svg>
+                Projects
+            </a>
+        </div>
+
+        <div class="header-content-wrapper">
+            <div class="project-primary-info-top">
+                <div class="project-details">
+                    <img src="https://placehold.co/64x64/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
+                    <div>
+                        <h1 class="project-name">Julián Ortiz</h1>
+                        <button class="add-record-button ml-0 md:ml-2 mt-1 md:mt-0 inline-block md:inline">+ Add Record</button>
+                        <div class="project-sub-details mt-1"> 
+                            <p>Sales rep: Syris</p>
+                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                            <p><a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a></p>
+                            <p><a href="tel:6892674350">(689) 267-4350</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs-container">
+            <button class="tab-button" data-tab="snapshots">SNAPSHOTS</button>
+            <button class="tab-button active" data-tab="flow">FLOW</button>
+            <button class="tab-button" data-tab="status">STATUS</button>
+            <button class="tab-button" data-tab="tasks">TASKS</button>
+            <button class="tab-button" data-tab="tickets">TICKETS</button>
+            <button class="tab-button" data-tab="details">DETAILS</button>
+            <button class="tab-button" data-tab="contact">CONTACT</button>
+            <button class="tab-button" data-tab="plus3">3+</button>
+            <button class="tab-button" data-tab="convo">CONVO</button>
+        </div>
+
+        <div class="tab-content-area">
+            <div id="snapshotsContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2>
+            </div>
+            <div id="flowContent" class="tab-pane">
+                <div class="flow-card" data-card-id="pool1">
+                    <div class="flow-card-header">
+                        <div class="drag-handle">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
+                        </div>
+                        <div class="flow-card-main-content">
+                            <div>
+                                <span class="flow-card-type">BID REQUEST</span>
+                                <h4 class="flow-card-title">@pool</h4>
+                            </div>
+                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                        </div>
+                        <div class="flow-card-options">
+                            <button title="More options">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">Tue, May 20, 2025, 3:38:22 PM</p>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Notes</p>
+                        <p class="flow-card-section-content">TestQA</p>
+                    </div>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Scheduled For</p>
+                        <p class="flow-card-section-content italic text-gray-400">Not Scheduled</p>
+                    </div>
+                    <div class="flow-card-tags-display">
+                        <span class="flow-card-tag status-action">Needs Follow-up</span>
+                    </div>
+                    <div class="flow-card-attachment">
+                        <div class="flow-card-attachment-details">
+                            <img src="https://placehold.co/24x24/7DD3FC/0C4A6E?text=CC" alt="User CC" class="flow-card-attachment-user">
+                            <span class="flow-card-filename">11619772.jpg</span>
+                        </div>
+                        <a href="#" class="flow-card-view-files-btn">View Files</a>
+                    </div>
+                </div>
+
+                <div class="flow-card" data-card-id="roofrepair1">
+                     <div class="flow-card-header">
+                        <div class="drag-handle">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
+                        </div>
+                        <div class="flow-card-main-content">
+                            <div>
+                                <span class="flow-card-type">BID REQUEST</span>
+                                <h4 class="flow-card-title">@roofrepair</h4>
+                            </div>
+                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                        </div>
+                        <div class="flow-card-options">
+                            <button title="More options">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">Wed, May 14, 2025, 11:52:46 AM</p>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Notes</p>
+                        <p class="flow-card-section-content">This is cool</p>
+                    </div>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Scheduled For</p>
+                        <p class="flow-card-section-content">Sat, May 31, 2025</p>
+                    </div>
+                    <div class="flow-card-tags-display">
+                        <span class="flow-card-tag status-scheduled">Scheduled</span>
+                        <span class="flow-card-tag status-action">Pickup Material</span>
+                    </div>
+                    <div class="flow-card-attachment">
+                         <div class="flow-card-attachment-details">
+                            <img src="https://placehold.co/24x24/FECACA/7F1D1D?text=AS" alt="User AS" class="flow-card-attachment-user">
+                            <span class="flow-card-filename">Contracts-2025-05-19-12-57.png</span>
+                        </div>
+                        <a href="#" class="flow-card-view-files-btn">View Files</a>
+                    </div>
+                </div>
+
+                <div class="flow-card" data-card-id="roof1">
+                    <div class="flow-card-header">
+                        <div class="drag-handle">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
+                        </div>
+                        <div class="flow-card-main-content">
+                            <div>
+                                <span class="flow-card-type">WORK ORDER</span>
+                                <h4 class="flow-card-title">@roof</h4>
+                            </div>
+                            <span class="flow-card-primary-status-tag">In Progress <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                        </div>
+                        <div class="flow-card-options">
+                            <button title="More options">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">Mon, May 12, 2025, 09:15:00 AM</p>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Details</p>
+                        <p class="flow-card-section-content">Full roof replacement, shingle type: Architectural, Color: Weathered Wood.</p>
+                    </div>
+                     <div class="flow-card-tags-display">
+                        <span class="flow-card-tag status-action">Pickup Material</span>
+                        <span class="flow-card-tag status-alert">Punch List Left</span>
+                        <span class="flow-card-tag">Quality Check Pending</span>
+                    </div>
+                    <div class="flow-card-attachment">
+                         <div class="flow-card-attachment-details">
+                            <img src="https://placehold.co/24x24/E2E8F0/475569?text=WM" alt="User WM" class="flow-card-attachment-user">
+                            <span class="flow-card-filename">Roofing_Permit.pdf</span>
+                        </div>
+                        <a href="#" class="flow-card-view-files-btn">View Files</a>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content</h2></div>
+            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
+            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
+            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content</h2></div>
+            <div id="plus3Content" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">3+ Content</h2></div>
+            <div id="convoContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Convo Content</h2></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.add('hidden'));
+
+                    this.classList.add('active');
+                    const targetPaneId = this.dataset.tab + 'Content';
+                    const targetPane = document.getElementById(targetPaneId);
+                    if (targetPane) {
+                        targetPane.classList.remove('hidden');
+                    } else {
+                         console.warn('Target pane not found for tab:', this.dataset.tab);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+

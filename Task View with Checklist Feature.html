@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task View with Checklist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #6b7280; /* Mimicking the dimmed background of a modal */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align modal to top */
+            min-height: 100vh;
+            padding-top: 2rem; /* Space from top */
+            padding-bottom: 2rem; /* Space at bottom for scrolling */
+        }
+        .task-modal-container {
+            background-color: white;
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 600px; /* Adjust as needed */
+            overflow: hidden;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem; /* 16px 24px */
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .modal-title-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* 12px */
+        }
+        .modal-title-icon svg {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            color: #6b7280; /* gray-500 */
+        }
+        .modal-title-icon span {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #1f293b; /* gray-800 */
+        }
+        .modal-actions button {
+            color: #6b7280; /* gray-500 */
+        }
+        .modal-actions button:hover {
+            color: #1f293b; /* gray-800 */
+        }
+        .modal-content {
+            padding: 1.5rem; /* 24px */
+            max-height: calc(100vh - 12rem); /* Adjust based on header/footer and padding */
+            overflow-y: auto;
+        }
+        .task-section {
+            margin-bottom: 1.5rem; /* 24px */
+        }
+        .task-section-title {
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 600;
+            color: #6b7280; /* gray-500 */
+            text-transform: uppercase;
+            margin-bottom: 0.5rem; /* 8px */
+            letter-spacing: 0.05em;
+        }
+        .task-main-title {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+            color: #111827; /* gray-900 */
+            margin-bottom: 0.25rem;
+        }
+        .task-due-date {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* gray-600 */
+            margin-bottom: 0.5rem;
+        }
+        .task-description {
+            font-size: 0.875rem; /* text-sm */
+            color: #374151; /* gray-700 */
+            line-height: 1.6;
+        }
+        .task-description strong {
+            color: #111827;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .info-item img.avatar {
+            width: 1.75rem; /* 28px */
+            height: 1.75rem; /* 28px */
+            border-radius: 9999px; /* full */
+            margin-right: 0.75rem; /* 12px */
+        }
+        .info-item .label {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* gray-500 */
+            width: 90px; /* Fixed width for alignment */
+        }
+        .info-item .value {
+            font-size: 0.875rem; /* text-sm */
+            color: #111827; /* gray-900 */
+            font-weight: 500;
+        }
+        .info-item .value a {
+            color: #2563eb; /* blue-600 */
+        }
+        .conversation-snippet, .job-snippet {
+            background-color: #f9fafb; /* gray-50 */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* 6px */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            font-size: 0.875rem;
+            color: #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .conversation-snippet .text-content, .job-snippet .text-content {
+             line-height: 1.5;
+        }
+        .conversation-snippet .text-content .user, .job-snippet .text-content .user {
+            font-weight: 600;
+            color: #111827;
+        }
+        .conversation-snippet .text-content .meta, .job-snippet .text-content .meta {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        .arrow-icon svg {
+            width: 1rem; height: 1rem; color: #9ca3af; /* gray-400 */
+        }
+
+        /* Checklist Styles */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6; /* gray-100 */
+        }
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 1rem; height: 1rem; margin-right: 0.75rem; accent-color: #2563eb;
+        }
+        .checklist-item label {
+            flex-grow: 1; font-size: 0.875rem; color: #374151;
+        }
+        .checklist-item.completed label {
+            text-decoration: line-through; color: #9ca3af; /* gray-400 */
+        }
+        .checklist-progress-bar-bg {
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 0.25rem; /* 4px */
+            height: 0.5rem; /* 8px */
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+        .checklist-progress-bar {
+            background-color: #2563eb; /* blue-600 */
+            height: 100%;
+            transition: width 0.3s ease-in-out;
+        }
+        .add-checklist-item-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* 6px */
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        .details-toggle-btn {
+            background-color: #f3f4f6; border: 1px solid #e5e7eb; color: #4b5563;
+            padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500;
+            display: block; margin: 1rem auto 0;
+        }
+         .details-toggle-btn:hover {
+            background-color: #e5e7eb;
+        }
+
+        .comments-section textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            min-height: 60px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- 
+    ✅ Feature Request Template (Developer-Facing)
+    🧾 Request Summary
+    Implement "Checklists" (a.k.a. subtasks) within the existing Tasks feature. This allows users to break down a complex task into smaller, trackable items.
+    Each parent task can contain multiple checklist items. The task is only marked complete when all checklist items are completed. This enables better accountability and tracking for processes like Vanessa's SOT/bid verification and final billing.
+    🎯 Goal
+    Enable granular task tracking inside the platform and support complex workflows by allowing task decomposition into checklist items.
+    This improves:
+
+    Clarity in task ownership and progress
+    Tracking of detailed internal workflows (e.g., verification/billing)
+    User satisfaction and visibility of completion status
+    📌 Functional Requirements
+    [ ]  Add support for multiple checklist items inside a single task.
+    [ ]  Checklist items can be marked complete/incomplete.
+    [ ]  A task is marked as complete only when all checklist items are complete.
+    [ ]  Display a progress indicator (e.g., percentage bar or number) based on checklist completion.
+    [ ]  Users can add, edit, and reorder checklist items (drag-and-drop reordering preferred).
+    [ ]  Use the term "Checklist" instead of "Subtask" in the UI.
+    [ ]  (Future, not for S4): Ability to assign checklist items to different users.
+    🧩 Technical Context
+    Extend the task data model to support a one-to-many relationship between tasks and checklist items.
+    Update the task UI to include checklist components.
+    Logic to calculate and display task progress based on checklist completion.
+    Future scalability: Checklist items may later include assignees, due dates, or file attachments.
+    📐 Mockups / References
+    Transcript: "It’s like the Vanessa SOT/bid verification process. It needs little checkboxes. And then once they're all checked off, the task is done."
+    Visual: Refer to modern checklist UIs from Notion or ClickUp.
+    Priority Workflow: Vanessa → SOT Finalization → Billing
+    📅 Effort
+    🟠 Medium – Requires model updates, new UI components, and progress logic. Drag-and-drop optional for v1.
+    🧪 Acceptance Criteria
+    [ ]  Users can add multiple checklist items inside a task.
+    [ ]  Items are individually completable.
+    [ ]  Task status depends on all checklist items being completed.
+    [ ]  UI clearly shows progress (e.g., 3/5 or 60%).
+    [ ]  "Checklist" is the consistent label across the UI.
+    [ ]  Tasks behave predictably when checklists are edited or reordered.
+    👤 Assignees
+    To be assigned (Flow 1.0 Team / P3 Sprint Team)
+    🗂️ Tags
+    #Flow #Tasks #Checklist #Subtasks #Accountability #S4Priority #ProcessImprovement
+    -->
+
+    <div class="task-modal-container">
+        <div class="modal-header">
+            <div class="modal-title-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Task</span>
+            </div>
+            <div class="modal-actions flex items-center space-x-3">
+                <button title="Pin task">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25L7.5 16.5V3.75m9 0H7.5A2.25 2.25 0 005.25 6v10.5A2.25 2.25 0 007.5 18.75h9A2.25 2.25 0 0018.75 16.5V6A2.25 2.25 0 0016.5 3.75z" />
+                    </svg>
+                </button>
+                <button title="More options">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                    </svg>
+                </button>
+                <button title="Close task" id="closeModalButton">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-content">
+            <div class="task-section">
+                <p class="task-section-title">Task</p>
+                <h1 class="task-main-title">Fence wooden done?</h1>
+                <p class="task-due-date">Due, Sat, May 24, 2025</p>
+                <p class="task-description">this is for fence wood staining only. **only doing $1,450 for the wooden fence**</p>
+            </div>
+
+            <div class="task-section">
+                <div class="flex justify-between items-center">
+                    <p class="task-section-title">Checklist</p>
+                    <span id="checklistProgressText" class="text-xs font-medium text-gray-500">0/0 Completed</span>
+                </div>
+                <div class="checklist-progress-bar-bg">
+                    <div id="checklistProgressBar" class="checklist-progress-bar" style="width: 0%;"></div>
+                </div>
+                <div id="checklistItemsContainer" class="mt-2">
+                    </div>
+                <input type="text" id="newChecklistItemInput" class="add-checklist-item-input" placeholder="Add a checklist item...">
+            </div>
+
+            <div class="task-section">
+                <p class="task-section-title">Time Tracker</p>
+                <p class="text-sm text-gray-500">Created on: Mon, May 12, 2025</p>
+                <p class="text-2xl font-semibold text-gray-800 mt-1">3D : 7H : 13M : 17S</p>
+            </div>
+
+            <div class="task-section">
+                <p class="task-section-title">Conversation</p>
+                <div class="conversation-snippet">
+                    <div class="text-content">
+                        <span class="user">Taylor Sandy - Client GamePlan</span>
+                        <span class="meta block">@Will - 05/12/2025</span>
+                        That's totally fine to do the wood fence as long as it's approved
+                    </div>
+                    <a href="#" class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="task-section">
+                <p class="task-section-title">Job</p>
+                 <div class="job-snippet">
+                    <div class="text-content">
+                        <span class="user">Taylor Sandy</span>
+                        <span class="meta block">Status: INS. RESPONDED</span>
+                        <div class="mt-1">
+                            <span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 mr-1">3+</span>
+                            <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 mr-1">CONVO</span>
+                             <span class="inline-flex items-center justify-center w-5 h-5 bg-gray-200 rounded-full text-xs text-gray-500 mr-1">D</span>
+                            <span class="inline-flex items-center justify-center w-5 h-5 bg-gray-200 rounded-full text-xs text-gray-500">S</span>
+                        </div>
+                    </div>
+                    <a href="#" class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <button id="detailsToggleBtn" class="details-toggle-btn">DETAILS <span id="detailsArrow">&#9660;</span></button>
+
+            <div id="assigneeSection" class="hidden mt-4">
+                <div class="task-section">
+                    <div class="info-item">
+                        <span class="label">Assigned To</span>
+                        <img src="https://placehold.co/28x28/E0E7FF/4F46E5?text=JO" alt="Julio Orellana" class="avatar">
+                        <span class="value">Julio Orellana</span>
+                    </div>
+                </div>
+                <div class="task-section">
+                     <div class="info-item">
+                        <span class="label">Assigned By</span>
+                        <img src="https://placehold.co/28x28/DBEAFE/1E40AF?text=MB" alt="Michel Browder" class="avatar">
+                        <span class="value">Michel Browder</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-section mt-6">
+                <p class="task-section-title">Comments</p>
+                <div class="flex items-start space-x-3">
+                    <img src="https://placehold.co/32x32/C7D2FE/4338CA?text=U" alt="User avatar" class="w-8 h-8 rounded-full">
+                    <textarea placeholder="Add a comment..." class="flex-1"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checklistItemsContainer = document.getElementById('checklistItemsContainer');
+            const newChecklistItemInput = document.getElementById('newChecklistItemInput');
+            const checklistProgressBar = document.getElementById('checklistProgressBar');
+            const checklistProgressText = document.getElementById('checklistProgressText');
+            const closeModalButton = document.getElementById('closeModalButton');
+            const detailsToggleBtn = document.getElementById('detailsToggleBtn');
+            const assigneeSection = document.getElementById('assigneeSection');
+            const detailsArrow = document.getElementById('detailsArrow');
+
+
+            let checklistItems = [
+                // { id: 1, text: 'Verify SOT document accuracy', completed: true },
+                // { id: 2, text: 'Confirm bid matches SOT', completed: false },
+                // { id: 3, text: 'Check for any discrepancies', completed: false }
+            ]; // Start with an empty list or load from storage/API
+
+            function renderChecklist() {
+                checklistItemsContainer.innerHTML = '';
+                let completedCount = 0;
+
+                if (checklistItems.length === 0) {
+                    const emptyState = document.createElement('p');
+                    emptyState.textContent = 'No checklist items yet. Add one below!';
+                    emptyState.className = 'text-sm text-gray-400 text-center py-2';
+                    checklistItemsContainer.appendChild(emptyState);
+                }
+
+                checklistItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `checklist-item ${item.completed ? 'completed' : ''}`;
+                    div.innerHTML = `
+                        <input type="checkbox" id="item-${item.id}" data-id="${item.id}" ${item.completed ? 'checked' : ''}>
+                        <label for="item-${item.id}">${item.text}</label>
+                    `;
+                    checklistItemsContainer.appendChild(div);
+
+                    if (item.completed) {
+                        completedCount++;
+                    }
+                });
+                updateProgress(completedCount);
+                addCheckboxListeners();
+            }
+
+            function addCheckboxListeners() {
+                const checkboxes = checklistItemsContainer.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        const item = checklistItems.find(i => i.id === itemId);
+                        if (item) {
+                            item.completed = this.checked;
+                            // Potentially save to localStorage or call API here
+                            renderChecklist(); // Re-render to update styles and progress
+                        }
+                    });
+                });
+            }
+
+            function updateProgress(completedCount) {
+                const totalItems = checklistItems.length;
+                const percentage = totalItems > 0 ? (completedCount / totalItems) * 100 : 0;
+                checklistProgressBar.style.width = `${percentage}%`;
+                checklistProgressText.textContent = `${completedCount}/${totalItems} Completed`;
+
+                // Conceptual: If all items are complete, the parent task could be marked complete.
+                // This UI doesn't have a master task checkbox, but you could add logic here.
+                // if (totalItems > 0 && completedCount === totalItems) {
+                //     console.log("Task (Fence wooden done?) can be marked as complete!");
+                // }
+            }
+
+            newChecklistItemInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter' && this.value.trim() !== '') {
+                    const newItem = {
+                        id: Date.now(), // Simple ID generation
+                        text: this.value.trim(),
+                        completed: false
+                    };
+                    checklistItems.push(newItem);
+                    this.value = ''; // Clear input
+                    // Potentially save to localStorage or call API here
+                    renderChecklist();
+                }
+            });
+            
+            if(closeModalButton) {
+                closeModalButton.addEventListener('click', () => {
+                    // In a real app, this would properly close or hide the modal
+                    alert('Close button clicked. Modal would be dismissed.');
+                    document.querySelector('.task-modal-container').style.display = 'none';
+                });
+            }
+
+            if (detailsToggleBtn && assigneeSection && detailsArrow) {
+                detailsToggleBtn.addEventListener('click', () => {
+                    const isHidden = assigneeSection.classList.contains('hidden');
+                    assigneeSection.classList.toggle('hidden', !isHidden);
+                    detailsArrow.innerHTML = isHidden ? '&#9650;' : '&#9660;'; // Up/Down arrow
+                });
+            }
+
+
+            // Initial render
+            renderChecklist();
+        });
+    </script>
+
+</body>
+</html>
+

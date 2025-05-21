@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation with Reaction Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #6b7280; /* Dimmed background for modal context */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .chat-container-wrapper { /* Simulates the modal boundaries from the image */
+            background-color: white;
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 700px; /* Adjusted width */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* Limit height */
+        }
+        .chat-header {
+            background-color: white; /* White header as per image */
+            color: #1f293b; /* Dark text */
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .chat-header-left { display: flex; align-items: center; gap: 0.5rem; }
+        .chat-header-title { font-size: 1.125rem; font-weight: 600; }
+        .chat-header-avatars img {
+            width: 1.75rem; height: 1.75rem;
+            border-radius: 9999px; border: 2px solid white;
+            margin-left: -0.75rem; /* Overlap more */
+        }
+        .chat-header-avatars .avatar-count {
+            background-color: #e5e7eb; /* Lighter gray for count */
+            color: #4b5563; /* Darker gray text */
+            padding: 0.125rem 0.375rem; /* Smaller padding */
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-left: 0.125rem; /* Smaller margin */
+            font-weight: 500;
+        }
+        .chat-header-close-btn { color: #6b7280; }
+        .chat-header-close-btn:hover { color: #1f293b; }
+
+        .chat-tabs { display: flex; background-color: white; border-bottom: 1px solid #e5e7eb; padding: 0 1rem; }
+        .chat-tab {
+            padding: 0.75rem 0.5rem; margin-right: 1rem; font-size: 0.875rem;
+            font-weight: 500; color: #6b7280; border-bottom: 3px solid transparent;
+            cursor: pointer;
+        }
+        .chat-tab.active { color: #003366; border-bottom-color: #003366; } /* Dark blue active tab */
+
+        .chat-messages-area {
+            flex-grow: 1; padding: 1rem; overflow-y: auto;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        .message-group { margin-bottom: 1.25rem; } /* Increased spacing */
+        .message-sender { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; color: #111827; }
+        
+        .message-content-wrapper { /* Wraps bubble and reactions */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Default for incoming */
+        }
+        .message-content-wrapper.outgoing {
+            align-items: flex-end;
+        }
+
+        .message-bubble {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f293b; /* gray-800 */
+            padding: 0.625rem 1rem; /* 10px 16px */
+            border-radius: 1rem; /* More rounded */
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+        .message-bubble.outgoing {
+            background-color: #0052cc; /* Brighter blue */
+            color: white;
+            border-bottom-right-radius: 0.375rem; /* 6px */
+        }
+        .message-bubble.incoming {
+             border-bottom-left-radius: 0.375rem; /* 6px */
+        }
+        .message-meta-time {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280; /* gray-500 */
+            margin-top: 0.25rem;
+        }
+         .message-content-wrapper.incoming .message-meta-time {
+            align-self: flex-start; /* Time below incoming bubble */
+            margin-left: 0.5rem;
+        }
+        .message-content-wrapper.outgoing .message-meta-time {
+            align-self: flex-end; /* Time below outgoing bubble */
+            margin-right: 0.5rem;
+        }
+
+        .pinned-message-display { 
+            background-color: #fefce8; /* yellow-50 */
+            border-left: 4px solid #facc15; /* yellow-400 */
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem; 
+            border-radius: 0.25rem; /* 4px */
+            font-size: 0.875rem; /* text-sm */
+        }
+        .pinned-message-display .user {
+            font-weight: 600; color: #ca8a04; /* yellow-600 */ display: block;
+        }
+        .pinned-message-display .text {
+            color: #a16207; /* yellow-700 */ margin-top: 0.125rem;
+        }
+        .pinned-message-display img {
+            margin-top: 0.5rem; border-radius: 0.25rem; max-width: 150px; height: auto;
+        }
+
+        .associated-task-indicator {
+            font-size: 0.75rem; color: #6b7280; margin-top: 0.375rem; display: flex; align-items: center;
+        }
+        .associated-task-indicator svg {
+            width: 0.875rem; height: 0.875rem; margin-right: 0.25rem;
+        }
+
+        .message-reactions {
+            display: flex;
+            gap: 0.25rem; /* 4px */
+            margin-top: 0.375rem; /* 6px */
+            position: relative; 
+        }
+        .reaction-chip {
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #3730a3; /* indigo-800 */
+            padding: 0.125rem 0.5rem; /* 2px 8px */
+            border-radius: 9999px; /* pill */
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .reaction-chip:hover { background-color: #c7d2fe; /* indigo-200 */ }
+        .reaction-chip .count { margin-left: 0.25rem; }
+
+        .reaction-viewer-popup {
+            position: absolute;
+            background-color: #374151; 
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100; 
+            font-size: 0.875rem;
+            bottom: 100%; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-0.5rem); 
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.1s, visibility 0.1s;
+            min-width: 120px; 
+        }
+        .reaction-viewer-popup.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .reaction-viewer-popup::after { /* Arrow */
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #374151 transparent transparent transparent;
+        }
+        .reaction-viewer-popup ul { list-style: none; padding: 0; margin: 0; }
+        .reaction-viewer-popup li { margin-bottom: 0.125rem; }
+        .reaction-viewer-popup li:last-child { margin-bottom: 0; }
+
+
+        .chat-input-area {
+            display: flex; padding: 0.75rem 1rem;
+            border-top: 1px solid #e5e7eb; background-color: white;
+            align-items: center;
+        }
+        .chat-input-area input {
+            flex-grow: 1; border: 1px solid #d1d5db;
+            border-radius: 0.375rem; padding: 0.625rem 0.75rem; 
+            font-size: 0.875rem;
+        }
+        .chat-input-area button { margin-left: 0.5rem; color: #6b7280; }
+        .chat-input-area button:hover { color: #003366; }
+        .chat-input-area button svg { width: 1.25rem; height: 1.25rem; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="chat-container-wrapper">
+        <header class="chat-header">
+            <div class="chat-header-left">
+                <button title="More options" class="text-white hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" /></svg>
+                </button>
+                <div class="chat-header-title">De-Bug</div>
+            </div>
+            <div class="flex items-center">
+                <div class="flex -space-x-3 mr-1 chat-header-avatars"> <img src="https://placehold.co/28x28/FFADAD/000000?text=AG" alt="User AG">
+                    <img src="https://placehold.co/28x28/FFC0CB/000000?text=VA" alt="User VA">
+                    <img src="https://placehold.co/28x28/ADD8E6/000000?text=AS" alt="User AS">
+                    <img src="https://placehold.co/28x28/90EE90/000000?text=AB" alt="User AB">
+                </div>
+                <span class="avatar-count">+14</span>
+                <button title="Close Chat" class="ml-3 chat-header-close-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <div class="chat-tabs">
+            <button class="chat-tab active" data-tab="convo">CONVO</button>
+            <button class="chat-tab" data-tab="tasks_tickets">TASKS/TICKETS</button>
+            <button class="chat-tab" data-tab="pins">PINS</button>
+        </div>
+
+        <div class="chat-messages-area" id="chatMessagesArea">
+            </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Start typing...">
+            <button title="More options / Attach" id="inputOptionsButton"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" /></svg>
+            </button>
+            <button title="Send Message" id="sendMessageButton">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="reactionViewerPopupTemplate" class="reaction-viewer-popup hidden">
+        <ul>
+            </ul>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatMessagesArea = document.getElementById('chatMessagesArea');
+            const reactionViewerPopupTemplate = document.getElementById('reactionViewerPopupTemplate');
+            let currentReactionPopup = null;
+
+            const currentUserId = 'Olikiver de Jesus Barros'; 
+
+            const messages = [
+                { 
+                    id: 1, sender: 'Michel Browder', 
+                    pinned: true,
+                    pinnedContent: { 
+                        user: 'Bobby Boutris - Client Ga...',
+                        text: 'resend them to me with timestamp. Apparently at the meeting though, the client mentioned the gutters above the garage was a dent caused by a fork that Booby scheduled and the only peint that should need touch og beve the front...',
+                    },
+                    text: "Olikiver de Jesus Barros can we work on adding a view option for whole reacted to our message? I don't know who hearted or gave a thumbs up on questions or comments that we make. Sometimes sales reps give things like instead of replying so it'd really helpful to see who reacted. Thank you 🙏", 
+                    time: '04:16 PM', type: 'incoming', 
+                    reactions: { 
+                        '👍': { count: 2, users: ['John Doe', 'Will P.'] },
+                        '❤️': { count: 1, users: ['Vanessa M.'] }
+                    },
+                    associatedTask: true // This will be shown for this message
+                },
+                { 
+                    id: 2, sender: 'Olikiver de Jesus Barros', 
+                    text: 'Yes, absolutely!', 
+                    time: '04:20 PM', 
+                    type: 'outgoing', 
+                    reactions: {'❤️': { count: 1, users: ['Michel Browder'] } } 
+                    // No associatedTask for this message
+                }
+                // Removed the "Great suggestion" message
+            ];
+
+            function renderMessages() {
+                chatMessagesArea.innerHTML = ''; 
+                messages.forEach(msg => {
+                    const messageGroup = document.createElement('div');
+                    messageGroup.className = 'message-group'; 
+                    
+                    if (msg.type === 'incoming' && msg.sender !== currentUserId) {
+                        const senderName = document.createElement('p');
+                        senderName.className = 'message-sender';
+                        senderName.textContent = msg.sender;
+                        messageGroup.appendChild(senderName);
+                    }
+                    
+                    const messageContentWrapper = document.createElement('div');
+                    messageContentWrapper.className = `message-content-wrapper ${msg.sender === currentUserId ? 'outgoing' : 'incoming'}`;
+
+
+                    if (msg.pinned && msg.pinnedContent) {
+                        const pinnedMessageDiv = document.createElement('div');
+                        pinnedMessageDiv.className = 'pinned-message-display'; 
+                        pinnedMessageDiv.innerHTML = `
+                            <span class="user">${msg.pinnedContent.user}</span>
+                            <p class="text">${msg.pinnedContent.text}</p>
+                            ${msg.pinnedContent.image ? `<img src="${msg.pinnedContent.image}" alt="Pinned content image">` : ''}
+                        `;
+                        messageContentWrapper.appendChild(pinnedMessageDiv);
+                    }
+
+                    const messageBubble = document.createElement('div');
+                    messageBubble.className = `message-bubble ${msg.sender === currentUserId ? 'outgoing' : 'incoming'}`;
+                    messageBubble.textContent = msg.text;
+                    messageBubble.dataset.messageId = msg.id;
+                    messageContentWrapper.appendChild(messageBubble);
+                    
+                    const metaTime = document.createElement('div');
+                    metaTime.className = 'message-meta-time';
+                    metaTime.textContent = msg.time;
+                    messageContentWrapper.appendChild(metaTime);
+
+
+                    if (msg.reactions && Object.keys(msg.reactions).length > 0) {
+                        const reactionsDiv = document.createElement('div');
+                        reactionsDiv.className = 'message-reactions';
+                        for (const emoji in msg.reactions) {
+                            const reactionData = msg.reactions[emoji];
+                            const reactionChip = document.createElement('div');
+                            reactionChip.className = 'reaction-chip';
+                            reactionChip.innerHTML = `${emoji} <span class="count">${reactionData.count}</span>`;
+                            reactionChip.dataset.emoji = emoji;
+                            
+                            reactionChip.addEventListener('mouseenter', (event) => {
+                                showReactionPopup(event.currentTarget, reactionData.users, emoji);
+                            });
+                            reactionChip.addEventListener('mouseleave', () => {
+                                hideReactionPopup();
+                            });
+                             reactionChip.addEventListener('click', (event) => { 
+                                showReactionPopup(event.currentTarget, reactionData.users, emoji);
+                            });
+                            reactionsDiv.appendChild(reactionChip);
+                        }
+                        messageContentWrapper.appendChild(reactionsDiv);
+                    }
+                    
+                    messageGroup.appendChild(messageContentWrapper);
+
+                    // Display "Associated Task" only if msg.associatedTask is true
+                    if (msg.associatedTask) {
+                        const associatedTaskInfo = document.createElement('p');
+                        associatedTaskInfo.className = 'associated-task-indicator';
+                        associatedTaskInfo.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1 text-blue-600"><path fill-rule="evenodd" d="M7.053 2.2a.75.75 0 01.707-.01L14.53 5.44a.75.75 0 010 1.329l-6.77 3.251a.75.75 0 01-.707-.01L.47 6.77a.75.75 0 010-1.329L7.053 2.2zM2.25 8.318l4.5 2.167v3.265l-4.5-2.167V8.318zm11.5 0v3.265l-4.5 2.167v-3.265l4.5-2.167z" clip-rule="evenodd" /></svg> 1 Associated Task`;
+                        messageGroup.appendChild(associatedTaskInfo);
+                    }
+                    chatMessagesArea.appendChild(messageGroup);
+                });
+                chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight; 
+            }
+            
+            function showReactionPopup(targetElement, users, emoji) {
+                hideReactionPopup(); 
+
+                currentReactionPopup = reactionViewerPopupTemplate.cloneNode(true);
+                currentReactionPopup.id = ''; 
+                const ul = currentReactionPopup.querySelector('ul');
+                ul.innerHTML = ''; 
+
+                if (users && users.length > 0) {
+                    users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = `${emoji} ${user}`;
+                        ul.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = `No users for ${emoji}`; 
+                    ul.appendChild(li);
+                }
+
+                document.body.appendChild(currentReactionPopup);
+                currentReactionPopup.classList.remove('hidden');
+                currentReactionPopup.classList.add('visible');
+                
+                const targetRect = targetElement.getBoundingClientRect();
+                const popupRect = currentReactionPopup.getBoundingClientRect();
+
+                let top = targetRect.top + window.scrollY - popupRect.height - 8; 
+                let left = targetRect.left + window.scrollX + (targetRect.width / 2) - (popupRect.width / 2);
+
+                if (top < window.scrollY) { 
+                    top = targetRect.bottom + window.scrollY + 8;
+                    const arrow = currentReactionPopup.querySelector('::after'); // Attempt to select pseudo-element
+                    if(arrow && arrow.style) arrow.style.display = 'none'; 
+                }
+                if (left < window.scrollX) left = window.scrollX + 5; 
+                if (left + popupRect.width > window.innerWidth + window.scrollX) {
+                    left = window.innerWidth + window.scrollX - popupRect.width - 5; 
+                }
+                
+                currentReactionPopup.style.top = `${top}px`;
+                currentReactionPopup.style.left = `${left}px`;
+                currentReactionPopup.style.transform = ''; 
+                currentReactionPopup.style.bottom = 'auto'; 
+            }
+
+            function hideReactionPopup() {
+                if (currentReactionPopup) {
+                    currentReactionPopup.remove();
+                    currentReactionPopup = null;
+                }
+            }
+            
+            document.addEventListener('click', function(event) {
+                if (currentReactionPopup && !currentReactionPopup.contains(event.target) && !event.target.closest('.reaction-chip')) {
+                    hideReactionPopup();
+                }
+            });
+
+            renderMessages();
+        });
+    </script>
+
+</body>
+</html>
+

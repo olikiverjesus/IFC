@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation to Ticket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light background for the page */
+        }
+        .chat-app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .chat-header {
+            background-color: #003366; /* Dark blue */
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header-title {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+        }
+        .chat-header-avatars img {
+            width: 1.75rem; /* 28px */
+            height: 1.75rem; /* 28px */
+            border-radius: 9999px;
+            border: 2px solid white;
+            margin-left: -0.5rem; /* Overlap avatars */
+        }
+        .chat-header-avatars .avatar-count {
+            background-color: #0052cc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+        .chat-tabs {
+            display: flex;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .chat-tab {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500;
+            color: #6b7280; /* gray-500 */
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+        }
+        .chat-tab.active {
+            color: #003366; /* Dark blue */
+            border-bottom-color: #003366;
+        }
+        .chat-messages-area {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        .message-group {
+            margin-bottom: 1rem;
+            position: relative; /* For absolute positioning of action icons container */
+        }
+        .message-bubble {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f293b; /* gray-800 */
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem; /* 12px */
+            max-width: 75%;
+            word-wrap: break-word;
+            position: relative; 
+        }
+        .message-bubble.outgoing {
+            background-color: #0052cc; /* Brighter blue for outgoing */
+            color: white;
+            margin-left: auto; /* Align to right */
+            border-bottom-right-radius: 0.25rem; 
+        }
+        .message-bubble.incoming {
+             border-bottom-left-radius: 0.25rem;
+        }
+        .message-meta {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280; /* gray-500 */
+            margin-top: 0.25rem;
+        }
+        .message-bubble.outgoing .message-meta {
+            text-align: right;
+            color: #d1d5db; 
+        }
+        .message-sender {
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+        
+        /* Inline Action Icons Styles */
+        .message-inline-actions {
+            position: absolute;
+            bottom: -1.25rem; /* Position below the bubble */
+            left: 0.5rem; /* Indent slightly from the left of the group */
+            display: flex;
+            gap: 0.375rem; /* 6px */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            z-index: 10;
+            padding: 0.25rem; 
+            background-color: rgba(255,255,255,0.8); 
+            border-radius: 1rem;
+        }
+        .message-group:hover .message-inline-actions {
+            opacity: 1;
+            visibility: visible;
+        }
+         .message-bubble.outgoing + .message-inline-actions { /* Position for outgoing messages */
+            right: 0.5rem;
+            left: auto;
+        }
+
+        .action-icon-btn {
+            background-color: #003366; /* Dark blue */
+            color: white;
+            width: 1.75rem; /* 28px */
+            height: 1.75rem; /* 28px */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .action-icon-btn:hover {
+            background-color: #002244; /* Darker blue */
+        }
+        .action-icon-btn svg {
+            width: 0.875rem; /* 14px */
+            height: 0.875rem; /* 14px */
+        }
+
+
+        .chat-input-area {
+            display: flex;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #e5e7eb; /* gray-200 */
+            background-color: white;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* 6px */
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .chat-input-area button {
+            margin-left: 0.5rem;
+            color: #6b7280;
+        }
+        .chat-input-area button:hover {
+            color: #003366;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .modal-container {
+            background-color: white;
+            padding: 1.5rem; /* 24px */
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .modal-header-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .modal-title-form {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+        }
+        .form-label { display: block; font-weight: 500; color: #374151; margin-bottom: 0.375rem; font-size: 0.875rem; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db;
+            border-radius: 0.25rem; font-size: 0.875rem; background-color: white; margin-bottom: 1rem;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #2563eb; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .form-actions { text-align: right; margin-top: 1.5rem; }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; font-size: 0.875rem; cursor: pointer; }
+        .btn-primary { background-color: #003366; color: white; }
+        .btn-primary:hover { background-color: #002244; }
+        .btn-secondary { background-color: #e5e7eb; color: #374151; margin-right: 0.5rem; }
+        .btn-secondary:hover { background-color: #d1d5db; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="chat-app-container">
+        <header class="chat-header">
+            <div class="chat-header-title">Julián Ortiz - Client GamePlan</div>
+            <div class="flex items-center">
+                <div class="flex -space-x-2 mr-2 chat-header-avatars">
+                    <img src="https://placehold.co/28x28/FFC0CB/000000?text=VA" alt="User VA">
+                    <img src="https://placehold.co/28x28/ADD8E6/000000?text=AS" alt="User AS">
+                    <img src="https://placehold.co/28x28/90EE90/000000?text=AB" alt="User AB">
+                </div>
+                <span class="avatar-count">+7</span>
+                <button title="Close Chat" class="ml-4 text-white hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <div class="chat-tabs">
+            <button class="chat-tab active" data-tab="convo">CONVO</button>
+            <button class="chat-tab" data-tab="tasks_tickets">TASKS/TICKETS</button>
+        </div>
+
+        <div class="chat-messages-area" id="chatMessagesArea">
+            </div>
+
+        <div class="chat-input-area">
+            <input type="text" placeholder="Start typing...">
+            <button title="Attach File">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81a.75.75 0 00-1.06-1.061z" /></svg>
+            </button>
+            <button title="Send Message">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="createTicketModal" class="modal-overlay hidden">
+        <div class="modal-container">
+            <div class="modal-header-form">
+                <h2 class="modal-title-form">Create New Ticket</h2>
+                <button id="closeTicketModalBtn" title="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-gray-500 hover:text-gray-700">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="newTicketForm">
+                <div>
+                    <label for="ticketDescription" class="form-label">Description (from message)</label>
+                    <textarea id="ticketDescription" name="ticketDescription" rows="4" class="form-textarea"></textarea>
+                </div>
+                <div>
+                    <label for="originalContext" class="form-label">Original Conversation</label>
+                    <input type="text" id="originalContext" name="originalContext" class="form-input" readonly placeholder="Link or reference to conversation...">
+                </div>
+                <div>
+                    <label for="ticketAssignee" class="form-label">Assign To</label>
+                    <select id="ticketAssignee" name="ticketAssignee" class="form-select">
+                        <option value="">Select Assignee...</option>
+                        <option value="user1">Vanessa M.</option>
+                        <option value="user2">Will P.</option>
+                        <option value="user3">Amadeu L.</option>
+                        <option value="user4">Development Team</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ticketDueDate" class="form-label">Due Date</label>
+                    <input type="date" id="ticketDueDate" name="ticketDueDate" class="form-input">
+                </div>
+                <div>
+                    <label for="ticketTags" class="form-label">Tags</label>
+                    <input type="text" id="ticketTags" name="ticketTags" class="form-input" placeholder="e.g., SOT, Billing, Urgent">
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelTicketBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatMessagesArea = document.getElementById('chatMessagesArea');
+            const createTicketModal = document.getElementById('createTicketModal');
+            const closeTicketModalBtn = document.getElementById('closeTicketModalBtn');
+            const cancelTicketBtn = document.getElementById('cancelTicketBtn');
+            const newTicketForm = document.getElementById('newTicketForm');
+            const ticketDescriptionInput = document.getElementById('ticketDescription');
+            const originalContextInput = document.getElementById('originalContext');
+
+            const messages = [
+                { id: 1, sender: 'Cathy Parada', text: 'Hola', time: '12:37 PM', type: 'incoming', reactions: { heart: 1, thumbsUp: 1 }, associatedTask: true },
+                { id: 2, sender: 'Cheza Rodriguez', text: 'Hi', time: '12:42 PM', type: 'incoming' },
+                { id: 3, sender: 'Geraldine Salarda', text: 'Hello!', time: '12:43 PM', type: 'incoming' },
+                { id: 4, sender: 'You', text: 'Can we get an update on the SOT for Julián Ortiz?', time: '12:45 PM', type: 'outgoing' },
+                { id: 5, sender: 'Vanessa M.', text: 'Working on the SOT verification now. Will update by EOD.', time: '12:50 PM', type: 'incoming' }
+            ];
+
+            function renderMessages() {
+                chatMessagesArea.innerHTML = ''; 
+                messages.forEach(msg => {
+                    const messageGroup = document.createElement('div');
+                    messageGroup.className = 'message-group'; 
+                    
+                    if (msg.type === 'incoming') {
+                        const senderName = document.createElement('p');
+                        senderName.className = 'message-sender';
+                        senderName.textContent = msg.sender;
+                        messageGroup.appendChild(senderName);
+                    }
+
+                    const messageBubble = document.createElement('div');
+                    messageBubble.className = `message-bubble ${msg.type}`;
+                    messageBubble.textContent = msg.text;
+                    messageBubble.dataset.messageId = msg.id;
+                    messageBubble.dataset.messageText = msg.text; 
+                    
+                    messageGroup.appendChild(messageBubble);
+
+                    const inlineActionsContainer = document.createElement('div');
+                    inlineActionsContainer.className = 'message-inline-actions';
+                    
+                    // 1. React Button
+                    const reactBtn = document.createElement('button');
+                    reactBtn.className = 'action-icon-btn';
+                    reactBtn.title = 'React';
+                    reactBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.536-4.464a.75.75 0 00-1.06-1.06 3.5 3.5 0 01-4.95 0 .75.75 0 00-1.06 1.06 5 5 0 007.07 0zM9 8.5a1 1 0 11-2 0 1 1 0 012 0zm4 0a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" /></svg>`;
+                    reactBtn.addEventListener('click', () => alert('React to: ' + msg.text));
+                    inlineActionsContainer.appendChild(reactBtn);
+
+                    // 2. Mention Button
+                    const mentionBtn = document.createElement('button');
+                    mentionBtn.className = 'action-icon-btn';
+                    mentionBtn.title = 'Mention';
+                    mentionBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6.25 5.242a3.5 3.5 0 117.5 0 .75.75 0 001.5 0 5 5 0 00-10.5 0 .75.75 0 001.5 0z" /><path d="M10 12.5a.75.75 0 00-1.5 0v1.407a3.521 3.521 0 00-1.89.093.75.75 0 00-.36.648l-.002.001v.002l-.002.002A2.75 2.75 0 008.75 18h2.5a2.75 2.75 0 002.504-3.099l-.002-.002v-.002l-.001-.002a.75.75 0 00-.36-.648 3.521 3.521 0 00-1.89-.093V12.5A.75.75 0 0010 12.5z" /></svg>`;
+                    mentionBtn.addEventListener('click', () => alert('Mention from: ' + msg.text));
+                    inlineActionsContainer.appendChild(mentionBtn);
+
+                    // 3. Create Task Button
+                    const createTaskBtn = document.createElement('button');
+                    createTaskBtn.className = 'action-icon-btn';
+                    createTaskBtn.title = 'Create Task';
+                    // Using a checkmark with a plus, similar to the image provided by user
+                    createTaskBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M16.704 7.704a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06 0l-3.5-3.5a.75.75 0 011.06-1.06L9 14.69l7.06-7.06a.75.75 0 011.06 0z" clip-rule="evenodd" /></svg>`;
+                    createTaskBtn.addEventListener('click', () => alert('Create Task from: ' + msg.text + ' (Modal not implemented for tasks in this demo)'));
+                    inlineActionsContainer.appendChild(createTaskBtn);
+                    
+                    // 4. Create Ticket Button
+                    const createTicketBtn = document.createElement('button');
+                    createTicketBtn.className = 'action-icon-btn';
+                    createTicketBtn.title = 'Create Ticket';
+                    createTicketBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.047 1.027a1.5 1.5 0 012.121 0l1.803 1.803a1.5 1.5 0 010 2.121l-8.364 8.364a1.5 1.5 0 01-.657.408l-3.586.9A.75.75 0 016 14.25l.9-3.586a1.5 1.5 0 01.408-.657L15.047 1.027zm-1.414 2.121L5.27 11.512l-.686 2.744 2.744-.686L15.69 4.803l-2.057-2.057z" clip-rule="evenodd" /><path d="M14.25 5.25a.75.75 0 00-1.06-1.06l-2.024 2.023a.75.75 0 001.06 1.06l2.024-2.023zM5.25 14.25a.75.75 0 00-1.06-1.06L2.166 15.21a.75.75 0 001.061 1.06l2.023-2.023z" /></svg>`;
+                    createTicketBtn.addEventListener('click', () => {
+                        openCreateTicketModal(msg.text, `conv_id_placeholder/msg_${msg.id}`);
+                    });
+                    inlineActionsContainer.appendChild(createTicketBtn);
+
+                    // 5. Pin Message Button
+                    const pinBtn = document.createElement('button');
+                    pinBtn.className = 'action-icon-btn';
+                    pinBtn.title = 'Pin Message';
+                    pinBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.03 2.97a.75.75 0 010 1.06l-2.5 2.5a.75.75 0 01-1.06-1.06l2.5-2.5a.75.75 0 011.06 0zM3.5 6.25a.75.75 0 01.75-.75h11.5a.75.75 0 010 1.5H4.25a.75.75 0 01-.75-.75zm12.78 2.97a.75.75 0 010 1.06l-2.5 2.5a.75.75 0 11-1.06-1.06l2.5-2.5a.75.75 0 011.06 0z" clip-rule="evenodd" /><path d="M8.563 3.836a2.5 2.5 0 00-3.162-.32l-3.75 2.25A2.5 2.5 0 00.75 8v4A2.5 2.5 0 003.25 14.5h13.5A2.5 2.5 0 0019.25 12V8a2.5 2.5 0 00-.901-1.934l-3.75-2.25a2.5 2.5 0 00-3.162-.32L10 4.436l-1.437-.599zM17.75 12a1 1 0 01-1 1H3.25a1 1 0 01-1-1V8a1 1 0 01.36-.773l3.75-2.25a1 1 0 011.265.128L10 6.536l2.635-1.437a1 1 0 011.265-.128l3.75 2.25A1 1 0 0117.75 8v4z" /></svg>`;
+                    pinBtn.addEventListener('click', () => alert('Pin: ' + msg.text));
+                    inlineActionsContainer.appendChild(pinBtn);
+                    
+                    messageGroup.appendChild(inlineActionsContainer);
+
+
+                    const meta = document.createElement('div');
+                    meta.className = 'message-meta';
+                    meta.textContent = msg.time;
+                    if (msg.type === 'incoming') {
+                         messageGroup.appendChild(meta);
+                    } else {
+                        messageGroup.appendChild(meta); 
+                    }
+
+
+                    if (msg.associatedTask) {
+                        const associatedTaskInfo = document.createElement('p');
+                        associatedTaskInfo.className = 'text-xs text-blue-600 mt-1 ml-2 flex items-center';
+                        associatedTaskInfo.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M7.053 2.2a.75.75 0 01.707-.01L14.53 5.44a.75.75 0 010 1.329l-6.77 3.251a.75.75 0 01-.707-.01L.47 6.77a.75.75 0 010-1.329L7.053 2.2zM2.25 8.318l4.5 2.167v3.265l-4.5-2.167V8.318zm11.5 0v3.265l-4.5 2.167v-3.265l4.5-2.167z" clip-rule="evenodd" /></svg> 3 Associated Task`;
+                        messageGroup.appendChild(associatedTaskInfo);
+                    }
+
+
+                    chatMessagesArea.appendChild(messageGroup);
+                });
+                chatMessagesArea.scrollTop = chatMessagesArea.scrollHeight; 
+            }
+            
+            function openCreateTicketModal(description, contextLink) {
+                ticketDescriptionInput.value = description;
+                originalContextInput.value = contextLink; 
+                createTicketModal.classList.remove('hidden');
+            }
+
+            function closeCreateTicketModal() {
+                createTicketModal.classList.add('hidden');
+                newTicketForm.reset();
+            }
+
+            closeTicketModalBtn.addEventListener('click', closeCreateTicketModal);
+            cancelTicketBtn.addEventListener('click', closeCreateTicketModal);
+
+            newTicketForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const ticketData = Object.fromEntries(formData.entries());
+                console.log('New Ticket Data:', ticketData);
+                alert(`Ticket "${ticketData.ticketDescription.substring(0,30)}..." created (simulated)!`);
+                closeCreateTicketModal();
+            });
+
+            renderMessages();
+        });
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Template: Automated Tag/Status Mapping</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+        th, td {
+            border: 1px solid #e5e7eb; /* gray-200 */
+            padding: 0.75rem; /* p-3 */
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f9fafb; /* gray-50 */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* gray-700 */
+        }
+        td {
+            color: #4b5563; /* gray-600 */
+        }
+        .export-button {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            font-weight: 500; /* font-medium */
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border-radius: 0.375rem; /* rounded-md */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .export-button:hover {
+            background-color: #1d4ed8; /* blue-700 */
+        }
+        .notes-section h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .notes-section p, .notes-section li {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-md">
+        <header class="mb-6 pb-4 border-b border-gray-200">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Google Sheets Template: Automated Tag/Status Mapping</h1>
+        </header>
+
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Objective</h2>
+            <p class="text-gray-700">To define the clear mappings between task/ticket completions (or other triggers) and the desired automated outcomes on primary Flow Cards (e.g., <code>@IFC</code>, <code>@roof</code>). This spreadsheet will serve as the "matrix map" for development.</p>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Assignees</h2>
+            <p class="text-gray-700"><strong>Spreadsheet Creation/Maintenance:</strong> Amadeu Tolentino, Oli de Jesus Barros.</p>
+            <p class="text-gray-700"><strong>Input/Review:</strong> Will Merrifield, Michel Browder.</p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-3">Usage Instructions</h2>
+            <p class="text-gray-700 mb-4">Create a new Google Sheet and use the columns below as headers. Each row will represent a specific automation rule. You can use the button below to export the headers and example data as a CSV file, which can be easily imported into Google Sheets.</p>
+            <button id="exportCsvButton" class="export-button">
+                <i class="fas fa-file-csv mr-2"></i>Export Table as CSV
+            </button>
+        </section>
+
+        <div class="overflow-x-auto">
+            <table id="mappingTable">
+                <thead>
+                    <tr>
+                        <th>Triggering Event / Source</th>
+                        <th>Specific Task/Ticket Type (or Event Detail)</th>
+                        <th>Condition(s) (If any)</th>
+                        <th>Target Flow Card Type</th>
+                        <th>Specific Target Card Instance (e.g., based on Trade)</th>
+                        <th>Action to Perform</th>
+                        <th>Outcome: New Tag/Status Value</th>
+                        <th>Notes / Logic Details</th>
+                        <th>Responsible for Input</th>
+                        <th>Status (Defined, Dev Ready, Implemented)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Task Completion</td>
+                        <td>"Material Pickup"</td>
+                        <td>Task marked "Completed"</td>
+                        <td><code>@roof</code> Card</td>
+                        <td>Current Job's <code>@roof</code> Card</td>
+                        <td>Add Tag</td>
+                        <td>"Material Acquired"</td>
+                        <td>When Mario marks his "Material Pickup for Roof" task as done.</td>
+                        <td>Michel/Will</td>
+                        <td>Defined</td>
+                    </tr>
+                    <tr>
+                        <td>Ticket Closure</td>
+                        <td>"Leak Repair" (Warranty Type)</td>
+                        <td>Ticket status "Closed - Resolved"</td>
+                        <td><code>@roof</code> Card</td>
+                        <td>Current Job's <code>@roof</code> Card</td>
+                        <td>Add Tag</td>
+                        <td>"Warranty Repair Complete"</td>
+                        <td>When a warranty leak repair ticket for the roof is closed.</td>
+                        <td>Michel/Will</td>
+                        <td>Defined</td>
+                    </tr>
+                    <tr>
+                        <td>Task Completion</td>
+                        <td>"SOT Verified" (Vanessa's Checklist Item)</td>
+                        <td>All SOT checklist items for <code>@IFC</code> are completed</td>
+                        <td><code>@IFC</code> Card</td>
+                        <td>Current Job's <code>@IFC</code> Card</td>
+                        <td>Update Status</td>
+                        <td>"SOT Verified"</td>
+                        <td>This status appears on the main project card.</td>
+                        <td>Will/Vanessa</td>
+                        <td>To Be Defined</td>
+                    </tr>
+                    <tr>
+                        <td>All Trade Bids Received</td>
+                        <td>(System Event - Needs Definition)</td>
+                        <td>All <code>Bid Request</code> cards for job have an attached bid OR are marked "Not Proceeding"</td>
+                        <td><code>@IFC</code> Card</td>
+                        <td>Current Job's <code>@IFC</code> Card</td>
+                        <td>Add Tag</td>
+                        <td>"All Bids In"</td>
+                        <td>How does the system know all *expected* bids are in?</td>
+                        <td>Amadeu/Oli/Will</td>
+                        <td>To Be Defined</td>
+                    </tr>
+                    <tr>
+                        <td>Flow Card Status Change</td>
+                        <td><code>@roof</code> Card</td>
+                        <td>Status changes to "Production Scheduled"</td>
+                        <td><code>@IFC</code> Card</td>
+                        <td>Current Job's <code>@IFC</code> Card</td>
+                        <td>Update Status</td>
+                        <td>"Production Started"</td>
+                        <td>Reflects overall project progress.</td>
+                        <td>Michel/Will</td>
+                        <td>To Be Defined</td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+
+        <section class="notes-section mt-8">
+            <h3 class="text-lg font-semibold text-gray-800">Column Explanations</h3>
+            <ul>
+                <li><strong>Triggering Event / Source:</strong> What action initiates the automation? (e.g., Task Completion, Ticket Status Change, Manual Action on a Card, System Event).</li>
+                <li><strong>Specific Task/Ticket Type (or Event Detail):</strong> The specific name or type of the task, ticket, or event that acts as the trigger (e.g., "Material Pickup Task," "Leak Repair Ticket," "IFC Card Created").</li>
+                <li><strong>Condition(s) (If any):</strong> Any specific conditions that must be met for the trigger to fire (e.g., Task status is "Completed," Ticket priority is "High," All checklist items for X are done).</li>
+                <li><strong>Target Flow Card Type:</strong> Which type of primary Flow Card will be affected? (e.g., <code>@IFC</code> Card, <code>@roof</code> Card, <code>@gutter</code> Card).</li>
+                <li><strong>Specific Target Card Instance:</strong> How is the exact card identified? (e.g., "Current Job's <code>@roof</code> Card," "The <code>@gutter</code> Card associated with this Ticket").</li>
+                <li><strong>Action to Perform:</strong> What kind of update should happen on the target card? (e.g., Add Tag, Remove Tag, Update Status, Set Field Value).</li>
+                <li><strong>Outcome: New Tag/Status Value:</strong> The actual text of the new tag or status to be applied (e.g., "Material Acquired," "Punchlist Complete," "Ready for Install").</li>
+                <li><strong>Notes / Logic Details:</strong> Any additional explanations, business rules, or specific logic that developers need to understand.</li>
+                <li><strong>Responsible for Input:</strong> Who is responsible for defining the specifics of this rule?</li>
+                <li><strong>Status:</strong> Tracking the progress of defining and implementing this specific mapping rule.</li>
+            </ul>
+        </section>
+
+        <footer class="mt-12 pt-6 border-t border-gray-200 text-center">
+            <p class="text-sm text-gray-500">&copy; 2025 IFC Roofing - Flow System. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('exportCsvButton').addEventListener('click', function() {
+            const table = document.getElementById('mappingTable');
+            let csv = [];
+            // Headers
+            const headers = [];
+            table.querySelectorAll('thead th').forEach(header => {
+                headers.push('"' + header.innerText.replace(/"/g, '""') + '"');
+            });
+            csv.push(headers.join(','));
+
+            // Data Rows
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('td').forEach(cell => {
+                    rowData.push('"' + cell.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+
+            const csvString = csv.join('\\n');
+            const filename = 'automated_tag_status_mapping_flow_ux.csv'; // English filename
+
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            link.setAttribute('target', '_blank');
+            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString));
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>
+

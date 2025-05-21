@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Impact Analysis: Replacing "Comments" with "Convos" in Tickets</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.5; }
+        h1 { font-size: 2em; margin-bottom: 0.5em; }
+        h2 { font-size: 1.5em; margin-top: 1em; margin-bottom: 0.4em; }
+        h3 { font-size: 1.2em; margin-top: 1em; margin-bottom: 0.3em; }
+        ul { margin-left: 20px; }
+        li { margin-bottom: 0.5em; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1em; margin-bottom: 1em; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
+        th { background-color: #f2f2f2; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 1em 0; }
+    </style>
+</head>
+<body>
+
+    <h1>Impact Analysis: Replacing "Comments" with "Convos" in Tickets</h1>
+
+    <p>This document outlines the key aspects of the user request to replace the existing "Comments" feature with a more dynamic "Convo" system within tickets, along with an analysis of the potential impacts and a recommended approach.</p>
+
+    <hr>
+
+    <h2>1. What the User Asked For</h2>
+
+    <p>The core request is to <strong>deprecate the "Comments" feature entirely</strong> from tickets and replace it with a richer, more interactive "Convo" system.</p>
+
+    <p><strong>Key User Requirements:</strong></p>
+    <ul>
+        <li>Rename every UI label from “Comments” to “Convo”.</li>
+        <li>Support rich conversational features instead of flat threads, including:
+            <ul>
+                <li>Threaded replies.</li>
+                <li>Emoji reactions (e.g., ❤️, 👍).</li>
+                <li>Ability to "Convert to task" directly from any message.</li>
+                <li>Standard message actions like pinning, editing, and deleting (where applicable).</li>
+            </ul>
+        </li>
+        <li>Ensure every "Convo" remains contextually tied to its specific ticket.</li>
+        <li>Make the expansion and visibility of the "Convo" as fluid and intuitive as a standard chat interface.</li>
+    </ul>
+
+    <p><strong>Direct User Quotes:</strong></p>
+    <ul>
+        <li><em>"Please no more comments in the app—only Convos in context.”</em></li>
+        <li><em>"I want to reply to that…love it…turn it into a task…not possible with current comments.”</em></li>
+    </ul>
+
+    <hr>
+
+    <h2>2. Impact of Removing the Old “Comments” Model</h2>
+
+    <p>This section details the potential impacts and risks associated with fully removing the existing "Comments" model, along with suggested mitigations.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Dimension</th>
+                <th>Impact / Risk</th>
+                <th>Mitigation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Data Migration</strong></td>
+                <td>• All existing comment records need migration into new Convo schema.<br>• Potential data loss if not careful.</td>
+                <td>• Write migration scripts that soft-delete originals and copy into thread model with IDs.<br>• Perform dry runs and validate meticulously.</td>
+            </tr>
+            <tr>
+                <td><strong>Backend Complexity</strong></td>
+                <td>• New data model for threads, reactions, deletes, conversions.<br>• Changes to permissions and storage layers.</td>
+                <td>• Build incrementally: support read-only legacy comments → coexistence → hard-switch later.<br>• Plan schema changes carefully.</td>
+            </tr>
+            <tr>
+                <td><strong>Frontend Effort</strong></td>
+                <td>• Rewriting all comment UIs across web, iOS, Android.<br>• New components for chat-style display and actions.</td>
+                <td>• Create a single Convo component and reuse everywhere; feature-flag roll-out.</td>
+            </tr>
+            <tr>
+                <td><strong>User Training</strong></td>
+                <td>• Users familiar with flat comments may be confused by threads.<br>• Need to document how to reply, react, convert.</td>
+                <td>• Ship with an in-app walkthrough and short video demo; update help center.</td>
+            </tr>
+            <tr>
+                <td><strong>Notification Flow</strong></td>
+                <td>• @mentions, reactions, and reply notifications must be re-wired to the new model.</td>
+                <td>• Audit all notification hooks; write automated tests to validate delivery.</td>
+            </tr>
+            <tr>
+                <td><strong>Performance</strong></td>
+                <td>• Chat-style threads can grow large; UI and database queries may slow down.</td>
+                <td>• Paginate or lazy-load older messages; index thread tables.</td>
+            </tr>
+            <tr>
+                <td><strong>Backward Compat.</strong></td>
+                <td>• Some integrations or reports may rely on flat-comments API.<br>• Webhooks / automations could break.</td>
+                <td>• Build shim endpoints mapping old comment APIs to new convo endpoints until deprecated.</td>
+            </tr>
+            <tr>
+                <td><strong>Risk to Rollout</strong></td>
+                <td>• Fully removing comments in one go is high-risk; could interrupt ticket workflows.</td>
+                <td>• Use a feature flag to switch per-workspace or per-user, monitor usage and error rates.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>3. Pragmatic Recommendation: Phased Rollout</h2>
+
+    <p>To minimize risk while delivering the richer "Convo" experience the user has requested, a phased approach is recommended:</p>
+
+    <h3>Phase 1 — Coexistence & Initial Migration</h3>
+    <ul>
+        <li>Introduce "Convos" as a new feature alongside the existing "Comments" system within tickets.</li>
+        <li>Migrate existing comments into a “legacy thread” format within the new Convo system (perhaps read-only or with limited interaction initially).</li>
+        <li>Optionally, provide a UI toggle allowing users to switch between viewing old "Comments" and new "Convos" for a transition period.</li>
+        <li>Focus on building core Convo features: threaded replies and reactions.</li>
+    </ul>
+
+    <h3>Phase 2 — Feature Parity, Validation & Soft Deprecation</h3>
+    <ul>
+        <li>Implement remaining Convo features like "Convert to task," editing, etc.</li>
+        <li>Soft-delete legacy "Comments" data (mark as inactive, hide from default view) in favor of the migrated Convos.</li>
+        <li>Actively monitor the adoption of "Convos."</li>
+        <li>Collect user feedback and fix bugs related to reactions, replies, and task conversions.</li>
+        <li>Communicate the upcoming full transition to users.</li>
+    </ul>
+
+    <h3>Phase 3 — Full Cut-Over & Deprecation</h3>
+    <ul>
+        <li>Remove all code paths related to the old "Comments" system.</li>
+        <li>Globally rename UI labels and menu items from "Comments" to "Convo."</li>
+        <li>Formally deprecate old comment APIs and webhooks (after a suitable notice period if shims were used).</li>
+        <li>Clean up any remaining migration artifacts.</li>
+    </ul>
+
+    <p>This approach lets you measure impact, gather feedback, and iterate before fully committing to removing the old comments model—minimizing risk while delivering the richer Convo experience the user has requested.</p>
+
+</body>
+</html>
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project View Enhancement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for better visual replication if needed */
+        .status-badge {
+            background-color: #E0E7FF; /* A light indigo */
+            color: #3730A3; /* A darker indigo */
+        }
+        .icon-placeholder {
+            width: 20px;
+            height: 20px;
+            background-color: #D1D5DB; /* gray-300 */
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!--
+    ✅ Enhancement/UI Change Request Template (Developer-Facing)
+    🧾 Request Summary
+    Users currently have no intuitive way to return to their board view (e.g., Active Jobs) after clicking into a project. This interrupts the user flow—especially for Customer Service reps like Cathy—who need to quickly move between multiple projects.
+
+    A close ("X") button should be added in the project view UI, enabling users to exit the project and return to the exact board or context they came from.
+    🎯 Goal
+    Improve navigation flow by allowing users to quickly exit a project view and return to their board context without being redirected to the Project Snapshot or dashboard.
+
+    This is especially critical for roles like Customer Service and Sales Management who triage work via boards.
+    📌 Specific Changes Required
+     Add a visible and consistently placed "X" button in the project view (likely top-left or top-right).
+     When clicked, the "X" returns the user to the previous board view, preserving filters and scroll position if possible.
+     Ensure this behavior works across:
+        Board to project navigation (e.g., Active Jobs → Project)
+        Mobile and desktop
+    🧩 Technical Context
+    The system needs to track the user’s navigation origin (e.g., lastBoardVisited).
+    Requires routing adjustments to avoid defaulting to /snapshot.
+    Consider interaction with sticky filters (which are also being implemented separately).
+    📐 Mockups / References
+    Behavior similar to modals or embedded navigators in platforms like Trello or Linear:
+    "X" = exit detail and return to list/board.
+    Can visually align with modal-based architecture if already being adopted in other parts of the platform.
+    📅 Effort
+    🟢 Low (based on Will & Amadeu's view: small UI + routing fix)
+
+    🧠 High user impact with minimal implementation cost
+    🧪 Acceptance Criteria
+     Project views display an "X" button in a consistent position.
+     Clicking "X" returns the user to the exact board they navigated from.
+     Board filters and scroll position are preserved on return.
+     Works seamlessly across devices (desktop and mobile).
+    👤 Assignees
+    Oli (Product)
+    Development Team
+    Amadeu (Design/Lead)
+    🗂️ Tags
+    #UX #Navigation #BoardFlow #CustomerService #S4Priority #LowEffortHighImpact
+    -->
+
+    <div class="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
+        <div class="flex justify-between items-center mb-6">
+            <a href="#" class="text-blue-600 hover:text-blue-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Projects
+            </a>
+            <button id="closeProjectView" title="Close Project View" class="text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div class="flex flex-col sm:flex-row items-start">
+                <img src="https://placehold.co/100x100/E0E7FF/3730A3?text=Project" alt="Project Thumbnail" class="w-24 h-24 rounded-md object-cover mb-4 sm:mb-0 sm:mr-6">
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start mb-1">
+                        <h1 class="text-2xl font-semibold text-gray-800">William Merrifield The Son</h1>
+                        <a href="#" class="text-sm text-blue-600 hover:text-blue-800 whitespace-nowrap ml-4">+ Add Record</a>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-1">Sales rep: Will</p>
+                    <p class="text-sm text-gray-600 mb-1">105 Williamsburg Ct, Colleyville, TX 76034</p>
+                    <p class="text-sm text-blue-500 hover:text-blue-700 mb-1">william.merrifield2010@gmail.com</p>
+                    <p class="text-sm text-gray-600">(469) 744 2398</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-2 items-center">
+                <button class="bg-blue-100 text-blue-700 px-3 py-1 text-sm font-medium rounded-full hover:bg-blue-200">3+</button>
+                <button class="bg-gray-200 text-gray-700 px-3 py-1 text-sm font-medium rounded-full hover:bg-gray-300">CONVO</button>
+                <button class="bg-gray-200 text-gray-700 px-3 py-1 text-sm font-medium rounded-full hover:bg-gray-300">FLOW</button>
+                <button class="bg-gray-200 text-gray-700 px-3 py-1 text-sm font-medium rounded-full hover:bg-gray-300">STATUS</button>
+                <div class="flex items-center ml-auto sm:ml-0">
+                    <span class="icon-placeholder" title="Document Icon"></span>
+                    <span class="icon-placeholder" title="Calendar Icon"></span>
+                    <span class="icon-placeholder" title="List Icon"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6 border-b border-gray-300">
+            <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                <a href="#" class="text-blue-600 border-blue-600 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm" aria-current="page">
+                    SNAPSHOTS
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    FLOW
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    STATUS
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    TASKS
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    TICKETS
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    DETAILS
+                </a>
+                <a href="#" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                    CONTACT
+                </a>
+            </nav>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white p-5 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">CONSTRUCTION SCHEDULE</h3>
+                <p class="text-gray-500 text-sm">Details about the construction schedule...</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg shadow">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-medium text-gray-900">SUPPLEMENT SCHEDULE</h3>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex items-center text-sm text-gray-600 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    0/0
+                </div>
+                <div class="flex justify-end">
+                     <span class="status-badge px-3 py-1 text-xs font-semibold rounded-full">71 INSPECTED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for the close button functionality
+        const closeButton = document.getElementById('closeProjectView');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                // This simulates returning to the previous page/board view.
+                // In a real application, this would involve more complex routing
+                // to restore the exact board state, filters, and scroll position.
+                if (document.referrer) {
+                    window.history.back();
+                } else {
+                    // Fallback if there's no referrer (e.g., page was opened directly)
+                    // You might want to redirect to a default board or dashboard here.
+                    console.log("No previous page in history. Implement fallback navigation.");
+                    alert("Navigating back to the board (simulated).");
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
+

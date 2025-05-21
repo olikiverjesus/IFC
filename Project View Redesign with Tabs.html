@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project View - Redesigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9; /* Light grayish-blue background */
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .top-nav-bar {
+            background-color: white;
+            padding: 0.75rem 1.5rem; /* 12px 24px */
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .header-content-wrapper {
+            background-color: white;
+            padding: 1.5rem; /* 24px */
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .project-primary-info {
+            display: flex;
+            flex-direction: column; /* Stack on small screens */
+            md:flex-direction: row; /* Side-by-side on medium screens and up */
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem; /* Space before detailed info blocks */
+        }
+        .project-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            md:margin-bottom: 0;
+        }
+        .project-avatar {
+            width: 4rem; /* 64px */
+            height: 4rem; /* 64px */
+            border-radius: 0.5rem; /* 8px */
+            object-fit: cover;
+            margin-right: 1rem; /* 16px */
+        }
+        .project-name {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700; /* bold */
+            color: #1e293b; /* slate-800 */
+        }
+        .project-address {
+            font-size: 0.875rem; /* text-sm */
+            color: #475569; /* slate-600 */
+        }
+        .add-record-button {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* medium */
+            padding: 0.5rem 1rem; /* 8px 16px */
+            border-radius: 0.375rem; /* 6px */
+            white-space: nowrap;
+            align-self: flex-start;
+            md:align-self: center;
+        }
+        .add-record-button:hover {
+            background-color: #1d4ed8; /* blue-700 */
+        }
+
+        /* Updated Styling for the info blocks container */
+        .detailed-info-container {
+            display: grid;
+            /* On small screens, 1 column. On md screens, 2 columns. On lg screens, potentially more if space allows or stick to 2. */
+            grid-template-columns: repeat(1, minmax(0, 1fr)); /* Default to 1 column */
+            gap: 1rem; /* Space between each info block */
+            margin-bottom: 1.5rem; /* Space before tabs */
+        }
+
+        @media (min-width: 768px) { /* md breakpoint in Tailwind */
+            .detailed-info-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns on medium screens */
+            }
+        }
+        /* For very large screens, you could add another breakpoint for 3 or 4 columns if desired */
+        /* @media (min-width: 1280px) { /* xl breakpoint in Tailwind */
+        /* .detailed-info-container {
+        /* grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* More flexible columns on very large screens */
+        /* }
+        /* } */
+
+
+        .info-block {
+            background-color: #f8fafc; /* slate-50 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            display: flex; /* Added for better internal alignment if needed */
+            flex-direction: column; /* Ensure content within block stacks */
+        }
+        .info-block h3 {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            color: #475569; /* slate-600 */
+            margin-bottom: 0.5rem;
+        }
+        .info-block p {
+            font-size: 0.875rem; /* text-sm */
+            color: #1e293b; /* slate-800 */
+            margin-bottom: 0.25rem;
+            word-break: break-word; /* Prevent long text from breaking layout */
+        }
+        .info-block p strong {
+            color: #334155; /* slate-700 */
+            /* min-width: 80px; /* Removed to allow more flexible wrapping */
+            /* display: inline-block; /* Removed for natural flow */
+            margin-right: 0.25rem; /* Small space after label */
+        }
+        .info-block a {
+            color: #2563eb; /* blue-600 */
+            text-decoration: none;
+        }
+        .info-block a:hover {
+            text-decoration: underline;
+        }
+
+        .tabs-container {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+            padding: 0 1.5rem; /* 24px horizontal padding */
+            overflow-x: auto; /* For mobile */
+            white-space: nowrap; /* For mobile */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .tab-button {
+            padding: 0.75rem 1rem; /* 12px 16px */
+            margin-right: 0.5rem; /* 8px */
+            border: none;
+            background: none;
+            color: #475569; /* slate-600 */
+            font-weight: 500;
+            font-size: 0.875rem; /* text-sm */
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            display: inline-block; /* For mobile scrolling */
+        }
+        .tab-button.active, .tab-button:hover {
+            color: #2563eb; /* blue-600 */
+            border-bottom-color: #2563eb; /* blue-600 */
+        }
+        .tab-content-area {
+            padding: 1.5rem; /* 24px */
+        }
+        .tab-pane.hidden {
+            display: none;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-left: 1rem; /* Indent adjuster details */
+        }
+        .collapsible-content.open {
+            max-height: 200px;
+        }
+        .details-toggle {
+            font-size: 0.75rem; /* text-xs */
+            color: #2563eb; /* blue-600 */
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+         .details-toggle:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 
+    Portuguese Request Summary (for context):
+    Com base na reunião de "P4 Vision (feedback)" de 19 de maio, o Will pediu que o cabeçalho dos projetos no aplicativo (a área que aparece no topo quando você visualiza um projeto específico) fosse redesenhado para incluir de forma consistente as seguintes informações primárias, tornando-as sempre visíveis ou facilmente acessíveis:
+    Informações do Cliente:
+    Nome do cliente
+    Número de telefone
+    Endereço (Já presente no project-primary-info)
+    Email
+    Informações do Representante de Vendas (Sales Rep):
+    Nome do representante de vendas associado ao projeto.
+    Status do Job:
+    O status atual do projeto.
+    Informações do Seguro:
+    Número da apólice/sinistro (Claim number)
+    Nome da companhia de seguros (Insurance company)
+    Detalhes do perito/regulador de seguros (Adjuster information - nome e contato).
+    A ideia é que essas informações chave estejam sempre no topo da página do projeto, independentemente da aba em que o usuário esteja (Flow, Status, Tasks, etc.), para evitar a necessidade de navegar até a aba "Details" ou procurar em diferentes locais. Ele também mencionou a possibilidade de alguns desses detalhes estarem em um menu suspenso (dropdown) se o espaço for limitado, mas a informação principal deve ser proeminente.
+    Amadeu concordou com a necessidade de redesenhar essa seção do cabeçalho para acomodar essas informações de forma clara e consistente, tanto na visualização desktop quanto mobile.
+    -->
+
+    <div class="min-h-screen page-container">
+        <div class="top-nav-bar">
+            <a href="#" class="text-blue-600 hover:text-blue-700 flex items-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
+                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                </svg>
+                Projects
+            </a>
+        </div>
+
+        <div class="header-content-wrapper">
+            <div class="project-primary-info">
+                <div class="project-details">
+                    <img src="https://placehold.co/64x64/E0E7FF/3730A3?text=WM" alt="Client Avatar" class="project-avatar">
+                    <div>
+                        <h1 class="project-name">William Merrifield The Son</h1>
+                        <p class="project-address">105 Williamsburg Ct, Colleyville, TX 76034</p>
+                    </div>
+                </div>
+                <button class="add-record-button">
+                    + Add Record
+                </button>
+            </div>
+
+            <div class="detailed-info-container">
+                <div class="info-block">
+                    <h3>Client Information</h3>
+                    <p><strong>Name:</strong> William Merrifield The Son</p>
+                    <p><strong>Phone:</strong> <a href="tel:4697442398">(469) 744-2398</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:william.merrifield2010@gmail.com">william.merrifield2010@gmail.com</a></p>
+                    <p><strong>Address:</strong> 105 Williamsburg Ct, Colleyville, TX 76034</p>
+                </div>
+
+                <div class="info-block">
+                    <h3>Sales Rep Information</h3>
+                    <p><strong>Name:</strong> Will</p>
+                    <p><strong>Email:</strong> <a href="mailto:sales.will@example.com">sales.will@example.com</a></p>
+                </div>
+
+                <div class="info-block">
+                    <h3>Job Status</h3>
+                    <p><strong>Status:</strong> <span class="font-medium text-yellow-600">Inspected</span></p> 
+                </div>
+
+                <div class="info-block">
+                    <h3>Insurance Information</h3>
+                    <p><strong>Claim #:</strong> TX-CLM-0012345</p>
+                    <p><strong>Company:</strong> Liberty Mutual</p>
+                    <p><strong>Adjuster:</strong> John Doe <span class="details-toggle" id="adjusterDetailsToggle">(Show Contact)</span></p>
+                    <div id="adjusterDetailsContent" class="collapsible-content">
+                        <p><strong>Phone:</strong> <a href="tel:5551234567">(555) 123-4567</a></p>
+                        <p><strong>Email:</strong> <a href="mailto:j.doe@libertymutualadjusters.com">j.doe@libertymutualadjusters.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="snapshots">SNAPSHOTS</button>
+            <button class="tab-button" data-tab="flow">FLOW</button>
+            <button class="tab-button" data-tab="status">STATUS</button>
+            <button class="tab-button" data-tab="tasks">TASKS</button>
+            <button class="tab-button" data-tab="tickets">TICKETS</button>
+            <button class="tab-button" data-tab="details">DETAILS</button>
+            <button class="tab-button" data-tab="contact">CONTACT</button>
+            <button class="tab-button" data-tab="plus3">3+</button>
+            <button class="tab-button" data-tab="convo">CONVO</button>
+        </div>
+
+        <div class="tab-content-area">
+            <div id="snapshotsContent" class="tab-pane">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Snapshots will appear here. This section might include key metrics, summaries, or recent activity.</p>
+                    <div class="mt-4 p-4 border border-dashed border-slate-300 rounded-md">
+                         <h3 class="font-medium text-slate-700">Construction Schedule</h3>
+                         <p class="text-sm text-slate-500 mt-1">No active schedule items.</p>
+                    </div>
+                     <div class="mt-4 p-4 border border-dashed border-slate-300 rounded-md">
+                         <h3 class="font-medium text-slate-700">Supplement Schedule</h3>
+                         <p class="text-sm text-slate-500 mt-1">0/0 items. 71 Inspected.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="flowContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Flow</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Flow will appear here.</p>
+                </div>
+            </div>
+            <div id="statusContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Status</h2>
+                 <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Status will appear here.</p>
+                </div>
+            </div>
+            <div id="tasksContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Tasks will appear here.</p>
+                </div>
+            </div>
+            <div id="ticketsContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Tickets will appear here.</p>
+                </div>
+            </div>
+            <div id="detailsContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Details</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Details will appear here.</p>
+                </div>
+            </div>
+            <div id="contactContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Contact</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for Contact will appear here.</p>
+                </div>
+            </div>
+            <div id="plus3Content" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">3+ (More Options / Quick Actions)</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for '3+' tab will appear here. This could be a dropdown or quick actions.</p>
+                </div>
+            </div>
+            <div id="convoContent" class="tab-pane hidden">
+                <h2 class="text-xl font-semibold text-slate-700 mb-4">Convo (Conversation/Chat)</h2>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <p class="text-slate-600">Content for 'Convo' tab will appear here. This could be a chat interface or communication log.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tab switching logic
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.add('hidden'));
+
+                    this.classList.add('active');
+                    const targetPaneId = this.dataset.tab + 'Content';
+                    const targetPane = document.getElementById(targetPaneId);
+                    if (targetPane) {
+                        targetPane.classList.remove('hidden');
+                    } else {
+                        console.warn('Target pane not found for tab:', this.dataset.tab);
+                    }
+                });
+            });
+
+            // Collapsible adjuster details
+            const adjusterToggle = document.getElementById('adjusterDetailsToggle');
+            const adjusterContent = document.getElementById('adjusterDetailsContent');
+
+            if (adjusterToggle && adjusterContent) {
+                adjusterToggle.addEventListener('click', function() {
+                    const isOpen = adjusterContent.classList.contains('open');
+                    adjusterContent.classList.toggle('open', !isOpen);
+                    if (isOpen) {
+                        this.textContent = '(Show Contact)';
+                    } else {
+                        this.textContent = '(Hide Contact)';
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
+
