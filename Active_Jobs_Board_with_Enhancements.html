@@ -129,6 +129,10 @@
             display: flex;
             align-items: center;
         }
+        .card-footer-item .emoji-prefix { /* For person emoji */
+            margin-right: 0.25rem;
+            font-size: 0.9rem; /* Slightly larger emoji */
+        }
         
         .five-star-status-badge { /* Single color badge, text only */
             font-size: 0.75rem; 
@@ -137,6 +141,7 @@
             border-radius: 0.25rem; 
             background-color: #E2E8F0; /* Tailwind slate-200 (Light Gray) */
             color: #4A5568; /* Tailwind gray-700 (Dark Gray text for contrast) */
+            /* No emoji span here by default */
         }
 
         .filter-bar {
@@ -187,7 +192,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const boardContainer = document.getElementById('boardContainer');
             const salesRepFilter = document.getElementById('salesRepFilter');
-            const storageKey = 'boardViewFilters_ActiveJobs_V4'; // Updated key
+            const storageKey = 'boardViewFilters_ActiveJobs_V5'; // Updated key
 
             const salesReps = [
                 { id: 'rep1', name: 'Will M.' },
@@ -200,7 +205,7 @@
             const today = new Date();
             today.setHours(0,0,0,0); 
 
-            function calculateDaysSince(dateString) {
+            function formatDaysSince(dateString) {
                 if (!dateString) return 'N/A';
                 const pastDate = new Date(dateString);
                 pastDate.setHours(0,0,0,0); 
@@ -211,7 +216,7 @@
                 
                 if (diffDays === 0) return 'Today';
                 if (diffDays === 1) return 'Yesterday';
-                if (diffDays > 1) return `${diffDays} days ago`;
+                if (diffDays > 1) return `${diffDays}`; // Just the number
                 if (diffDays < 0) return `Future`; 
                 return 'N/A'; 
             }
@@ -317,11 +322,12 @@
                         
                         let fiveStarStatusBadge = '';
                         if (card.fiveStarStatus) {
-                            // Emojis removed, text only for the badge
+                            // Text only for the badge, no emoji prefix here
                             fiveStarStatusBadge = `<span class="five-star-status-badge">${card.fiveStarStatus}</span>`;
                         }
                         
-                        const daysSinceContactText = calculateDaysSince(card.lastContact);
+                        const daysSinceContactText = formatDaysSince(card.lastContact);
+                        const contactHistoryEmoji = '👤'; // Default person emoji for contact history
 
                         cardDiv.innerHTML = `
                             <div class="card-main-content">
@@ -340,6 +346,7 @@
                             </div>
                             <div class="card-footer">
                                  <div class="card-footer-item"> 
+                                    <span class="emoji-prefix">${contactHistoryEmoji}</span>
                                     <span>${daysSinceContactText}</span>
                                 </div>
                                 <div class="card-footer-item five-star-status-wrapper">
