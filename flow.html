@@ -97,7 +97,7 @@
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; 
             border-radius: 0.25rem; background-color: #f3f4f6; color: #4b5563; 
             border: 1px solid #e5e7eb; display: inline-flex; align-items: center; margin-right: 0.5rem; 
-            cursor: pointer; /* Make status tag clickable */
+            cursor: pointer; 
         }
         .flow-card-primary-status-tag svg { width: 0.75rem; height: 0.75rem; margin-left: 0.25rem; }
         .flow-card-options button { color: #9ca3af; background: none; border: none; cursor: pointer; }
@@ -332,10 +332,10 @@
             // Sample data for flow cards
             let flowCardsData = [
                 {
-                    id: 'card-ifc1', // IFC Card Example
-                    type: 'PROJECT HUB', // Or similar to denote it's the main project card
+                    id: 'card-ifc1', 
+                    type: 'PROJECT HUB', 
                     title: '@IFC - Julián Ortiz Project',
-                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString(), // 5 days ago
+                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString(), 
                     notes: 'Main project information and overview. All trades and activities link back here.',
                     scheduledFor: null,
                     primaryStatus: 'Active',
@@ -379,7 +379,7 @@
                     scheduledFor: 'Fri, May 16, 2025',
                     primaryStatus: 'Pending',
                     attachments: [],
-                    secondaryTags: [{text: 'Urgent', type: 'punch-list'}], // Using punch-list style for urgent
+                    secondaryTags: [{text: 'Urgent', type: 'punch-list'}], 
                     detailsProgress: 100,
                     financialEmoji: null 
                 },
@@ -438,7 +438,7 @@
                     return;
                 }
                 if (!title && itemTypeRaw === 'bid_request' && tradeValue) {
-                    title = tradeText; // Default title to trade if not provided for bid requests
+                    title = tradeText; 
                 } else if (!title) {
                     alert('Please provide a title for the flow item.');
                     return;
@@ -503,10 +503,10 @@
                                 <span class="flow-card-filename" title="Click to view ${attachment.name}">${attachment.name}</span>
                             </div>
                             <div class="file-actions-bar">
-                                <button class="file-action-btn view-file-btn">View</button>
-                                <button class="file-action-btn archive-file-btn">Archive</button>
-                                <button class="file-action-btn edit-file-btn">Edit</button>
-                                <button class="file-action-btn remove-file-btn">Remove</button>
+                                <button class="file-action-btn view-file-btn" title="View File"><i class="fas fa-eye"></i></button>
+                                <button class="file-action-btn archive-file-btn" title="Archive File"><i class="fas fa-archive"></i></button>
+                                <button class="file-action-btn edit-file-btn" title="Edit File Details"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="file-action-btn remove-file-btn" title="Remove File"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
                     `).join('');
@@ -566,12 +566,16 @@
                         const filename = e.target.closest('.flow-card-attachment').dataset.filename;
                         if(confirm(`Are you sure you want to archive "${filename}" for ${data.title}?`)){
                             alert(`Simulating: Archiving file "${filename}" (moved to GDrive Archived folder).`);
-                            // Here you would update the card's data and re-render, or hide the attachment
                             const cardToUpdate = flowCardsData.find(c => c.id === data.id);
                             if (cardToUpdate) {
-                                cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename); // Example: remove from list
-                                // Or add an "archived: true" flag and change display
-                                renderFlowCards();
+                                const attachmentIndex = cardToUpdate.attachments.findIndex(att => att.name === filename);
+                                if (attachmentIndex > -1) {
+                                     // Instead of removing, you might mark as archived
+                                     // For this simulation, we'll just log it.
+                                     console.log(`File ${filename} marked as archived for card ${data.id}`);
+                                     // Optionally, update UI to reflect archived state without removing
+                                     e.target.closest('.file-actions-bar').innerHTML = '<span class="text-xs text-gray-500 italic">Archived</span>';
+                                }
                             }
                         }
                     });
@@ -590,7 +594,7 @@
                             const cardToUpdate = flowCardsData.find(c => c.id === data.id);
                             if (cardToUpdate) {
                                 cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename);
-                                renderFlowCards();
+                                renderFlowCards(); // Re-render to remove the attachment from UI
                             }
                         }
                     });
@@ -632,11 +636,13 @@
                 const fileName = fileInput.files[0].name;
                 const cardIndex = flowCardsData.findIndex(card => card.id === currentUploadCardId);
                 if (cardIndex > -1) {
-                    // Add to existing attachments or create new array
                     if (!flowCardsData[cardIndex].attachments) {
                         flowCardsData[cardIndex].attachments = [];
                     }
-                    flowCardsData[cardIndex].attachments.push({ name: fileName, userInitials: 'ME', url: '#' }); 
+                    // Prevent adding duplicate filenames for simplicity in this demo
+                    if (!flowCardsData[cardIndex].attachments.find(att => att.name === fileName)) {
+                        flowCardsData[cardIndex].attachments.push({ name: fileName, userInitials: 'ME', url: '#' }); 
+                    }
                     renderFlowCards();
                     alert(`File "${fileName}" uploaded successfully (simulated) for card ID ${currentUploadCardId}!`);
                 }
@@ -645,7 +651,7 @@
             
             // --- Drag and Drop with Dragula ---
             if (typeof dragula !== 'undefined') {
-                const drake = dragula(Array.from(document.querySelectorAll('#flowContent')), { // Pass array of containers
+                const drake = dragula([flowCardContainer], { // Dragula needs an array of containers
                     moves: function (el, source, handle, sibling) {
                         return handle.classList.contains('drag-handle') || handle.closest('.drag-handle');
                     }
@@ -656,25 +662,24 @@
                     const cardDataIndex = flowCardsData.findIndex(c => c.id === cardId);
                     if (cardDataIndex === -1) return;
 
-                    const cardData = flowCardsData[cardDataIndex];
-                    flowCardsData.splice(cardDataIndex, 1); // Remove from old position in data array
+                    const cardData = flowCardsData.splice(cardDataIndex, 1)[0]; // Remove and get the card data
 
                     let newIndex = 0;
                     if (sibling) {
                         const siblingId = sibling.dataset.cardId;
                         newIndex = flowCardsData.findIndex(c => c.id === siblingId);
-                         if (newIndex === -1) newIndex = flowCardsData.length; // Fallback if sibling not found
+                         if (newIndex === -1) { // Should not happen if sibling is valid
+                            newIndex = target.children.length -1; // Add to end if sibling somehow not in data
+                         }
                     } else {
-                        newIndex = flowCardsData.length; // Dropped at the end
+                        newIndex = target.children.length; // Dropped at the end of the visible list
                     }
                     
-                    flowCardsData.splice(newIndex, 0, cardData); // Insert at new position in data array
+                    flowCardsData.splice(newIndex, 0, cardData); 
                     
                     console.log(`Card ${cardId} moved. New order in array (simulated):`, flowCardsData.map(c=>c.title));
-                    // Re-render to ensure DOM matches data array order if Dragula doesn't perfectly sync with data model
-                    // For this simulation, Dragula's DOM update is usually sufficient for visual reordering.
-                    // If other logic depends on flowCardsData order, a re-render might be needed.
-                    // renderFlowCards(); // Uncomment if strict data-DOM sync is needed after drag
+                    // For this simulation, Dragula's DOM update is primary.
+                    // Re-rendering from data array would revert Dragula's DOM change unless DOM is cleared first.
                 });
             } else {
                 console.warn('Dragula library not found. Drag and drop will not work.');
@@ -686,11 +691,9 @@
             document.getElementById('projectAddRecordBtn')?.addEventListener('click', () => alert('Simulating: Add Record for Julián Ortiz'));
             document.getElementById('actionPill3Plus')?.addEventListener('click', () => alert('Simulating: 3+ Action Pill Clicked'));
             document.getElementById('actionPillConvo')?.addEventListener('click', () => alert('Simulating: CONVO Action Pill Clicked'));
-            document.getElementById('actionPillFlow')?.addEventListener('click', () => alert('Simulating: FLOW Action Pill Clicked (already on Flow tab)'));
+            document.getElementById('actionPillFlow')?.addEventListener('click', () => { /* Already on flow tab, or switch to it */ });
             document.getElementById('actionPillStatus')?.addEventListener('click', () => alert('Simulating: STATUS Action Pill Clicked'));
 
-
-            // Initial Render
             renderFlowCards();
         });
     </script>
