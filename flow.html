@@ -39,7 +39,7 @@
         .project-name { font-size: 1.25rem; font-weight: 600; color: #1f293b; }
         .add-record-button { 
             background-color: transparent; color: #2563eb; font-size: 0.875rem; 
-            font-weight: 500; padding: 0.125rem 0; white-space: nowrap; 
+            font-weight: 500; padding: 0.125rem 0; white-space: nowrap; cursor: pointer;
         }
         .add-record-button:hover { color: #1d4ed8; text-decoration: underline;}
         .project-sub-details { font-size: 0.875rem; color: #475569; }
@@ -60,7 +60,7 @@
         .action-pill.highlight { background-color: #3B82F6; color: white; border-color: #2563EB; }
         .action-icon-buttons { display: flex; align-items: center; margin-left: auto; gap: 0.25rem; }
         .action-icon-buttons button {
-            color: #6b7280; padding: 0.5rem; border-radius: 9999px; background: none; border: none;
+            color: #6b7280; padding: 0.5rem; border-radius: 9999px; background: none; border: none; cursor: pointer;
         }
         .action-icon-buttons button:hover { background-color: #f3f4f6; color: #1f293b; }
         .action-icon-buttons svg, .action-icon-buttons i { font-size: 1.125rem; width: 1.125rem; height: 1.125rem; }
@@ -88,7 +88,7 @@
         }
         .flow-card-header-top { display: flex; align-items: flex-start; margin-bottom: 0.25rem; }
         .drag-handle { color: #9ca3af; margin-right: 0.5rem; cursor: grab; padding-top: 0.375rem; }
-        .drag-handle i { font-size: 1rem; } /* Ensure Font Awesome icon size */
+        .drag-handle i { font-size: 1rem; } 
         .flow-card-title-section { flex-grow: 1; }
         .flow-card-type { font-size: 0.625rem; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
         .flow-card-title { font-size: 1rem; font-weight: 600; color: #1f293b; margin-top: 0.125rem; }
@@ -97,11 +97,12 @@
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; 
             border-radius: 0.25rem; background-color: #f3f4f6; color: #4b5563; 
             border: 1px solid #e5e7eb; display: inline-flex; align-items: center; margin-right: 0.5rem; 
+            cursor: pointer; /* Make status tag clickable */
         }
         .flow-card-primary-status-tag svg { width: 0.75rem; height: 0.75rem; margin-left: 0.25rem; }
-        .flow-card-options button { color: #9ca3af; }
+        .flow-card-options button { color: #9ca3af; background: none; border: none; cursor: pointer; }
         .flow-card-options button:hover { color: #4b5563; }
-        .flow-card-timestamp { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem; padding-left: 1.75rem; } /* Adjusted padding for drag handle */
+        .flow-card-timestamp { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem; padding-left: 1.75rem; } 
         .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.75rem; }
         .flow-card-section-label { font-size: 0.6875rem; font-weight: 500; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem; }
         .flow-card-section-content { font-size: 0.875rem; color: #374151; line-height: 1.5; word-break: break-word; }
@@ -111,10 +112,10 @@
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.625rem; 
             border-radius: 0.75rem; border: 1px solid;
         }
-        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } /* Amber */
-        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } /* Red */
-        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } /* Green */
-        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } /* Indigo */
+        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } 
+        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } 
+        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } 
+        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } 
 
         .flow-card-attachment { display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-left: 1.75rem; }
         .flow-card-attachment-details { display: flex; align-items: center; }
@@ -127,13 +128,18 @@
         .flow-card-filename:hover { text-decoration: underline; }
         .flow-card-view-files-btn {
             font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; 
-            padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none;
+            padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none; cursor: pointer;
         }
         .flow-card-view-files-btn:hover { background-color: #1c3274; }
+        .file-actions-bar { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+        .file-action-btn { font-size: 0.75rem; color: #4b5563; padding: 0.125rem 0.25rem; cursor: pointer; }
+        .file-action-btn:hover { text-decoration: underline; color: #1f293b; }
+
+
         .flow-card-actions { margin-top: 0.75rem; padding-left: 1.75rem; display: flex; gap: 0.5rem; }
         .flow-card-action-btn {
             font-size: 0.75rem; font-weight: 500; color: #4b5563; background-color: #f3f4f6;
-            padding: 0.25rem 0.625rem; border-radius: 0.25rem; border: 1px solid #e5e7eb;
+            padding: 0.25rem 0.625rem; border-radius: 0.25rem; border: 1px solid #e5e7eb; cursor: pointer;
         }
         .flow-card-action-btn:hover { background-color: #e5e7eb; }
         .progress-indicator { font-size: 0.75rem; color: #6b7280; padding-left: 1.75rem; margin-top: 0.25rem;}
@@ -179,7 +185,7 @@
                     <div>
                         <div class="project-name-and-button">
                             <h1 class="project-name">Julián Ortiz</h1>
-                            <button class="add-record-button">+ Add Record</button>
+                            <button class="add-record-button" id="projectAddRecordBtn">+ Add Record</button>
                         </div>
                         <div class="project-sub-details"> 
                             <p>Sales rep: Syris</p>
@@ -194,14 +200,14 @@
         
         <div class="action-pills-bar">
             <div>
-                <span class="action-pill highlight">3+</span>
-                <span class="action-pill">CONVO</span>
-                <span class="action-pill">FLOW</span>
-                <span class="action-pill">STATUS</span>
+                <span class="action-pill highlight" id="actionPill3Plus">3+</span>
+                <span class="action-pill" id="actionPillConvo">CONVO</span>
+                <span class="action-pill" id="actionPillFlow">FLOW</span>
+                <span class="action-pill" id="actionPillStatus">STATUS</span>
             </div>
             <div class="action-icon-buttons">
-                <button title="Document" id="headerDocButton"><i class="fas fa-file-alt"></i></button>
-                <button title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-alt"></i></button>
+                <button title="Document" id="headerDocButton"><i class="fas fa-file-lines"></i></button>
+                <button title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-days"></i></button>
                 <button title="Add New Flow Item" id="addNewFlowItemBtn"><i class="fas fa-plus"></i></button>
             </div>
         </div>
@@ -239,8 +245,8 @@
                     <label for="flowItemType" class="form-label">Item Type</label>
                     <select id="flowItemType" name="flowItemType" class="form-select">
                         <option value="bid_request">Bid Request</option>
-                        <option value="punchlist">Punchlist Item</option>
-                        <option value="warranty">Warranty Item</option>
+                        <option value="punchlist_item">Punchlist Item</option>
+                        <option value="warranty_item">Warranty Item</option>
                         <option value="project_doc">Project Document</option>
                         <option value="material_pickup">Material Pickup</option>
                         <option value="bill_home">Bill Home</option>
@@ -251,13 +257,13 @@
                     <label for="flowItemTrade" class="form-label">Trade</label>
                     <select id="flowItemTrade" name="flowItemTrade" class="form-select">
                         <option value="">Select Trade...</option>
-                        <option value="roof">@roof</option>
-                        <option value="gutters">@gutters</option>
-                        <option value="siding">@siding</option>
-                        <option value="windows">@windows</option>
-                        <option value="pool">@pool</option>
-                        <option value="repair">@repair</option>
-                        <option value="skylight">@skylight</option>
+                        <option value="@roof">@roof</option>
+                        <option value="@gutters">@gutters</option>
+                        <option value="@siding">@siding</option>
+                        <option value="@windows">@windows</option>
+                        <option value="@pool">@pool</option>
+                        <option value="@repair">@repair</option>
+                        <option value="@skylight">@skylight</option>
                     </select>
                 </div>
                  <div class="form-group">
@@ -301,9 +307,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
-        // JavaScript for interactivity will be extensive and added here
-        // This includes: Tab Switching, Modal Handling, Dynamic Card Creation,
-        // File Upload Simulation, Drag and Drop with Dragula.
         document.addEventListener('DOMContentLoaded', function () {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
@@ -314,7 +317,7 @@
             const addFlowItemForm = document.getElementById('addFlowItemForm');
             const flowItemTypeSelect = document.getElementById('flowItemType');
             const tradeGroup = document.getElementById('tradeGroup');
-            const flowCardContainer = document.getElementById('flowContent'); // Cards will be added here
+            const flowCardContainer = document.getElementById('flowContent'); 
 
             const uploadFileModal = document.getElementById('uploadFileModal');
             const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
@@ -329,6 +332,19 @@
             // Sample data for flow cards
             let flowCardsData = [
                 {
+                    id: 'card-ifc1', // IFC Card Example
+                    type: 'PROJECT HUB', // Or similar to denote it's the main project card
+                    title: '@IFC - Julián Ortiz Project',
+                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString(), // 5 days ago
+                    notes: 'Main project information and overview. All trades and activities link back here.',
+                    scheduledFor: null,
+                    primaryStatus: 'Active',
+                    attachments: [],
+                    secondaryTags: [{text: 'High Priority', type: 'action'}, {text: 'Phase 1', type: 'default'}],
+                    detailsProgress: 10, 
+                    financialEmoji: '⏳' 
+                },
+                {
                     id: 'card-pool1',
                     type: 'BID REQUEST',
                     title: '@pool',
@@ -336,23 +352,49 @@
                     notes: 'TestQA',
                     scheduledFor: null,
                     primaryStatus: 'Requested',
-                    attachments: [{ name: '11619772.jpg', userInitials: 'CC' }],
+                    attachments: [{ name: '11619772.jpg', userInitials: 'CC', url: '#' }],
                     secondaryTags: [{text: 'Needs Follow-up', type: 'action'}],
-                    detailsProgress: 25, // Example progress
-                    financialEmoji: '💰' // Example emoji
+                    detailsProgress: 25, 
+                    financialEmoji: '💰' 
                 },
                 {
                     id: 'card-roofrepair1',
                     type: 'BID REQUEST',
                     title: '@roofrepair',
                     timestamp: 'Wed, May 14, 2025, 11:52:46 AM',
-                    notes: 'This is cool',
+                    notes: 'This is cool. Ensure all flashing details are included in the bid.',
                     scheduledFor: 'Sat, May 31, 2025',
-                    primaryStatus: 'Requested',
-                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS' }],
+                    primaryStatus: 'Bid Received',
+                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }],
                     secondaryTags: [{text: 'Scheduled', type: 'scheduled'}, {text: 'Pickup Material', type: 'action'}],
                     detailsProgress: 80,
                     financialEmoji: '👍'
+                },
+                {
+                    id: 'card-materialpickup1',
+                    type: 'MATERIAL PICKUP',
+                    title: 'Shingles for @roofrepair',
+                    timestamp: 'Thu, May 15, 2025, 09:00:00 AM',
+                    notes: 'Pick up from ABC Supply. PO#12345',
+                    scheduledFor: 'Fri, May 16, 2025',
+                    primaryStatus: 'Pending',
+                    attachments: [],
+                    secondaryTags: [{text: 'Urgent', type: 'punch-list'}], // Using punch-list style for urgent
+                    detailsProgress: 100,
+                    financialEmoji: null 
+                },
+                 {
+                    id: 'card-punchlist1',
+                    type: 'PUNCHLIST ITEM',
+                    title: 'Fix gutter alignment - @gutters',
+                    timestamp: 'Mon, May 26, 2025, 10:00:00 AM',
+                    notes: 'Client reported slight misalignment on the west side after install.',
+                    scheduledFor: 'Wed, May 28, 2025',
+                    primaryStatus: 'To Do',
+                    attachments: [],
+                    secondaryTags: [{text: 'Leak Repair Done', type: 'warranty-done'}, {text: 'Client Notified', type: 'default'}],
+                    detailsProgress: 50,
+                    financialEmoji: '👏' 
                 }
             ];
 
@@ -384,42 +426,48 @@
 
             addFlowItemForm.addEventListener('submit', function(event) {
                 event.preventDefault();
-                const type = document.getElementById('flowItemType').selectedOptions[0].text;
-                let title = document.getElementById('flowItemTitle').value;
-                const notes = document.getElementById('flowItemNotes').value;
-                const trade = document.getElementById('flowItemTrade').value;
+                const itemTypeRaw = document.getElementById('flowItemType').value;
+                const typeDisplay = document.getElementById('flowItemType').selectedOptions[0].text;
+                let title = document.getElementById('flowItemTitle').value.trim();
+                const notes = document.getElementById('flowItemNotes').value.trim();
+                const tradeValue = document.getElementById('flowItemTrade').value;
+                const tradeText = document.getElementById('flowItemTrade').selectedOptions[0].text;
 
-                if (document.getElementById('flowItemType').value === 'bid_request' && trade) {
-                    // Title might be just the trade if not specified, or append trade
-                    if (!title.startsWith('@') && trade) title = `${trade} - ${title}` ;
-                     else if (!title) title = trade;
+                if (itemTypeRaw === 'bid_request' && !tradeValue) {
+                    alert('Please select a trade for Bid Request.');
+                    return;
                 }
-
-
+                if (!title && itemTypeRaw === 'bid_request' && tradeValue) {
+                    title = tradeText; // Default title to trade if not provided for bid requests
+                } else if (!title) {
+                    alert('Please provide a title for the flow item.');
+                    return;
+                }
+                
                 const newCardData = {
                     id: 'card-' + Date.now(),
-                    type: type.toUpperCase().replace(' ITEM', ''), // Simplify type
+                    type: typeDisplay.toUpperCase().replace(' ITEM', ''),
                     title: title,
                     timestamp: new Date().toLocaleString(),
                     notes: notes,
                     scheduledFor: null,
-                    primaryStatus: 'New', // Default status
+                    primaryStatus: 'New', 
                     attachments: [],
                     secondaryTags: [],
                     detailsProgress: 0,
                     financialEmoji: null
                 };
-                flowCardsData.unshift(newCardData); // Add to the beginning
+                flowCardsData.unshift(newCardData); 
                 renderFlowCards();
                 addFlowItemModal.classList.add('hidden');
                 this.reset();
                 tradeGroup.classList.add('hidden');
-                alert('Flow card created (simulated)!');
+                alert(`Flow card "${newCardData.title}" created (simulated)!`);
             });
 
             // --- Render Flow Cards ---
             function renderFlowCards() {
-                flowCardContainer.innerHTML = ''; // Clear existing cards
+                flowCardContainer.innerHTML = ''; 
                 flowCardsData.forEach(cardData => {
                     const cardElement = createFlowCardElement(cardData);
                     flowCardContainer.appendChild(cardElement);
@@ -427,9 +475,10 @@
             }
             
             function getTagClass(tagType) {
-                if (tagType === 'action') return 'tag-pickup-material'; // Re-using for general action
+                if (tagType === 'action') return 'tag-pickup-material'; 
                 if (tagType === 'scheduled') return 'tag-scheduled';
-                // Add more types as needed
+                if (tagType === 'punch-list') return 'tag-punch-list';
+                if (tagType === 'warranty-done') return 'tag-warranty-done';
                 return 'tag-default';
             }
 
@@ -445,24 +494,32 @@
                     ).join('');
                 }
                 
-                let attachmentHTML = '';
+                let attachmentSectionHTML = '';
                 if (data.attachments && data.attachments.length > 0) {
-                    const attachment = data.attachments[0]; // Assuming one attachment for now
-                    attachmentHTML = `
-                        <div class="flow-card-attachment-details">
-                            <div class="flow-card-attachment-user avatar-initials">${attachment.userInitials}</div>
-                            <span class="flow-card-filename" data-filename="${attachment.name}">${attachment.name}</span>
+                    attachmentSectionHTML = data.attachments.map(attachment => `
+                        <div class="flow-card-attachment" data-filename="${attachment.name}">
+                            <div class="flow-card-attachment-details">
+                                <div class="flow-card-attachment-user avatar-initials">${attachment.userInitials}</div>
+                                <span class="flow-card-filename" title="Click to view ${attachment.name}">${attachment.name}</span>
+                            </div>
+                            <div class="file-actions-bar">
+                                <button class="file-action-btn view-file-btn">View</button>
+                                <button class="file-action-btn archive-file-btn">Archive</button>
+                                <button class="file-action-btn edit-file-btn">Edit</button>
+                                <button class="file-action-btn remove-file-btn">Remove</button>
+                            </div>
                         </div>
-                        <button class="flow-card-view-files-btn" data-filename="${attachment.name}">View Files</button>
-                    `;
+                    `).join('');
                 } else {
-                     attachmentHTML = `
-                        <div class="flow-card-attachment-details">
-                            <span class="text-xs text-gray-400 italic">No Bid Attached</span>
-                        </div>
-                        <button class="flow-card-action-btn upload-bid-btn">Upload</button>
-                    `;
+                     attachmentSectionHTML = `
+                        <div class="flow-card-attachment">
+                            <div class="flow-card-attachment-details">
+                                <span class="text-xs text-gray-400 italic">No Bid Attached</span>
+                            </div>
+                            <button class="flow-card-action-btn upload-bid-btn">Upload</button>
+                        </div>`;
                 }
+
 
                 card.innerHTML = `
                     <div class="flow-card-header-top">
@@ -485,17 +542,61 @@
                     ${data.scheduledFor ? `<div class="flow-card-section"><p class="flow-card-section-label">Scheduled For</p><p class="flow-card-section-content">${data.scheduledFor}</p></div>` : ''}
                     <div class="flow-card-secondary-tags">${secondaryTagsHTML}</div>
                     <div class="progress-indicator">Details: ${data.detailsProgress || 0}% complete <span class="financial-emoji">${data.financialEmoji || ''}</span></div>
-                    <div class="flow-card-attachment">${attachmentHTML}</div>
+                    ${attachmentSectionHTML}
                     <div class="flow-card-actions">
                         <button class="flow-card-action-btn edit-details-btn">Edit Details</button>
                         <button class="flow-card-action-btn open-in-drive-btn">Open in Drive</button>
-                        </div>
+                    </div>
                 `;
 
                 // Add event listeners for card-specific actions
                 card.querySelector('.upload-bid-btn')?.addEventListener('click', () => openUploadModal(data.id, data.title));
-                card.querySelector('.flow-card-filename')?.addEventListener('click', (e) => alert(`Simulating: Viewing ${e.target.dataset.filename}`));
-                card.querySelector('.flow-card-view-files-btn')?.addEventListener('click', (e) => alert(`Simulating: Viewing files for ${data.title} (filename: ${e.target.dataset.filename || data.attachments[0]?.name})`));
+                
+                card.querySelectorAll('.flow-card-filename').forEach(el => {
+                    el.addEventListener('click', (e) => alert(`Simulating: Viewing ${e.target.textContent}`));
+                });
+                card.querySelectorAll('.view-file-btn').forEach(el => {
+                     el.addEventListener('click', (e) => {
+                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
+                        alert(`Simulating: Viewing file "${filename}" for ${data.title}`);
+                    });
+                });
+                 card.querySelectorAll('.archive-file-btn').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
+                        if(confirm(`Are you sure you want to archive "${filename}" for ${data.title}?`)){
+                            alert(`Simulating: Archiving file "${filename}" (moved to GDrive Archived folder).`);
+                            // Here you would update the card's data and re-render, or hide the attachment
+                            const cardToUpdate = flowCardsData.find(c => c.id === data.id);
+                            if (cardToUpdate) {
+                                cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename); // Example: remove from list
+                                // Or add an "archived: true" flag and change display
+                                renderFlowCards();
+                            }
+                        }
+                    });
+                });
+                 card.querySelectorAll('.edit-file-btn').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
+                        alert(`Simulating: Editing details for file "${filename}" for ${data.title}.`);
+                    });
+                });
+                 card.querySelectorAll('.remove-file-btn').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
+                        if(confirm(`Are you sure you want to PERMANENTLY DELETE "${filename}" for ${data.title}? This cannot be undone.`)){
+                            alert(`Simulating: Deleting file "${filename}" from GDrive.`);
+                            const cardToUpdate = flowCardsData.find(c => c.id === data.id);
+                            if (cardToUpdate) {
+                                cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename);
+                                renderFlowCards();
+                            }
+                        }
+                    });
+                });
+
+
                 card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(`Simulating: Opening detailed construction plan form for ${data.title}.`));
                 card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(`Simulating: Opening Google Drive for ${data.title}.`));
 
@@ -508,7 +609,7 @@
                 uploadModalTitle.textContent = `Upload File for ${cardTitle}`;
                 fileNameDisplay.textContent = '';
                 fileInputLabelText.textContent = 'Click or drag file here';
-                fileInput.value = null; // Reset file input
+                fileInput.value = null; 
                 uploadFileModal.classList.remove('hidden');
             }
             closeUploadModalBtn.addEventListener('click', () => uploadFileModal.classList.add('hidden'));
@@ -531,7 +632,11 @@
                 const fileName = fileInput.files[0].name;
                 const cardIndex = flowCardsData.findIndex(card => card.id === currentUploadCardId);
                 if (cardIndex > -1) {
-                    flowCardsData[cardIndex].attachments = [{ name: fileName, userInitials: 'ME' }]; // Simulate upload
+                    // Add to existing attachments or create new array
+                    if (!flowCardsData[cardIndex].attachments) {
+                        flowCardsData[cardIndex].attachments = [];
+                    }
+                    flowCardsData[cardIndex].attachments.push({ name: fileName, userInitials: 'ME', url: '#' }); 
                     renderFlowCards();
                     alert(`File "${fileName}" uploaded successfully (simulated) for card ID ${currentUploadCardId}!`);
                 }
@@ -540,27 +645,36 @@
             
             // --- Drag and Drop with Dragula ---
             if (typeof dragula !== 'undefined') {
-                const drake = dragula([flowCardContainer], {
+                const drake = dragula(Array.from(document.querySelectorAll('#flowContent')), { // Pass array of containers
                     moves: function (el, source, handle, sibling) {
                         return handle.classList.contains('drag-handle') || handle.closest('.drag-handle');
                     }
                 });
 
                 drake.on('drop', function(el, target, source, sibling) {
-                    // Here you would typically save the new order to the backend
-                    // For simulation, we can reorder the flowCardsData array
                     const cardId = el.dataset.cardId;
-                    const newIndex = Array.from(target.children).indexOf(el);
-                    const cardData = flowCardsData.find(c => c.id === cardId);
+                    const cardDataIndex = flowCardsData.findIndex(c => c.id === cardId);
+                    if (cardDataIndex === -1) return;
+
+                    const cardData = flowCardsData[cardDataIndex];
+                    flowCardsData.splice(cardDataIndex, 1); // Remove from old position in data array
+
+                    let newIndex = 0;
+                    if (sibling) {
+                        const siblingId = sibling.dataset.cardId;
+                        newIndex = flowCardsData.findIndex(c => c.id === siblingId);
+                         if (newIndex === -1) newIndex = flowCardsData.length; // Fallback if sibling not found
+                    } else {
+                        newIndex = flowCardsData.length; // Dropped at the end
+                    }
                     
-                    // Remove from old position
-                    flowCardsData = flowCardsData.filter(c => c.id !== cardId);
-                    // Insert at new position
-                    flowCardsData.splice(newIndex, 0, cardData);
+                    flowCardsData.splice(newIndex, 0, cardData); // Insert at new position in data array
                     
                     console.log(`Card ${cardId} moved. New order in array (simulated):`, flowCardsData.map(c=>c.title));
-                    // No need to call renderFlowCards() again if Dragula handles DOM update,
-                    // unless your data array order is critical for other operations.
+                    // Re-render to ensure DOM matches data array order if Dragula doesn't perfectly sync with data model
+                    // For this simulation, Dragula's DOM update is usually sufficient for visual reordering.
+                    // If other logic depends on flowCardsData order, a re-render might be needed.
+                    // renderFlowCards(); // Uncomment if strict data-DOM sync is needed after drag
                 });
             } else {
                 console.warn('Dragula library not found. Drag and drop will not work.');
@@ -569,6 +683,11 @@
             // --- Header Icon Button Simulators ---
             document.getElementById('headerDocButton')?.addEventListener('click', () => alert('Simulating: Open Documents'));
             document.getElementById('headerCalendarButton')?.addEventListener('click', () => alert('Simulating: Open Calendar'));
+            document.getElementById('projectAddRecordBtn')?.addEventListener('click', () => alert('Simulating: Add Record for Julián Ortiz'));
+            document.getElementById('actionPill3Plus')?.addEventListener('click', () => alert('Simulating: 3+ Action Pill Clicked'));
+            document.getElementById('actionPillConvo')?.addEventListener('click', () => alert('Simulating: CONVO Action Pill Clicked'));
+            document.getElementById('actionPillFlow')?.addEventListener('click', () => alert('Simulating: FLOW Action Pill Clicked (already on Flow tab)'));
+            document.getElementById('actionPillStatus')?.addEventListener('click', () => alert('Simulating: STATUS Action Pill Clicked'));
 
 
             // Initial Render
