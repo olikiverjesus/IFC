@@ -3,119 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Flow View</title>
+    <title>Project Flow View - Interactive Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f4f7f9; /* Light grayish-blue background */
+            background-color: #f8f9fa; /* Main page background */
         }
         .page-container {
             max-width: 1000px; 
             margin: 0 auto;
+            background-color: white; 
         }
         .top-nav-bar {
-            background-color: white;
-            padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+            background-color: white; padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0; display: flex; align-items: center;
         }
-        .header-content-wrapper {
-            background-color: white;
-            padding: 1.5rem;
+        .top-nav-bar a {
+            color: #4a5568; text-decoration: none; display: flex;
+            align-items: center; font-size: 0.875rem; font-weight: 500;
         }
+        .top-nav-bar svg { width: 1.25rem; height: 1.25rem; margin-right: 0.375rem; }
+
+        .header-content-wrapper { background-color: white; padding: 1.5rem; }
         .project-primary-info-top {
-            display: flex;
-            flex-direction: column; 
-            md:flex-direction: row; 
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem; 
+            display: flex; flex-direction: column; md:flex-direction: row; 
+            justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; 
         }
-        .project-details {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            md:margin-bottom: 0;
+        .project-details { display: flex; align-items: center; margin-bottom: 1rem; md:margin-bottom: 0; }
+        .project-avatar { width: 4rem; height: 4rem; border-radius: 0.5rem; object-fit: cover; margin-right: 1rem; background-color: #e2e8f0; }
+        .project-name-and-button { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .project-name { font-size: 1.25rem; font-weight: 600; color: #1f293b; }
+        .add-record-button { 
+            background-color: transparent; color: #2563eb; font-size: 0.875rem; 
+            font-weight: 500; padding: 0.125rem 0; white-space: nowrap; 
         }
-        .project-avatar {
-            width: 4rem; height: 4rem; /* 64px */
-            border-radius: 0.5rem; /* 8px */
-            object-fit: cover;
-            margin-right: 1rem; /* 16px */
-        }
-        .project-name {
-            font-size: 1.25rem; /* 20px */
-            font-weight: 600; /* semibold */
-            color: #1f293b; /* slate-800 */
-        }
-        .project-sub-details { 
-            font-size: 0.875rem; /* text-sm */
-            color: #475569; /* slate-600 */
-            margin-top: 0.25rem;
-        }
-        .project-sub-details p {
-            margin-bottom: 0.125rem;
-        }
-        .project-sub-details a {
-            color: #2563eb; /* blue-600 */
-        }
-        .project-sub-details a:hover {
-            text-decoration: underline;
-        }
-        .add-record-button { /* Style adjusted to match image */
-            background-color: transparent; 
-            color: #2563eb; /* blue-600 */
-            font-size: 0.875rem; 
-            font-weight: 500;
-            padding: 0.25rem 0; 
-            white-space: nowrap; 
-            align-self: flex-start;
-            margin-top: 0.25rem; 
-        }
-        .add-record-button:hover { color: #1d4ed8; }
+        .add-record-button:hover { color: #1d4ed8; text-decoration: underline;}
+        .project-sub-details { font-size: 0.875rem; color: #475569; }
+        .project-sub-details p { margin-bottom: 0.125rem; line-height: 1.4; }
+        .project-sub-details a { color: #2563eb; }
+        .project-sub-details a:hover { text-decoration: underline; }
 
         .action-pills-bar {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem; 
-            background-color: white;
-            border-bottom: 1px solid #e2e8f0; 
+            display: flex; align-items: center; padding: 0.75rem 1.5rem; 
+            background-color: white; border-bottom: 1px solid #e2e8f0; 
         }
         .action-pill {
-            background-color: #e9ecef; 
-            color: #495057; 
-            padding: 0.375rem 0.875rem; 
-            border-radius: 9999px; /* full */
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-right: 0.5rem; /* 8px */
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
+            background-color: #E0E7FF; color: #3730A3; padding: 0.375rem 0.875rem; 
+            border-radius: 9999px; font-size: 0.8rem; font-weight: 500;
+            margin-right: 0.5rem; display: inline-flex; align-items: center; cursor: pointer;
+            border: 1px solid #C7D2FE; 
         }
-        .action-pill.highlight { 
-            background-color: #cfe2ff; 
-            color: #004085; 
-        }
-        .action-icon-buttons {
-            display: flex;
-            align-items: center;
-            margin-left: auto; 
-        }
+        .action-pill.highlight { background-color: #3B82F6; color: white; border-color: #2563EB; }
+        .action-icon-buttons { display: flex; align-items: center; margin-left: auto; gap: 0.25rem; }
         .action-icon-buttons button {
-            color: #6b7280; /* gray-500 */
-            padding: 0.5rem; /* 8px */
-            border-radius: 9999px; 
+            color: #6b7280; padding: 0.5rem; border-radius: 9999px; background: none; border: none;
         }
-        .action-icon-buttons button:hover {
-            background-color: #f3f4f6; /* gray-100 */
-            color: #1f293b; /* gray-800 */
-        }
-        .action-icon-buttons svg {
-            width: 1.25rem; /* 20px */
-            height: 1.25rem; /* 20px */
-        }
+        .action-icon-buttons button:hover { background-color: #f3f4f6; color: #1f293b; }
+        .action-icon-buttons svg, .action-icon-buttons i { font-size: 1.125rem; width: 1.125rem; height: 1.125rem; }
 
         .tabs-container {
             background-color: white; border-bottom: 1px solid #e2e8f0;
@@ -123,164 +71,100 @@
             position: sticky; top: 0; z-index: 10;
         }
         .tab-button {
-            padding: 0.75rem 1rem; margin-right: 0.5rem;
-            border: none; background: none; color: #475569;
-            font-weight: 500; font-size: 0.875rem;
+            padding: 0.75rem 1rem; margin-right: 0.5rem; border: none; background: none; 
+            color: #475569; font-weight: 500; font-size: 0.875rem;
             border-bottom: 3px solid transparent; cursor: pointer;
             transition: color 0.2s, border-color 0.2s; display: inline-block;
         }
-        .tab-button.active, .tab-button:hover {
-            color: #2563eb; border-bottom-color: #2563eb;
-        }
-        .tab-content-area { padding: 1.5rem; background-color: #f8f9fa; } /* Matching main content bg */
+        .tab-button.active, .tab-button:hover { color: #1f293b; border-bottom-color: #1f293b; }
+        .tab-content-area { padding: 1.5rem; background-color: #f8f9fa; } 
         .tab-pane.hidden { display: none; }
 
-        /* Flow Card Specific Styles - Updated to match image_53c0b6.png */
+        /* Flow Card Styles */
         .flow-card {
-            background-color: white;
-            border: 1px solid #e5e7eb; /* gray-200 */
-            border-radius: 0.5rem; /* 8px */
-            padding: 1rem; /* 16px */
-            margin-bottom: 1rem; /* 16px */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Softer shadow */
+            background-color: white; border: 1px solid #e5e7eb; 
+            border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
         }
-        .flow-card-header-top { /* For drag handle, type/title, and status/options */
-            display: flex;
-            align-items: flex-start; /* Align drag handle with top of text */
-            margin-bottom: 0.25rem;
-        }
-        .drag-handle {
-            color: #9ca3af; /* gray-400 */
-            margin-right: 0.5rem; /* 8px */
-            cursor: grab;
-            padding-top: 0.25rem; /* Fine-tune vertical alignment */
-        }
-        .drag-handle svg { width: 1rem; height: 1rem; }
-
-        .flow-card-title-section { /* Groups type and title */
-            flex-grow: 1;
-        }
-        .flow-card-type {
-            font-size: 0.625rem; /* 10px */
-            font-weight: 600;
-            color: #4b5563; /* gray-600 */
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .flow-card-title {
-            font-size: 1rem; /* 16px */
-            font-weight: 600;
-            color: #1f293b; /* gray-800 */
-            margin-top: 0.125rem; 
-        }
-        .flow-card-header-right { /* For status tag and options menu */
-            display: flex;
-            align-items: center;
-            margin-left: auto; /* Push to the right */
-        }
+        .flow-card-header-top { display: flex; align-items: flex-start; margin-bottom: 0.25rem; }
+        .drag-handle { color: #9ca3af; margin-right: 0.5rem; cursor: grab; padding-top: 0.375rem; }
+        .drag-handle i { font-size: 1rem; } /* Ensure Font Awesome icon size */
+        .flow-card-title-section { flex-grow: 1; }
+        .flow-card-type { font-size: 0.625rem; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
+        .flow-card-title { font-size: 1rem; font-weight: 600; color: #1f293b; margin-top: 0.125rem; }
+        .flow-card-header-right { display: flex; align-items: center; margin-left: auto; }
         .flow-card-primary-status-tag { 
-            font-size: 0.75rem; /* 12px */
-            font-weight: 500;
-            padding: 0.125rem 0.5rem; 
-            border-radius: 0.25rem; /* 4px */
-            background-color: #f3f4f6; /* gray-100 */
-            color: #4b5563; /* gray-600 */
-            border: 1px solid #e5e7eb; /* gray-200 */
-            display: inline-flex; 
-            align-items: center;
-            margin-right: 0.5rem; /* Space before options dots */
+            font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; 
+            border-radius: 0.25rem; background-color: #f3f4f6; color: #4b5563; 
+            border: 1px solid #e5e7eb; display: inline-flex; align-items: center; margin-right: 0.5rem; 
         }
-        .flow-card-primary-status-tag svg { /* Dropdown arrow in status */
-            width: 0.75rem; height: 0.75rem; margin-left: 0.25rem;
-        }
+        .flow-card-primary-status-tag svg { width: 0.75rem; height: 0.75rem; margin-left: 0.25rem; }
         .flow-card-options button { color: #9ca3af; }
         .flow-card-options button:hover { color: #4b5563; }
-
-        .flow-card-timestamp {
-            font-size: 0.75rem; /* 12px */
-            color: #6b7280; /* gray-500 */
-            margin-bottom: 0.75rem; /* 12px */
-            padding-left: 1.5rem; /* Indent below drag handle */
-        }
-        .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.5rem; }
-        .flow-card-section-label {
-            font-size: 0.6875rem; /* ~11px */
-            font-weight: 500;
-            color: #6b7280; /* gray-500 */
-            text-transform: uppercase;
-            margin-bottom: 0.125rem; /* 2px */
-        }
-        .flow-card-section-content {
-            font-size: 0.875rem; /* 14px */
-            color: #374151; /* gray-700 */
-            line-height: 1.5;
-            word-break: break-word;
-        }
-        .flow-card-secondary-tags { /* Container for secondary descriptive tags */
-            margin-top: 0.5rem; 
-            padding-left: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.375rem; 
-        }
+        .flow-card-timestamp { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem; padding-left: 1.75rem; } /* Adjusted padding for drag handle */
+        .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.75rem; }
+        .flow-card-section-label { font-size: 0.6875rem; font-weight: 500; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem; }
+        .flow-card-section-content { font-size: 0.875rem; color: #374151; line-height: 1.5; word-break: break-word; }
+        
+        .flow-card-secondary-tags { margin-top: 0.5rem; padding-left: 1.75rem; display: flex; flex-wrap: wrap; gap: 0.375rem; }
         .flow-card-secondary-tag { 
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 0.125rem 0.625rem; 
-            border-radius: 0.75rem; 
-            background-color: #e0e7ff; /* Example: indigo-100 */
-            color: #4338ca; /* Example: indigo-700 */
-            border: 1px solid #c7d2fe; /* Example: indigo-200 */
+            font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.625rem; 
+            border-radius: 0.75rem; border: 1px solid;
         }
-        .flow-card-attachment {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #f3f4f6; /* gray-100 */
-            padding-left: 1.5rem;
-        }
-         .flow-card-attachment-details {
-            display: flex;
-            align-items: center;
-        }
-        .flow-card-attachment-user img, .flow-card-attachment-user .avatar-initials {
-            width: 1.5rem; /* 24px */
-            height: 1.5rem; /* 24px */
-            border-radius: 9999px; /* full */
-            margin-right: 0.5rem; 
-            background-color: #bfdbfe; /* blue-200 for initials bg */
-            color: #1e3a8a; /* blue-800 for initials text */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.625rem; /* 10px for initials */
-            font-weight: 600;
-        }
-        .flow-card-filename {
-            font-size: 0.875rem;
-            color: #2563eb; /* blue-600 */
-            /* text-decoration: underline; Removed to match image */
-            cursor: pointer;
-        }
-        .flow-card-filename:hover { text-decoration: underline; }
+        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } /* Amber */
+        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } /* Red */
+        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } /* Green */
+        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } /* Indigo */
 
-        .flow-card-view-files-btn {
-            font-size: 0.75rem; font-weight: 500;
-            color: white; background-color: #003366; /* Dark blue like image */
-            padding: 0.375rem 0.75rem; /* 6px 12px */
-            border-radius: 0.25rem;
-            border: none;
+        .flow-card-attachment { display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-left: 1.75rem; }
+        .flow-card-attachment-details { display: flex; align-items: center; }
+        .flow-card-attachment-user .avatar-initials {
+            width: 1.5rem; height: 1.5rem; border-radius: 9999px; margin-right: 0.5rem; 
+            background-color: #bfdbfe; color: #1e3a8a; display: flex;
+            align-items: center; justify-content: center; font-size: 0.625rem; font-weight: 600;
         }
-        .flow-card-view-files-btn:hover { background-color: #002244; }
+        .flow-card-filename { font-size: 0.875rem; color: #2563eb; cursor: pointer; }
+        .flow-card-filename:hover { text-decoration: underline; }
+        .flow-card-view-files-btn {
+            font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; 
+            padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none;
+        }
+        .flow-card-view-files-btn:hover { background-color: #1c3274; }
+        .flow-card-actions { margin-top: 0.75rem; padding-left: 1.75rem; display: flex; gap: 0.5rem; }
+        .flow-card-action-btn {
+            font-size: 0.75rem; font-weight: 500; color: #4b5563; background-color: #f3f4f6;
+            padding: 0.25rem 0.625rem; border-radius: 0.25rem; border: 1px solid #e5e7eb;
+        }
+        .flow-card-action-btn:hover { background-color: #e5e7eb; }
+        .progress-indicator { font-size: 0.75rem; color: #6b7280; padding-left: 1.75rem; margin-top: 0.25rem;}
+        .financial-emoji { font-size: 1rem; margin-left: 0.5rem;}
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 50; padding: 1rem; }
+        .modal-content { background-color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 0 15px rgba(0,0,0,0.2); width: 100%; max-width: 500px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .modal-title { font-size: 1.25rem; font-weight: 600; }
+        .modal-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; color: #374151; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; }
+        .form-file-input-label { display: block; padding: 0.75rem; border: 2px dashed #d1d5db; border-radius: 0.375rem; text-align: center; cursor: pointer; background-color: #f9fafb; }
+        .form-file-input-label:hover { border-color: #9ca3af; }
+        .file-name-display { font-size: 0.875rem; color: #4b5563; margin-top: 0.5rem; }
+        .modal-actions { margin-top: 1.5rem; text-align: right; }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; cursor: pointer; }
+        .btn-primary { background-color: #2563eb; color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-secondary { background-color: #e5e7eb; color: #374151; margin-right: 0.5rem; }
+        .btn-secondary:hover { background-color: #d1d5db; }
+        .hidden { display: none; }
 
     </style>
 </head>
 <body>
     <div class="min-h-screen page-container">
         <div class="top-nav-bar">
-            <a href="#" class="text-blue-600 hover:text-blue-700 flex items-center text-sm">
+            <a href="#" class="text-gray-600 hover:text-blue-600 flex items-center text-sm font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
                     <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
                 </svg>
@@ -293,9 +177,11 @@
                 <div class="project-details">
                     <img src="https://placehold.co/64x64/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
                     <div>
-                        <h1 class="project-name">Julián Ortiz</h1>
-                        <button class="add-record-button ml-0 md:ml-2 mt-1 md:mt-0 inline-block md:inline">+ Add Record</button>
-                        <div class="project-sub-details mt-1"> 
+                        <div class="project-name-and-button">
+                            <h1 class="project-name">Julián Ortiz</h1>
+                            <button class="add-record-button">+ Add Record</button>
+                        </div>
+                        <div class="project-sub-details"> 
                             <p>Sales rep: Syris</p>
                             <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
                             <p><a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a></p>
@@ -314,15 +200,9 @@
                 <span class="action-pill">STATUS</span>
             </div>
             <div class="action-icon-buttons">
-                <button title="Document">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-2 16H8v-2h4v2zm0-4H8v-2h4v2zm4-4H8V8h8v2z"/></svg>
-                </button>
-                <button title="Calendar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 14H5V9h14v9zM5 7V6h14v1H5z"/></svg>
-                </button>
-                <button title="Add">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-                </button>
+                <button title="Document" id="headerDocButton"><i class="fas fa-file-alt"></i></button>
+                <button title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-alt"></i></button>
+                <button title="Add New Flow Item" id="addNewFlowItemBtn"><i class="fas fa-plus"></i></button>
             </div>
         </div>
 
@@ -334,137 +214,365 @@
             <button class="tab-button" data-tab="tickets">TICKETS</button>
             <button class="tab-button" data-tab="details">DETAILS</button>
             <button class="tab-button" data-tab="contact">CONTACT</button>
-            <button class="tab-button" data-tab="plus3">3+</button>
-            <button class="tab-button" data-tab="convo">CONVO</button>
         </div>
 
         <div class="tab-content-area">
             <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2></div>
             <div id="flowContent" class="tab-pane">
-                <div class="flow-card" data-card-id="pool1">
-                    <div class="flow-card-header-top">
-                        <div class="drag-handle">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
-                        </div>
-                        <div class="flow-card-title-section">
-                            <span class="flow-card-type">BID REQUEST</span>
-                            <h4 class="flow-card-title">@pool</h4>
-                        </div>
-                        <div class="flow-card-header-right">
-                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
-                            <div class="flow-card-options">
-                                <button title="More options">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="flow-card-timestamp">Tue, May 20, 2025, 3:38:22 PM</p>
-                    <div class="flow-card-section">
-                        <p class="flow-card-section-label">Notes</p>
-                        <p class="flow-card-section-content">TestQA</p>
-                    </div>
-                    <div class="flow-card-section">
-                        <p class="flow-card-section-label">Scheduled For</p>
-                        <p class="flow-card-section-content italic text-gray-400">Not Scheduled</p>
-                    </div>
-                    <div class="flow-card-secondary-tags">
-                        <span class="flow-card-secondary-tag status-action">Needs Follow-up</span> 
-                    </div>
-                    <div class="flow-card-attachment">
-                        <div class="flow-card-attachment-details">
-                            <div class="flow-card-attachment-user avatar-initials">CC</div>
-                            <span class="flow-card-filename">11619772.jpg</span>
-                        </div>
-                        <a href="#" class="flow-card-view-files-btn">View Files</a>
-                    </div>
                 </div>
-
-                <div class="flow-card" data-card-id="roofrepair1">
-                     <div class="flow-card-header-top">
-                        <div class="drag-handle">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
-                        </div>
-                        <div class="flow-card-title-section">
-                            <span class="flow-card-type">BID REQUEST</span>
-                            <h4 class="flow-card-title">@roofrepair</h4>
-                        </div>
-                        <div class="flow-card-header-right">
-                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
-                            <div class="flow-card-options">
-                                <button title="More options">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="flow-card-timestamp">Wed, May 14, 2025, 11:52:46 AM</p>
-                    <div class="flow-card-section">
-                        <p class="flow-card-section-label">Notes</p>
-                        <p class="flow-card-section-content">This is cool</p>
-                    </div>
-                    <div class="flow-card-section">
-                        <p class="flow-card-section-label">Scheduled For</p>
-                        <p class="flow-card-section-content">Sat, May 31, 2025</p>
-                    </div>
-                    <div class="flow-card-secondary-tags">
-                        <span class="flow-card-secondary-tag status-scheduled">Scheduled</span>
-                        <span class="flow-card-secondary-tag status-action">Pickup Material</span>
-                    </div>
-                    <div class="flow-card-attachment">
-                         <div class="flow-card-attachment-details">
-                            <div class="flow-card-attachment-user avatar-initials">AS</div>
-                            <span class="flow-card-filename">Contracts-2025-05-19-12-57.png</span>
-                        </div>
-                        <a href="#" class="flow-card-view-files-btn">View Files</a>
-                    </div>
-                </div>
-            </div>
             <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content</h2></div>
             <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
             <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
             <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
             <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content</h2></div>
-            <div id="plus3Content" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">3+ Content</h2></div>
-            <div id="convoContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Convo Content</h2></div>
         </div>
     </div>
 
+    <div id="addFlowItemModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Flow Item</h3>
+                <button class="modal-close-btn" id="closeAddFlowItemModalBtn">&times;</button>
+            </div>
+            <form id="addFlowItemForm">
+                <div class="form-group">
+                    <label for="flowItemType" class="form-label">Item Type</label>
+                    <select id="flowItemType" name="flowItemType" class="form-select">
+                        <option value="bid_request">Bid Request</option>
+                        <option value="punchlist">Punchlist Item</option>
+                        <option value="warranty">Warranty Item</option>
+                        <option value="project_doc">Project Document</option>
+                        <option value="material_pickup">Material Pickup</option>
+                        <option value="bill_home">Bill Home</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="tradeGroup">
+                    <label for="flowItemTrade" class="form-label">Trade</label>
+                    <select id="flowItemTrade" name="flowItemTrade" class="form-select">
+                        <option value="">Select Trade...</option>
+                        <option value="roof">@roof</option>
+                        <option value="gutters">@gutters</option>
+                        <option value="siding">@siding</option>
+                        <option value="windows">@windows</option>
+                        <option value="pool">@pool</option>
+                        <option value="repair">@repair</option>
+                        <option value="skylight">@skylight</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="flowItemTitle" class="form-label">Title (e.g., @pool or specific description)</label>
+                    <input type="text" id="flowItemTitle" name="flowItemTitle" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="flowItemNotes" class="form-label">Notes</label>
+                    <textarea id="flowItemNotes" name="flowItemNotes" rows="3" class="form-textarea"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddFlowItemBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Card</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="uploadFileModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="uploadModalTitle">Upload File</h3>
+                <button class="modal-close-btn" id="closeUploadModalBtn">&times;</button>
+            </div>
+            <form id="uploadFileForm">
+                <input type="hidden" id="uploadCardId">
+                <div class="form-group">
+                    <label for="fileInput" class="form-file-input-label">
+                        <span id="fileInputLabelText">Click or drag file here</span>
+                        <input type="file" id="fileInput" class="hidden">
+                    </label>
+                    <p id="fileNameDisplay" class="file-name-display"></p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelUploadBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
+        // JavaScript for interactivity will be extensive and added here
+        // This includes: Tab Switching, Modal Handling, Dynamic Card Creation,
+        // File Upload Simulation, Drag and Drop with Dragula.
         document.addEventListener('DOMContentLoaded', function () {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
+            const addNewFlowItemBtn = document.getElementById('addNewFlowItemBtn');
+            const addFlowItemModal = document.getElementById('addFlowItemModal');
+            const closeAddFlowItemModalBtn = document.getElementById('closeAddFlowItemModalBtn');
+            const cancelAddFlowItemBtn = document.getElementById('cancelAddFlowItemBtn');
+            const addFlowItemForm = document.getElementById('addFlowItemForm');
+            const flowItemTypeSelect = document.getElementById('flowItemType');
+            const tradeGroup = document.getElementById('tradeGroup');
+            const flowCardContainer = document.getElementById('flowContent'); // Cards will be added here
 
+            const uploadFileModal = document.getElementById('uploadFileModal');
+            const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
+            const cancelUploadBtn = document.getElementById('cancelUploadBtn');
+            const uploadFileForm = document.getElementById('uploadFileForm');
+            const uploadModalTitle = document.getElementById('uploadModalTitle');
+            const fileInput = document.getElementById('fileInput');
+            const fileInputLabelText = document.getElementById('fileInputLabelText');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            let currentUploadCardId = null;
+
+            // Sample data for flow cards
+            let flowCardsData = [
+                {
+                    id: 'card-pool1',
+                    type: 'BID REQUEST',
+                    title: '@pool',
+                    timestamp: 'Tue, May 20, 2025, 3:38:22 PM',
+                    notes: 'TestQA',
+                    scheduledFor: null,
+                    primaryStatus: 'Requested',
+                    attachments: [{ name: '11619772.jpg', userInitials: 'CC' }],
+                    secondaryTags: [{text: 'Needs Follow-up', type: 'action'}],
+                    detailsProgress: 25, // Example progress
+                    financialEmoji: '💰' // Example emoji
+                },
+                {
+                    id: 'card-roofrepair1',
+                    type: 'BID REQUEST',
+                    title: '@roofrepair',
+                    timestamp: 'Wed, May 14, 2025, 11:52:46 AM',
+                    notes: 'This is cool',
+                    scheduledFor: 'Sat, May 31, 2025',
+                    primaryStatus: 'Requested',
+                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS' }],
+                    secondaryTags: [{text: 'Scheduled', type: 'scheduled'}, {text: 'Pickup Material', type: 'action'}],
+                    detailsProgress: 80,
+                    financialEmoji: '👍'
+                }
+            ];
+
+            // --- Tab Switching ---
             tabButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabPanes.forEach(pane => pane.classList.add('hidden'));
-
                     this.classList.add('active');
                     const targetPaneId = this.dataset.tab + 'Content';
                     const targetPane = document.getElementById(targetPaneId);
-                    if (targetPane) {
-                        targetPane.classList.remove('hidden');
-                    } else {
-                         console.warn('Target pane not found for tab:', this.dataset.tab);
-                    }
+                    if (targetPane) targetPane.classList.remove('hidden');
                 });
             });
-             // Ensure initial active tab is shown
             const activeTabButton = document.querySelector('.tab-button.active');
             if (activeTabButton) {
                 const activeTabPaneId = activeTabButton.dataset.tab + 'Content';
-                const activePane = document.getElementById(activeTabPaneId);
-                if (activePane) {
-                    activePane.classList.remove('hidden');
+                document.getElementById(activeTabPaneId)?.classList.remove('hidden');
+            }
+
+            // --- Add New Flow Item Modal ---
+            addNewFlowItemBtn.addEventListener('click', () => addFlowItemModal.classList.remove('hidden'));
+            closeAddFlowItemModalBtn.addEventListener('click', () => addFlowItemModal.classList.add('hidden'));
+            cancelAddFlowItemBtn.addEventListener('click', () => addFlowItemModal.classList.add('hidden'));
+
+            flowItemTypeSelect.addEventListener('change', function() {
+                tradeGroup.classList.toggle('hidden', this.value !== 'bid_request');
+            });
+
+            addFlowItemForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const type = document.getElementById('flowItemType').selectedOptions[0].text;
+                let title = document.getElementById('flowItemTitle').value;
+                const notes = document.getElementById('flowItemNotes').value;
+                const trade = document.getElementById('flowItemTrade').value;
+
+                if (document.getElementById('flowItemType').value === 'bid_request' && trade) {
+                    // Title might be just the trade if not specified, or append trade
+                    if (!title.startsWith('@') && trade) title = `${trade} - ${title}` ;
+                     else if (!title) title = trade;
                 }
-                 // Hide all other panes explicitly on load
-                tabPanes.forEach(pane => {
-                    if (pane.id !== activeTabPaneId) {
-                        pane.classList.add('hidden');
-                    }
+
+
+                const newCardData = {
+                    id: 'card-' + Date.now(),
+                    type: type.toUpperCase().replace(' ITEM', ''), // Simplify type
+                    title: title,
+                    timestamp: new Date().toLocaleString(),
+                    notes: notes,
+                    scheduledFor: null,
+                    primaryStatus: 'New', // Default status
+                    attachments: [],
+                    secondaryTags: [],
+                    detailsProgress: 0,
+                    financialEmoji: null
+                };
+                flowCardsData.unshift(newCardData); // Add to the beginning
+                renderFlowCards();
+                addFlowItemModal.classList.add('hidden');
+                this.reset();
+                tradeGroup.classList.add('hidden');
+                alert('Flow card created (simulated)!');
+            });
+
+            // --- Render Flow Cards ---
+            function renderFlowCards() {
+                flowCardContainer.innerHTML = ''; // Clear existing cards
+                flowCardsData.forEach(cardData => {
+                    const cardElement = createFlowCardElement(cardData);
+                    flowCardContainer.appendChild(cardElement);
                 });
             }
+            
+            function getTagClass(tagType) {
+                if (tagType === 'action') return 'tag-pickup-material'; // Re-using for general action
+                if (tagType === 'scheduled') return 'tag-scheduled';
+                // Add more types as needed
+                return 'tag-default';
+            }
+
+            function createFlowCardElement(data) {
+                const card = document.createElement('div');
+                card.className = 'flow-card';
+                card.dataset.cardId = data.id;
+
+                let secondaryTagsHTML = '';
+                if (data.secondaryTags && data.secondaryTags.length > 0) {
+                    secondaryTagsHTML = data.secondaryTags.map(tag => 
+                        `<span class="flow-card-secondary-tag ${getTagClass(tag.type)}">${tag.text}</span>`
+                    ).join('');
+                }
+                
+                let attachmentHTML = '';
+                if (data.attachments && data.attachments.length > 0) {
+                    const attachment = data.attachments[0]; // Assuming one attachment for now
+                    attachmentHTML = `
+                        <div class="flow-card-attachment-details">
+                            <div class="flow-card-attachment-user avatar-initials">${attachment.userInitials}</div>
+                            <span class="flow-card-filename" data-filename="${attachment.name}">${attachment.name}</span>
+                        </div>
+                        <button class="flow-card-view-files-btn" data-filename="${attachment.name}">View Files</button>
+                    `;
+                } else {
+                     attachmentHTML = `
+                        <div class="flow-card-attachment-details">
+                            <span class="text-xs text-gray-400 italic">No Bid Attached</span>
+                        </div>
+                        <button class="flow-card-action-btn upload-bid-btn">Upload</button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flow-card-header-top">
+                        <div class="drag-handle" title="Drag to reorder">
+                            <i class="fas fa-grip-vertical"></i>
+                        </div>
+                        <div class="flow-card-title-section">
+                            <span class="flow-card-type">${data.type}</span>
+                            <h4 class="flow-card-title">${data.title}</h4>
+                        </div>
+                        <div class="flow-card-header-right">
+                            <span class="flow-card-primary-status-tag">${data.primaryStatus} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                            <div class="flow-card-options">
+                                <button title="More options"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">${data.timestamp}</p>
+                    ${data.notes ? `<div class="flow-card-section"><p class="flow-card-section-label">Notes</p><p class="flow-card-section-content">${data.notes}</p></div>` : ''}
+                    ${data.scheduledFor ? `<div class="flow-card-section"><p class="flow-card-section-label">Scheduled For</p><p class="flow-card-section-content">${data.scheduledFor}</p></div>` : ''}
+                    <div class="flow-card-secondary-tags">${secondaryTagsHTML}</div>
+                    <div class="progress-indicator">Details: ${data.detailsProgress || 0}% complete <span class="financial-emoji">${data.financialEmoji || ''}</span></div>
+                    <div class="flow-card-attachment">${attachmentHTML}</div>
+                    <div class="flow-card-actions">
+                        <button class="flow-card-action-btn edit-details-btn">Edit Details</button>
+                        <button class="flow-card-action-btn open-in-drive-btn">Open in Drive</button>
+                        </div>
+                `;
+
+                // Add event listeners for card-specific actions
+                card.querySelector('.upload-bid-btn')?.addEventListener('click', () => openUploadModal(data.id, data.title));
+                card.querySelector('.flow-card-filename')?.addEventListener('click', (e) => alert(`Simulating: Viewing ${e.target.dataset.filename}`));
+                card.querySelector('.flow-card-view-files-btn')?.addEventListener('click', (e) => alert(`Simulating: Viewing files for ${data.title} (filename: ${e.target.dataset.filename || data.attachments[0]?.name})`));
+                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(`Simulating: Opening detailed construction plan form for ${data.title}.`));
+                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(`Simulating: Opening Google Drive for ${data.title}.`));
+
+                return card;
+            }
+
+            // --- Upload File Modal & Logic ---
+            function openUploadModal(cardId, cardTitle) {
+                currentUploadCardId = cardId;
+                uploadModalTitle.textContent = `Upload File for ${cardTitle}`;
+                fileNameDisplay.textContent = '';
+                fileInputLabelText.textContent = 'Click or drag file here';
+                fileInput.value = null; // Reset file input
+                uploadFileModal.classList.remove('hidden');
+            }
+            closeUploadModalBtn.addEventListener('click', () => uploadFileModal.classList.add('hidden'));
+            cancelUploadBtn.addEventListener('click', () => uploadFileModal.classList.add('hidden'));
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileNameDisplay.textContent = `Selected: ${this.files[0].name}`;
+                    fileInputLabelText.textContent = 'Change file';
+                } else {
+                    fileNameDisplay.textContent = '';
+                    fileInputLabelText.textContent = 'Click or drag file here';
+                }
+            });
+            uploadFileForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+                const fileName = fileInput.files[0].name;
+                const cardIndex = flowCardsData.findIndex(card => card.id === currentUploadCardId);
+                if (cardIndex > -1) {
+                    flowCardsData[cardIndex].attachments = [{ name: fileName, userInitials: 'ME' }]; // Simulate upload
+                    renderFlowCards();
+                    alert(`File "${fileName}" uploaded successfully (simulated) for card ID ${currentUploadCardId}!`);
+                }
+                uploadFileModal.classList.add('hidden');
+            });
+            
+            // --- Drag and Drop with Dragula ---
+            if (typeof dragula !== 'undefined') {
+                const drake = dragula([flowCardContainer], {
+                    moves: function (el, source, handle, sibling) {
+                        return handle.classList.contains('drag-handle') || handle.closest('.drag-handle');
+                    }
+                });
+
+                drake.on('drop', function(el, target, source, sibling) {
+                    // Here you would typically save the new order to the backend
+                    // For simulation, we can reorder the flowCardsData array
+                    const cardId = el.dataset.cardId;
+                    const newIndex = Array.from(target.children).indexOf(el);
+                    const cardData = flowCardsData.find(c => c.id === cardId);
+                    
+                    // Remove from old position
+                    flowCardsData = flowCardsData.filter(c => c.id !== cardId);
+                    // Insert at new position
+                    flowCardsData.splice(newIndex, 0, cardData);
+                    
+                    console.log(`Card ${cardId} moved. New order in array (simulated):`, flowCardsData.map(c=>c.title));
+                    // No need to call renderFlowCards() again if Dragula handles DOM update,
+                    // unless your data array order is critical for other operations.
+                });
+            } else {
+                console.warn('Dragula library not found. Drag and drop will not work.');
+            }
+
+            // --- Header Icon Button Simulators ---
+            document.getElementById('headerDocButton')?.addEventListener('click', () => alert('Simulating: Open Documents'));
+            document.getElementById('headerCalendarButton')?.addEventListener('click', () => alert('Simulating: Open Calendar'));
+
+
+            // Initial Render
+            renderFlowCards();
         });
     </script>
 
