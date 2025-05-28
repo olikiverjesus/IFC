@@ -3,675 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLOW App UI Replication - Full Simulation</title>
+    <title>Project Flow View</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            background-color: #f8f9fa;
+            background-color: #f4f7f9; /* Light grayish-blue background */
         }
-        .project-header-bg {
-             background-color: #ffffff;
+        .page-container {
+            max-width: 1000px; 
+            margin: 0 auto;
         }
-        .project-header-tab {
-            border-bottom: 3px solid transparent;
-            color: #6b7280; /* Default tab text color */
-            padding-top: 0.5rem;
-            padding-bottom: 0.75rem;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-            margin-bottom: -1px;
-            transition: border-color 0.2s, color 0.2s;
-            white-space: nowrap;
+        .top-nav-bar {
+            background-color: white;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
         }
-        .project-header-tab:hover {
-            color: #1f2937;
+        .header-content-wrapper {
+            background-color: white;
+            padding: 1.5rem;
         }
-        .project-header-tab.active {
-            border-bottom-color: #2563eb;
-            color: #2563eb;
-            font-weight: 600;
+        .project-primary-info-top {
+            display: flex;
+            flex-direction: column; 
+            md:flex-direction: row; 
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem; 
         }
+        .project-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            md:margin-bottom: 0;
+        }
+        .project-avatar {
+            width: 4rem; height: 4rem; /* 64px */
+            border-radius: 0.5rem; /* 8px */
+            object-fit: cover;
+            margin-right: 1rem; /* 16px */
+        }
+        .project-name {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 600; /* semibold */
+            color: #1f293b; /* slate-800 */
+        }
+        .project-sub-details { 
+            font-size: 0.875rem; /* text-sm */
+            color: #475569; /* slate-600 */
+            margin-top: 0.25rem;
+        }
+        .project-sub-details p {
+            margin-bottom: 0.125rem;
+        }
+        .project-sub-details a {
+            color: #2563eb; /* blue-600 */
+        }
+        .project-sub-details a:hover {
+            text-decoration: underline;
+        }
+        .add-record-button { /* Style adjusted to match image */
+            background-color: transparent; 
+            color: #2563eb; /* blue-600 */
+            font-size: 0.875rem; 
+            font-weight: 500;
+            padding: 0.25rem 0; 
+            white-space: nowrap; 
+            align-self: flex-start;
+            margin-top: 0.25rem; 
+        }
+        .add-record-button:hover { color: #1d4ed8; }
+
+        .action-pills-bar {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem; 
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        .action-pill {
+            background-color: #e9ecef; 
+            color: #495057; 
+            padding: 0.375rem 0.875rem; 
+            border-radius: 9999px; /* full */
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 0.5rem; /* 8px */
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .action-pill.highlight { 
+            background-color: #cfe2ff; 
+            color: #004085; 
+        }
+        .action-icon-buttons {
+            display: flex;
+            align-items: center;
+            margin-left: auto; 
+        }
+        .action-icon-buttons button {
+            color: #6b7280; /* gray-500 */
+            padding: 0.5rem; /* 8px */
+            border-radius: 9999px; 
+        }
+        .action-icon-buttons button:hover {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f293b; /* gray-800 */
+        }
+        .action-icon-buttons svg {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+        }
+
+        .tabs-container {
+            background-color: white; border-bottom: 1px solid #e2e8f0;
+            padding: 0 1.5rem; overflow-x: auto; white-space: nowrap;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .tab-button {
+            padding: 0.75rem 1rem; margin-right: 0.5rem;
+            border: none; background: none; color: #475569;
+            font-weight: 500; font-size: 0.875rem;
+            border-bottom: 3px solid transparent; cursor: pointer;
+            transition: color 0.2s, border-color 0.2s; display: inline-block;
+        }
+        .tab-button.active, .tab-button:hover {
+            color: #2563eb; border-bottom-color: #2563eb;
+        }
+        .tab-content-area { padding: 1.5rem; background-color: #f8f9fa; } /* Matching main content bg */
+        .tab-pane.hidden { display: none; }
+
+        /* Flow Card Specific Styles - Updated to match image_53c0b6.png */
         .flow-card {
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            position: relative;
+            background-color: white;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem; /* 8px */
+            padding: 1rem; /* 16px */
+            margin-bottom: 1rem; /* 16px */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Softer shadow */
         }
-        .flow-card.gu-mirror { /* Style for the card being dragged */
-            cursor: grabbing !important;
-            opacity: 0.8;
-            background-color: #eef2ff;
-            transform: rotate(2deg);
+        .flow-card-header-top { /* For drag handle, type/title, and status/options */
+            display: flex;
+            align-items: flex-start; /* Align drag handle with top of text */
+            margin-bottom: 0.25rem;
         }
         .drag-handle {
+            color: #9ca3af; /* gray-400 */
+            margin-right: 0.5rem; /* 8px */
             cursor: grab;
-            color: #9ca3af;
-            padding: 0.5rem;
-            position: absolute;
-            left: -5px; /* Position slightly to the left of the card's main content padding */
-            bottom: 0.5rem; /* Position it near the bottom */
-            z-index: 10;
-            /* top: 50%; transform: translateY(-50%); REMOVED for bottom positioning */
+            padding-top: 0.25rem; /* Fine-tune vertical alignment */
         }
-        .drag-handle:hover {
-            color: #4b5563;
-        }
+        .drag-handle svg { width: 1rem; height: 1rem; }
 
+        .flow-card-title-section { /* Groups type and title */
+            flex-grow: 1;
+        }
+        .flow-card-type {
+            font-size: 0.625rem; /* 10px */
+            font-weight: 600;
+            color: #4b5563; /* gray-600 */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .flow-card-title {
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            color: #1f293b; /* gray-800 */
+            margin-top: 0.125rem; 
+        }
+        .flow-card-header-right { /* For status tag and options menu */
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* Push to the right */
+        }
+        .flow-card-primary-status-tag { 
+            font-size: 0.75rem; /* 12px */
+            font-weight: 500;
+            padding: 0.125rem 0.5rem; 
+            border-radius: 0.25rem; /* 4px */
+            background-color: #f3f4f6; /* gray-100 */
+            color: #4b5563; /* gray-600 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            display: inline-flex; 
+            align-items: center;
+            margin-right: 0.5rem; /* Space before options dots */
+        }
+        .flow-card-primary-status-tag svg { /* Dropdown arrow in status */
+            width: 0.75rem; height: 0.75rem; margin-left: 0.25rem;
+        }
+        .flow-card-options button { color: #9ca3af; }
+        .flow-card-options button:hover { color: #4b5563; }
 
-        .flow-button-primary {
-            background-color: #2563eb;
-            color: white;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
+        .flow-card-timestamp {
+            font-size: 0.75rem; /* 12px */
+            color: #6b7280; /* gray-500 */
+            margin-bottom: 0.75rem; /* 12px */
+            padding-left: 1.5rem; /* Indent below drag handle */
         }
-        .flow-button-primary:hover {
-            background-color: #1d4ed8;
+        .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.5rem; }
+        .flow-card-section-label {
+            font-size: 0.6875rem; /* ~11px */
+            font-weight: 500;
+            color: #6b7280; /* gray-500 */
+            text-transform: uppercase;
+            margin-bottom: 0.125rem; /* 2px */
         }
-        .flow-button-secondary {
-            background-color: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
+        .flow-card-section-content {
+            font-size: 0.875rem; /* 14px */
+            color: #374151; /* gray-700 */
+            line-height: 1.5;
+            word-break: break-word;
         }
-        .flow-button-secondary:hover {
-            background-color: #e5e7eb;
+        .flow-card-secondary-tags { /* Container for secondary descriptive tags */
+            margin-top: 0.5rem; 
+            padding-left: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem; 
         }
-        .flow-button-danger {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s;
-        }
-        .flow-button-danger:hover {
-            background-color: #fca5a5;
-            color: #7f1d1d;
-        }
-        .status-badge {
+        .flow-card-secondary-tag { 
             font-size: 0.75rem;
-            padding: 0.125rem 0.625rem;
-            border-radius: 0.25rem;
             font-weight: 500;
-            text-transform: capitalize;
+            padding: 0.125rem 0.625rem; 
+            border-radius: 0.75rem; 
+            background-color: #e0e7ff; /* Example: indigo-100 */
+            color: #4338ca; /* Example: indigo-700 */
+            border: 1px solid #c7d2fe; /* Example: indigo-200 */
         }
-        .status-requested {
-            background-color: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #bfdbfe;
+        .flow-card-attachment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f3f4f6; /* gray-100 */
+            padding-left: 1.5rem;
         }
-        .status-new {
-            background-color: #f0fdf4;
-            color: #166534;
-            border: 1px solid #a7f3d0;
+         .flow-card-attachment-details {
+            display: flex;
+            align-items: center;
         }
-        .action-icon-button {
-            color: #6b7280;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .action-icon-button:hover {
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-        .header-pills button {
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-        }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+        .flow-card-attachment-user img, .flow-card-attachment-user .avatar-initials {
+            width: 1.5rem; /* 24px */
+            height: 1.5rem; /* 24px */
+            border-radius: 9999px; /* full */
+            margin-right: 0.5rem; 
+            background-color: #bfdbfe; /* blue-200 for initials bg */
+            color: #1e3a8a; /* blue-800 for initials text */
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 50;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            font-size: 0.625rem; /* 10px for initials */
+            font-weight: 600;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            width: 90%;
-            max-width: 500px;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-        .file-input-container {
-            border: 2px dashed #d1d5db;
-            border-radius: 0.375rem;
-            padding: 2rem 1rem;
-            text-align: center;
+        .flow-card-filename {
+            font-size: 0.875rem;
+            color: #2563eb; /* blue-600 */
+            /* text-decoration: underline; Removed to match image */
             cursor: pointer;
-            transition: border-color 0.2s;
         }
-        .file-input-container:hover {
-            border-color: #2563eb;
+        .flow-card-filename:hover { text-decoration: underline; }
+
+        .flow-card-view-files-btn {
+            font-size: 0.75rem; font-weight: 500;
+            color: white; background-color: #003366; /* Dark blue like image */
+            padding: 0.375rem 0.75rem; /* 6px 12px */
+            border-radius: 0.25rem;
+            border: none;
         }
-        .file-input-container i {
-            font-size: 2rem;
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-        }
-        .file-input-container p {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-        .file-input-container span {
-            color: #2563eb;
-            font-weight: 500;
-        }
-        .modal-content input[type="file"], .modal-content select, .modal-content textarea {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.875rem;
-            width: 100%;
-            margin-bottom: 1rem;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
-        }
-        .modal-content input[type="file"].hidden-input {
-            display: none;
-        }
-        .attached-file-info-display {
-            display: flex;
-            align-items: center;
-            background-color: #f9fafb;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            margin-top: 0.5rem;
-        }
-        .attached-file-info-display i.file-icon {
-            color: #4b5563;
-            margin-right: 0.75rem;
-            font-size: 1.25rem;
-        }
-        .attached-file-info-display span.file-name {
-            font-size: 0.875rem;
-            color: #1f2937;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 1;
-        }
-         .file-actions button {
-            margin-left: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-        .project-tabs-container {
-            overflow-x: auto;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .project-tabs-container::-webkit-scrollbar {
-            display: none;
-        }
+        .flow-card-view-files-btn:hover { background-color: #002244; }
 
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body>
+    <div class="min-h-screen page-container">
+        <div class="top-nav-bar">
+            <a href="#" class="text-blue-600 hover:text-blue-700 flex items-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
+                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                </svg>
+                Projects
+            </a>
+        </div>
 
-    <main class="flex-1 flex flex-col min-h-screen">
-        <header class="project-header-bg p-4 md:p-6 border-b border-gray-200 sticky top-0 z-20">
-            <div class="mb-4">
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
-                    <i class="fas fa-chevron-left mr-2"></i>
-                    Projects
-                </a>
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                <div class="flex items-start space-x-3 sm:space-x-4 mb-4 md:mb-0">
-                    <img src="https://placehold.co/64x64/e2e8f0/718096?text=TS&font=Inter" alt="Client Photo" class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-cover border">
+        <div class="header-content-wrapper">
+            <div class="project-primary-info-top">
+                <div class="project-details">
+                    <img src="https://placehold.co/64x64/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
                     <div>
-                        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Taylor Sandy</h2>
-                        <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">Dec. 12</p>
-                        <p class="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">Sales rep: Will</p>
-                        <p class="text-xs sm:text-sm text-gray-600">300 W Van Oaks dr, Colleyville, TX 76034</p>
-                        <a href="mailto:taylor.b.sandy@gmail.com" class="text-xs sm:text-sm text-blue-600 hover:underline block truncate">taylor.b.sandy@gmail.com</a>
-                        <a href="tel:6825527796" class="text-xs sm:text-sm text-blue-600 hover:underline">(682) 552-7796</a>
-                    </div>
-                </div>
-                <div class="flex flex-col items-start md:items-end space-y-2">
-                    <div class="flex space-x-1 sm:space-x-2 header-pills">
-                        <button class="bg-blue-100 text-blue-700 border border-blue-300 text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2">3+ CONVO</button>
-                        <button class="bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-2">FLOW</button>
-                        <button class="bg-gray-100 text-gray-700 border border-gray-300 text-xs sm:text-sm px-2 py-1 sm:px-4 sm:py-2">STATUS</button>
-                    </div>
-                    <div class="flex space-x-1">
-                        <button class="action-icon-button" title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-alt"></i></button>
-                        <button class="action-icon-button" title="Upload" id="headerUploadButton"><i class="fas fa-upload"></i></button>
-                        <button class="action-icon-button" title="Link" id="headerLinkButton"><i class="fas fa-link"></i></button>
-                        <button class="action-icon-button" title="Add Flow Item" id="addFlowItemHeaderButton"><i class="fas fa-plus"></i></button>
+                        <h1 class="project-name">Julián Ortiz</h1>
+                        <button class="add-record-button ml-0 md:ml-2 mt-1 md:mt-0 inline-block md:inline">+ Add Record</button>
+                        <div class="project-sub-details mt-1"> 
+                            <p>Sales rep: Syris</p>
+                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                            <p><a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a></p>
+                            <p><a href="tel:6892674350">(689) 267-4350</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="project-tabs-container -mb-px border-b border-gray-200">
-                <nav class="flex -mb-px">
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">SNAPSHOTS</a>
-                    <a href="#" class="project-header-tab active py-3 px-2 sm:px-3 text-xs sm:text-sm">FLOW</a>
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">STATUS</a>
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">TASKS</a>
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">TICKETS</a>
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">DETAILS</a>
-                    <a href="#" class="project-header-tab py-3 px-2 sm:px-3 text-xs sm:text-sm">CONTACT</a>
-                </nav>
-            </div>
-        </header>
-
-        <div class="p-3 sm:p-4 md:p-6 space-y-0" id="flowCardContainer"> </div>
-    </main>
-
-    <div id="addFlowItemModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-semibold text-gray-800">Add New Flow Item</h3>
-                <button id="closeAddFlowItemModalButton" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
+        </div>
+        
+        <div class="action-pills-bar">
             <div>
-                <label for="flowItemTypeSelect" class="block text-sm font-medium text-gray-700 mb-1">Item Type</label>
-                <select id="flowItemTypeSelect">
-                    <option value="">Select type...</option>
-                    <option value="Bid Request">Bid Request</option>
-                    <option value="Punchlist">Punchlist Item</option>
-                    <option value="Warranty">Warranty Item</option>
-                    <option value="Project Document">Project Document</option>
-                    <option value="Material Pickup">Material Pickup</option>
-                    <option value="Bill Home">Bill Home</option>
-                    <option value="Other">Other</option>
-                </select>
+                <span class="action-pill highlight">3+</span>
+                <span class="action-pill">CONVO</span>
+                <span class="action-pill">FLOW</span>
+                <span class="action-pill">STATUS</span>
             </div>
-            <div id="tradeSelectContainer" class="hidden mt-4">
-                <label for="tradeSelect" class="block text-sm font-medium text-gray-700 mb-1">Trade</label>
-                <select id="tradeSelect">
-                    <option value="">Select trade...</option>
-                    <option value="@roof">@roof</option>
-                    <option value="@gutter">@gutter</option>
-                    <option value="@siding">@siding</option>
-                    <option value="@paint">@paint</option>
-                    <option value="@mof">@mof (Material Order Form)</option>
-                    <option value="@abc">@abc (ABC Supply)</option>
-                </select>
-            </div>
-             <div class="mt-4">
-                <label for="flowItemNotes" class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
-                <textarea id="flowItemNotes" rows="3" class="w-full focus:ring-blue-500 focus:border-blue-500" placeholder="Enter any notes for this item..."></textarea>
-            </div>
-            <div class="flex justify-end space-x-3 mt-6">
-                <button id="cancelAddFlowItemButton" class="flow-button-secondary px-4 py-2">Cancel</button>
-                <button id="confirmAddFlowItemButton" class="flow-button-primary px-4 py-2">Create Card</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="uploadModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800" id="uploadModalTitle">Upload Original @trade Bid</h3>
-                <button id="closeUploadModalButton" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times fa-lg"></i>
+            <div class="action-icon-buttons">
+                <button title="Document">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-2 16H8v-2h4v2zm0-4H8v-2h4v2zm4-4H8V8h8v2z"/></svg>
+                </button>
+                <button title="Calendar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 14H5V9h14v9zM5 7V6h14v1H5z"/></svg>
+                </button>
+                <button title="Add">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                 </button>
             </div>
-            <p class="text-sm text-gray-600 mb-4">
-                This will sync to the 'Original Bids' folder for this trade in Google Drive.
-            </p>
-            <label for="fileUploadInput" class="file-input-container block mb-4">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p><span>Click to browse</span> or drag and drop file here</p>
-                <p class="text-xs text-gray-500 mt-1">PDF, DOCX, PNG, JPG (MAX. 10MB)</p>
-            </label>
-            <input type="file" id="fileUploadInput" class="hidden-input" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-            <div id="selectedFilePreview" class="hidden mb-4"> </div>
-            <div class="flex justify-end space-x-3">
-                <button id="cancelUploadButton" class="flow-button-secondary px-4 py-2">Cancel</button>
-                <button id="confirmUploadButton" class="flow-button-primary px-4 py-2">Upload File</button>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button" data-tab="snapshots">SNAPSHOTS</button>
+            <button class="tab-button active" data-tab="flow">FLOW</button>
+            <button class="tab-button" data-tab="status">STATUS</button>
+            <button class="tab-button" data-tab="tasks">TASKS</button>
+            <button class="tab-button" data-tab="tickets">TICKETS</button>
+            <button class="tab-button" data-tab="details">DETAILS</button>
+            <button class="tab-button" data-tab="contact">CONTACT</button>
+            <button class="tab-button" data-tab="plus3">3+</button>
+            <button class="tab-button" data-tab="convo">CONVO</button>
+        </div>
+
+        <div class="tab-content-area">
+            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2></div>
+            <div id="flowContent" class="tab-pane">
+                <div class="flow-card" data-card-id="pool1">
+                    <div class="flow-card-header-top">
+                        <div class="drag-handle">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
+                        </div>
+                        <div class="flow-card-title-section">
+                            <span class="flow-card-type">BID REQUEST</span>
+                            <h4 class="flow-card-title">@pool</h4>
+                        </div>
+                        <div class="flow-card-header-right">
+                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                            <div class="flow-card-options">
+                                <button title="More options">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">Tue, May 20, 2025, 3:38:22 PM</p>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Notes</p>
+                        <p class="flow-card-section-content">TestQA</p>
+                    </div>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Scheduled For</p>
+                        <p class="flow-card-section-content italic text-gray-400">Not Scheduled</p>
+                    </div>
+                    <div class="flow-card-secondary-tags">
+                        <span class="flow-card-secondary-tag status-action">Needs Follow-up</span> 
+                    </div>
+                    <div class="flow-card-attachment">
+                        <div class="flow-card-attachment-details">
+                            <div class="flow-card-attachment-user avatar-initials">CC</div>
+                            <span class="flow-card-filename">11619772.jpg</span>
+                        </div>
+                        <a href="#" class="flow-card-view-files-btn">View Files</a>
+                    </div>
+                </div>
+
+                <div class="flow-card" data-card-id="roofrepair1">
+                     <div class="flow-card-header-top">
+                        <div class="drag-handle">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 4a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V4zM7 9a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V9zM7 14a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1v-2z"></path></svg>
+                        </div>
+                        <div class="flow-card-title-section">
+                            <span class="flow-card-type">BID REQUEST</span>
+                            <h4 class="flow-card-title">@roofrepair</h4>
+                        </div>
+                        <div class="flow-card-header-right">
+                            <span class="flow-card-primary-status-tag">Requested <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                            <div class="flow-card-options">
+                                <button title="More options">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 12a.75.75 0 110-1.5.75.75 0 010 1.5zm0-6a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="flow-card-timestamp">Wed, May 14, 2025, 11:52:46 AM</p>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Notes</p>
+                        <p class="flow-card-section-content">This is cool</p>
+                    </div>
+                    <div class="flow-card-section">
+                        <p class="flow-card-section-label">Scheduled For</p>
+                        <p class="flow-card-section-content">Sat, May 31, 2025</p>
+                    </div>
+                    <div class="flow-card-secondary-tags">
+                        <span class="flow-card-secondary-tag status-scheduled">Scheduled</span>
+                        <span class="flow-card-secondary-tag status-action">Pickup Material</span>
+                    </div>
+                    <div class="flow-card-attachment">
+                         <div class="flow-card-attachment-details">
+                            <div class="flow-card-attachment-user avatar-initials">AS</div>
+                            <span class="flow-card-filename">Contracts-2025-05-19-12-57.png</span>
+                        </div>
+                        <a href="#" class="flow-card-view-files-btn">View Files</a>
+                    </div>
+                </div>
             </div>
+            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content</h2></div>
+            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
+            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
+            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content</h2></div>
+            <div id="plus3Content" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">3+ Content</h2></div>
+            <div id="convoContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Convo Content</h2></div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
-        // --- DOM Elements ---
-        const addFlowItemModal = document.getElementById('addFlowItemModal');
-        const closeAddFlowItemModalButton = document.getElementById('closeAddFlowItemModalButton');
-        const cancelAddFlowItemButton = document.getElementById('cancelAddFlowItemButton');
-        const confirmAddFlowItemButton = document.getElementById('confirmAddFlowItemButton');
-        const flowItemTypeSelect = document.getElementById('flowItemTypeSelect');
-        const tradeSelectContainer = document.getElementById('tradeSelectContainer');
-        const tradeSelect = document.getElementById('tradeSelect');
-        const flowItemNotes = document.getElementById('flowItemNotes');
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
 
-        const uploadModal = document.getElementById('uploadModal');
-        const closeUploadModalButton = document.getElementById('closeUploadModalButton');
-        const cancelUploadButton = document.getElementById('cancelUploadButton');
-        const confirmUploadButton = document.getElementById('confirmUploadButton');
-        const uploadModalTitle = document.getElementById('uploadModalTitle');
-        const fileUploadInput = document.getElementById('fileUploadInput');
-        const selectedFilePreview = document.getElementById('selectedFilePreview');
-        const flowCardContainer = document.getElementById('flowCardContainer');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.add('hidden'));
 
-        const addFlowItemHeaderButton = document.getElementById('addFlowItemHeaderButton');
-        const headerCalendarButton = document.getElementById('headerCalendarButton');
-        const headerUploadButton = document.getElementById('headerUploadButton');
-        const headerLinkButton = document.getElementById('headerLinkButton');
-
-        let currentCardElementForUpload = null;
-        let currentFileObjectForUpload = null;
-
-        // --- Initial Demo Cards Data ---
-        const initialCardsData = [
-            { type: "BID REQUEST", trade: "@roof", date: "Mon, May 5, 2025, 5:22:32 PM", notes: "@punchlist @roof", status: "requested", id: "card1" },
-            { type: "BID REQUEST", trade: "@roof", date: "Mon, May 5, 2025, 5:21:49 PM", notes: "@punchlist @roof", status: "requested", id: "card2" },
-            { type: "PICKUP MATERIAL", trade: "@abc", date: "Tue, May 6, 2025, 09:00 AM", notes: "Pick up shingles from ABC Supply.", status: "new", id: "card3" }
-        ];
-
-        // --- Functions ---
-        function openUploadModalForCard(tradeForUpload, cardElementForUpload) {
-            currentCardElementForUpload = cardElementForUpload;
-            currentFileObjectForUpload = null;
-            uploadModalTitle.textContent = `Upload Original ${tradeForUpload || 'Document'}`;
-            selectedFilePreview.classList.add('hidden');
-            selectedFilePreview.innerHTML = '';
-            fileUploadInput.value = null;
-            uploadModal.classList.add('active');
-        }
-
-        function closeModal(modalElement) {
-            modalElement.classList.remove('active');
-        }
-
-        function createFlowCardHTML(cardData) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'flow-card rounded-lg p-3 sm:p-4 mb-4';
-            cardDiv.dataset.cardId = cardData.id || `card${Date.now()}`;
-            if (cardData.trade) {
-                cardDiv.dataset.trade = cardData.trade;
-            }
-
-            let typeColorClass = "text-blue-600";
-            if (cardData.type === "PICKUP MATERIAL") typeColorClass = "text-green-600";
-            if (cardData.type === "BILL HOME") typeColorClass = "text-purple-600";
-            
-            let statusClass = "status-requested";
-            if (cardData.status === "new") statusClass = "status-new";
-
-            cardDiv.innerHTML = `
-                <div class="drag-handle" title="Drag to reorder">
-                    <i class="fas fa-grip-vertical"></i>
-                </div>
-                <div class="ml-6"> <div class="flex justify-between items-start mb-1 sm:mb-2">
-                        <div>
-                            <h3 class="text-xs font-semibold ${typeColorClass} uppercase tracking-wider">${cardData.type}</h3>
-                            <h4 class="text-base sm:text-lg font-bold text-gray-800">${cardData.trade || 'General Item'}</h4>
-                            <p class="text-xs text-gray-500 mt-0.5">${cardData.date || new Date().toLocaleString('en-US', { /* ... date options ... */ })}</p>
-                        </div>
-                        <span class="status-badge ${statusClass}">${cardData.status || 'new'}</span>
-                    </div>
-                    <p class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">Not Scheduled</p>
-                    <div class="mb-2 sm:mb-3">
-                        <p class="text-xs text-gray-400 uppercase font-semibold">NOTES</p>
-                        <p class="text-xs sm:text-sm text-gray-700">${cardData.notes || 'No notes.'}</p>
-                    </div>
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                        <div class="flex-grow bid-attachment-info mr-0 sm:mr-2 mb-2 sm:mb-0 w-full sm:w-auto">
-                            <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
-                            <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>
-                        </div>
-                        <div class="flex space-x-2 card-actions flex-shrink-0 w-full sm:w-auto justify-end sm:justify-normal">
-                            <button class="flow-button-secondary btn-schedule text-xs sm:text-sm"><i class="fas fa-calendar-alt mr-1 sm:mr-1.5"></i>Schedule</button>
-                            <button class="flow-button-primary btn-upload text-xs sm:text-sm"><i class="fas fa-upload mr-1 sm:mr-1.5"></i>Upload</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            return cardDiv;
-        }
-
-        function populateInitialCards() {
-            initialCardsData.forEach(cardData => {
-                const cardElement = createFlowCardHTML(cardData);
-                flowCardContainer.appendChild(cardElement);
+                    this.classList.add('active');
+                    const targetPaneId = this.dataset.tab + 'Content';
+                    const targetPane = document.getElementById(targetPaneId);
+                    if (targetPane) {
+                        targetPane.classList.remove('hidden');
+                    } else {
+                         console.warn('Target pane not found for tab:', this.dataset.tab);
+                    }
+                });
             });
-        }
-
-        function displayAttachedFile(cardElement, file, isArchived = false) {
-            const bidAttachmentInfo = cardElement.querySelector('.bid-attachment-info');
-            const cardActions = cardElement.querySelector('.card-actions');
-
-            if (bidAttachmentInfo) {
-                bidAttachmentInfo.innerHTML = `
-                    <div class="attached-file-info-display flex-grow">
-                        <i class="fas ${isArchived ? 'fa-archive text-yellow-500' : 'fa-paperclip text-green-500'} file-icon"></i>
-                        <span class="file-name">${file.name} ${isArchived ? '(Archived)' : ''}</span>
-                    </div>
-                `;
-            }
-
-            if (cardActions) {
-                cardActions.innerHTML = '';
-                cardActions.classList.add('justify-end', 'sm:justify-normal');
-
-                if (isArchived) {
-                    const unarchiveButton = document.createElement('button');
-                    unarchiveButton.className = 'flow-button-secondary file-actions';
-                    unarchiveButton.innerHTML = '<i class="fas fa-undo mr-1"></i>Unarchive';
-                    unarchiveButton.title = "Unarchive Bid";
-                    unarchiveButton.onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Are you sure you want to unarchive ${file.name}?`)) {
-                            alert(`Simulating: Unarchiving ${file.name}. File would become active again.`);
-                            displayAttachedFile(cardElement, file, false);
-                        }
-                    };
-                    cardActions.appendChild(unarchiveButton);
-
-                    const removeButton = document.createElement('button');
-                    removeButton.className = 'flow-button-danger file-actions btn-remove';
-                    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                    removeButton.title = "Remove Archived Bid";
-                    removeButton.onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Are you sure you want to remove (delete) the archived file ${file.name}? This will delete the file from Google Drive.`)) {
-                            alert(`Simulating: Removing archived file ${file.name}.`);
-                            bidAttachmentInfo.innerHTML = `
-                                <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
-                                <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
-                            cardActions.innerHTML = '';
-                            const scheduleBtn = document.createElement('button');
-                            scheduleBtn.className = 'flow-button-secondary btn-schedule text-xs sm:text-sm';
-                            scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1 sm:mr-1.5"></i>Schedule';
-                            const uploadBtn = document.createElement('button');
-                            uploadBtn.className = 'flow-button-primary btn-upload text-xs sm:text-sm';
-                            uploadBtn.innerHTML = '<i class="fas fa-upload mr-1 sm:mr-1.5"></i>Upload';
-                            cardActions.appendChild(scheduleBtn);
-                            cardActions.appendChild(uploadBtn);
-                        }
-                    };
-                    cardActions.appendChild(removeButton);
-
-                } else {
-                    const viewButton = document.createElement('button');
-                    viewButton.className = 'flow-button-secondary file-actions btn-view';
-                    viewButton.innerHTML = '<i class="fas fa-eye"></i>';
-                    viewButton.title = "View Bid";
-                    viewButton.onclick = () => alert(`Simulating: Viewing ${file.name}`);
-                    cardActions.appendChild(viewButton);
-
-                    const archiveButton = document.createElement('button');
-                    archiveButton.className = 'flow-button-secondary file-actions btn-archive';
-                    archiveButton.innerHTML = '<i class="fas fa-archive"></i>';
-                    archiveButton.title = "Archive Bid";
-                    archiveButton.onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Are you sure you want to archive ${file.name}?`)) {
-                            alert(`Simulating: Archiving ${file.name}.`);
-                            displayAttachedFile(cardElement, file, true);
-                        }
-                    };
-                    cardActions.appendChild(archiveButton);
-
-                    const editButton = document.createElement('button');
-                    editButton.className = 'flow-button-secondary file-actions btn-edit';
-                    editButton.innerHTML = '<i class="fas fa-pencil-alt"></i>';
-                    editButton.title = "Edit Bid (Opens in Drive)";
-                    editButton.onclick = () => alert(`Simulating: Opening ${file.name} in Google Drive for editing.`);
-                    cardActions.appendChild(editButton);
-
-                    const removeButton = document.createElement('button');
-                    removeButton.className = 'flow-button-danger file-actions btn-remove';
-                    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                    removeButton.title = "Remove Bid";
-                    removeButton.onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Are you sure you want to remove ${file.name}? This will delete the file from Google Drive.`)) {
-                            alert(`Simulating: Removing file ${file.name}.`);
-                            bidAttachmentInfo.innerHTML = `
-                                <img src="https://placehold.co/24x24/e0e7ff/4338ca?text=U&font=Inter" alt="User icon" class="w-6 h-6 rounded-full inline-block mr-2">
-                                <span class="text-xs text-gray-500 align-middle">No Bid Attached</span>`;
-                            cardActions.innerHTML = '';
-                            const scheduleBtn = document.createElement('button');
-                            scheduleBtn.className = 'flow-button-secondary btn-schedule text-xs sm:text-sm';
-                            scheduleBtn.innerHTML = '<i class="fas fa-calendar-alt mr-1 sm:mr-1.5"></i>Schedule';
-                            const uploadBtn = document.createElement('button');
-                            uploadBtn.className = 'flow-button-primary btn-upload text-xs sm:text-sm';
-                            uploadBtn.innerHTML = '<i class="fas fa-upload mr-1 sm:mr-1.5"></i>Upload';
-                            cardActions.appendChild(scheduleBtn);
-                            cardActions.appendChild(uploadBtn);
-                        }
-                    };
-                    cardActions.appendChild(removeButton);
+             // Ensure initial active tab is shown
+            const activeTabButton = document.querySelector('.tab-button.active');
+            if (activeTabButton) {
+                const activeTabPaneId = activeTabButton.dataset.tab + 'Content';
+                const activePane = document.getElementById(activeTabPaneId);
+                if (activePane) {
+                    activePane.classList.remove('hidden');
                 }
-            }
-        }
-
-        // --- Event Listeners ---
-        addFlowItemHeaderButton.addEventListener('click', () => {
-            flowItemTypeSelect.value = '';
-            tradeSelect.value = '';
-            flowItemNotes.value = '';
-            tradeSelectContainer.classList.add('hidden');
-            addFlowItemModal.classList.add('active');
-        });
-
-        closeAddFlowItemModalButton.addEventListener('click', () => closeModal(addFlowItemModal));
-        cancelAddFlowItemButton.addEventListener('click', () => closeModal(addFlowItemModal));
-
-        flowItemTypeSelect.addEventListener('change', function() {
-            tradeSelectContainer.classList.toggle('hidden', this.value !== 'Bid Request');
-        });
-
-        confirmAddFlowItemButton.addEventListener('click', () => {
-            const itemType = flowItemTypeSelect.value;
-            const itemTrade = (itemType === 'Bid Request' && tradeSelect.value) ? tradeSelect.value : '';
-            const notes = flowItemNotes.value.trim();
-
-            if (!itemType) {
-                alert("Please select an item type."); return;
-            }
-            if (itemType === 'Bid Request' && !itemTrade) {
-                alert("Please select a trade for the Bid Request."); return;
-            }
-
-            const newCardData = {
-                type: itemType,
-                trade: itemTrade,
-                date: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }),
-                notes: notes || 'No notes provided.',
-                status: 'new',
-                id: `card${Date.now()}`
-            };
-            const newCardElement = createFlowCardHTML(newCardData);
-            flowCardContainer.appendChild(newCardElement);
-            closeModal(addFlowItemModal);
-            alert(`New "${newCardData.type}${itemTrade ? ' - ' + itemTrade : ''}" card added! You can now upload documents or reorder it.`);
-        });
-
-        flowCardContainer.addEventListener('click', function(event) {
-            const target = event.target;
-            const cardElement = target.closest('.flow-card');
-
-            if (target.closest('.btn-upload')) {
-                const trade = cardElement.dataset.trade || '@document';
-                openUploadModalForCard(trade, cardElement);
+                 // Hide all other panes explicitly on load
+                tabPanes.forEach(pane => {
+                    if (pane.id !== activeTabPaneId) {
+                        pane.classList.add('hidden');
+                    }
+                });
             }
         });
-
-        closeUploadModalButton.addEventListener('click', () => closeModal(uploadModal));
-        cancelUploadButton.addEventListener('click', () => closeModal(uploadModal));
-
-        fileUploadInput.addEventListener('change', function(event) {
-            if (event.target.files && event.target.files[0]) {
-                currentFileObjectForUpload = event.target.files[0];
-                selectedFilePreview.innerHTML = `<div class="attached-file-info-display">
-                                                  <i class="fas fa-file-alt file-icon"></i>
-                                                  <span class="file-name">${currentFileObjectForUpload.name} (${(currentFileObjectForUpload.size / 1024).toFixed(1)} KB)</span>
-                                              </div>`;
-                selectedFilePreview.classList.remove('hidden');
-            } else {
-                currentFileObjectForUpload = null;
-                selectedFilePreview.classList.add('hidden');
-                selectedFilePreview.innerHTML = '';
-            }
-        });
-
-        confirmUploadButton.addEventListener('click', function() {
-            if (currentCardElementForUpload && currentFileObjectForUpload) {
-                displayAttachedFile(currentCardElementForUpload, currentFileObjectForUpload, false);
-                closeModal(uploadModal);
-            } else if (!currentFileObjectForUpload) {
-                alert("Please select a file to upload.");
-            }
-        });
-
-        headerCalendarButton.addEventListener('click', () => alert("Simulating: Open Calendar View/Action"));
-        headerUploadButton.addEventListener('click', () => alert("Simulating: Open Generic Project Upload Action"));
-        headerLinkButton.addEventListener('click', () => alert("Simulating: Link Item / Add External Link Action"));
-
-        // --- Initialize Page & Dragula ---
-        document.addEventListener('DOMContentLoaded', () => {
-            populateInitialCards();
-            // Initialize Dragula for reordering cards
-            window.drake = dragula([flowCardContainer], {
-                // Only allow dragging when the .drag-handle element is clicked
-                moves: function (el, source, handle, sibling) {
-                    return handle.classList.contains('drag-handle') || handle.closest('.drag-handle');
-                }
-            });
-        });
-
     </script>
+
 </body>
 </html>
-```
