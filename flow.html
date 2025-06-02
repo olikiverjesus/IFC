@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Flow View - Comprehensive Interactive Simulation</title>
+    <title>Project Flow View - New Layout</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -11,72 +11,136 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa; /* Main page background */
+            background-color: #f8f9fa; 
         }
         .page-container {
             max-width: 1000px; 
             margin: 0 auto;
             background-color: white; 
         }
-        /* Top Navigation Bar (e.g., "< Projects") */
+        /* Top Navigation Bar: "< Back" */
         .top-nav-bar {
             background-color: white; padding: 0.75rem 1.5rem;
             border-bottom: 1px solid #e2e8f0; display: flex; align-items: center;
         }
         .top-nav-bar a {
-            color: #4a5568; text-decoration: none; display: flex;
+            color: #374151; /* gray-700 */ text-decoration: none; display: flex;
             align-items: center; font-size: 0.875rem; font-weight: 500;
         }
         .top-nav-bar svg { width: 1.25rem; height: 1.25rem; margin-right: 0.375rem; }
 
-        /* Project Header Area (Avatar, Name, Details, +Add Record) */
-        .header-content-wrapper { background-color: white; padding: 1.5rem; }
-        .project-primary-info-top {
-            display: flex; flex-direction: column; md:flex-direction: row; 
-            justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; 
+        /* Project Header Area */
+        .project-header-container {
+            background-color: white;
+            padding: 1.5rem;
+            /* No bottom border here, border is after action icons */
         }
-        .project-details { display: flex; align-items: center; margin-bottom: 1rem; md:margin-bottom: 0; }
-        .project-avatar { width: 4rem; height: 4rem; border-radius: 0.5rem; object-fit: cover; margin-right: 1rem; background-color: #e2e8f0; }
-        .project-name-and-button { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
-        .project-name { font-size: 1.25rem; font-weight: 600; color: #1f293b; }
-        .add-record-button { 
-            background-color: transparent; color: #2563eb; font-size: 0.875rem; 
-            font-weight: 500; padding: 0.125rem 0; white-space: nowrap; cursor: pointer;
+        .project-header-main {
+            display: flex;
+            flex-direction: column; /* Stack on small screens */
+            md:flex-direction: row; /* Side-by-side on medium */
+            gap: 1.5rem; /* Gap between avatar block and info columns */
+            margin-bottom: 1rem; /* Space before action icon buttons */
         }
-        .add-record-button:hover { color: #1d4ed8; text-decoration: underline;}
-        .project-sub-details { font-size: 0.875rem; color: #475569; }
-        .project-sub-details p { margin-bottom: 0.125rem; line-height: 1.4; }
-        .project-sub-details a { color: #2563eb; }
-        .project-sub-details a:hover { text-decoration: underline; }
+        .project-header-avatar-name {
+            display: flex;
+            align-items: flex-start; 
+            flex-shrink: 0;
+        }
+        .project-avatar {
+            width: 4.5rem; /* 72px */
+            height: 4.5rem; /* 72px */
+            border-radius: 0.375rem; /* 6px */
+            object-fit: cover;
+            margin-right: 1rem;
+            background-color: #e2e8f0; /* Placeholder bg */
+        }
+        .project-header-details-col1 { /* Name, status, address, email, phone */
+            flex-grow: 1;
+        }
+        .project-name {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            color: #1f293b;
+            margin-bottom: 0.125rem;
+        }
+        .project-status-duration {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* gray-600 */
+            margin-bottom: 0.375rem;
+        }
+        .project-contact-item {
+            font-size: 0.875rem;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.125rem;
+        }
+        .project-contact-item svg {
+            width: 1rem; height: 1rem;
+            margin-right: 0.5rem;
+            color: #9ca3af; /* gray-400 */
+        }
+        .project-contact-item a { color: #2563eb; }
+        .project-contact-item a:hover { text-decoration: underline; }
 
-        /* Action Pills Bar (3+, CONVO, FLOW, STATUS, Icons) */
-        .action-pills-bar {
-            display: flex; align-items: center; padding: 0.75rem 1.5rem; 
-            background-color: white; border-bottom: 1px solid #e2e8f0; 
+        .project-header-details-col2 { /* Last contacted, sales rep, insurance */
+            flex-shrink: 0;
+            width: auto;
+            md:width: 220px; 
+            md:text-left; /* Align text to left as per image */
+            padding-top: 0.25rem; /* Align with top of name */
         }
-        .action-pill {
-            background-color: #E0E7FF; color: #3730A3; padding: 0.375rem 0.875rem; 
-            border-radius: 9999px; font-size: 0.8rem; font-weight: 500;
-            margin-right: 0.5rem; display: inline-flex; align-items: center; cursor: pointer;
-            border: 1px solid #C7D2FE; 
+        .project-header-details-col2 .detail-item {
+            margin-bottom: 0.5rem;
         }
-        .action-pill.highlight { background-color: #3B82F6; color: white; border-color: #2563EB; }
-        .action-icon-buttons { display: flex; align-items: center; margin-left: auto; gap: 0.25rem; }
-        .action-icon-buttons button {
-            color: #6b7280; padding: 0.5rem; border-radius: 9999px; background: none; border: none; cursor: pointer;
+        .project-header-details-col2 .detail-label {
+            font-size: 0.625rem; /* 10px */
+            color: #6b7280; /* gray-500 */
+            text-transform: uppercase;
+            font-weight: 500;
+            display: block;
         }
-        .action-icon-buttons button:hover { background-color: #f3f4f6; color: #1f293b; }
-        .action-icon-buttons svg, .action-icon-buttons i { font-size: 1.125rem; width: 1.125rem; height: 1.125rem; }
+        .project-header-details-col2 .detail-value {
+            font-size: 0.875rem;
+            color: #1f293b;
+            font-weight: 500;
+        }
+        .project-header-actions { /* Row for the three icon buttons */
+            margin-top: 1rem; /* Space above this row */
+            padding-bottom: 1rem; /* Space below this row */
+            display: flex;
+            gap: 0.75rem; /* 12px */
+            border-bottom: 1px solid #e2e8f0; /* Border below icons */
+        }
+        .project-header-action-btn {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #4b5563; /* gray-600 */
+            padding: 0.5rem;
+            border-radius: 0.375rem; /* 6px */
+            border: 1px solid #e5e7eb; /* gray-200 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .project-header-action-btn:hover { background-color: #e5e7eb; }
+        .project-header-action-btn i, .project-header-action-btn svg { font-size: 0.875rem; width: 0.875rem; height: 0.875rem; } /* Smaller icons */
 
-        /* Main Navigation Tabs (SNAPSHOTS, FLOW, etc.) */
+        /* Main Navigation Tabs */
         .tabs-container {
             background-color: white; border-bottom: 1px solid #e2e8f0;
-            padding: 0 1.5rem; overflow-x: auto; white-space: nowrap;
+            padding: 0 0.5rem; 
+            display: flex; align-items: center;
             position: sticky; top: 0; z-index: 10;
         }
+        .tab-scroll-btn { color: #9ca3af; padding: 0.5rem; cursor: pointer; } 
+        .tab-scroll-btn:hover { color: #4b5563; }
+        .tab-list-wrapper { flex-grow: 1; overflow-x: auto; white-space: nowrap; text-align: center; } 
         .tab-button {
-            padding: 0.75rem 1rem; margin-right: 0.5rem; border: none; background: none; 
-            color: #475569; font-weight: 500; font-size: 0.875rem;
+            padding: 0.75rem 1rem; margin: 0 0.125rem; 
+            border: none; background: none; color: #475569;
+            font-weight: 500; font-size: 0.875rem;
             border-bottom: 3px solid transparent; cursor: pointer;
             transition: color 0.2s, border-color 0.2s; display: inline-block;
         }
@@ -94,13 +158,13 @@
         .drag-handle { color: #9ca3af; margin-right: 0.5rem; cursor: grab; padding-top: 0.375rem; }
         .drag-handle i { font-size: 1rem; } 
         .flow-card-title-section { flex-grow: 1; }
-        .flow-card-type { font-size: 0.625rem; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
-        .flow-card-title { font-size: 1rem; font-weight: 600; color: #1f293b; margin-top: 0.125rem; }
-        .flow-card-header-right { display: flex; align-items: center; margin-left: auto; }
+        .flow-card-type { font-size: 0.75rem; font-weight: 500; color: #4b5563; text-transform: uppercase; letter-spacing: 0.025em; display: block; margin-bottom: 0.125rem;}
+        .flow-card-title { font-size: 1.125rem; font-weight: 600; color: #1f293b; }
+        .flow-card-header-right { display: flex; align-items: center; margin-left: auto; gap: 0.5rem; }
         .flow-card-primary-status-tag { 
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; 
             border-radius: 0.25rem; background-color: #f3f4f6; color: #4b5563; 
-            border: 1px solid #e5e7eb; display: inline-flex; align-items: center; margin-right: 0.5rem; 
+            border: 1px solid #e5e7eb; display: inline-flex; align-items: center; 
             cursor: pointer; 
         }
         .flow-card-primary-status-tag svg { width: 0.75rem; height: 0.75rem; margin-left: 0.25rem; }
@@ -116,10 +180,10 @@
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.625rem; 
             border-radius: 0.75rem; border: 1px solid;
         }
-        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } /* Amber */
-        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } /* Red */
-        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } /* Green */
-        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } /* Indigo */
+        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } 
+        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } 
+        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } 
+        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } 
 
         .flow-card-attachment { display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-left: 1.75rem; }
         .flow-card-attachment-details { display: flex; align-items: center; }
@@ -130,12 +194,15 @@
         }
         .flow-card-filename { font-size: 0.875rem; color: #2563eb; cursor: pointer; }
         .flow-card-filename:hover { text-decoration: underline; }
-        /* .flow-card-view-files-btn was removed as file actions bar is more comprehensive */
-        .file-actions-bar { display: flex; gap: 0.5rem; align-items: center; } 
+        .flow-card-view-files-btn {
+            font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; 
+            padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none; cursor: pointer;
+        }
+        .flow-card-view-files-btn:hover { background-color: #1c3274; } 
+        .file-actions-bar { display: flex; gap: 0.5rem; margin-top: 0.25rem; align-items: center; } 
         .file-action-btn { font-size: 0.75rem; color: #4b5563; padding: 0.125rem 0.25rem; cursor: pointer; background: none; border: none; }
         .file-action-btn:hover { text-decoration: underline; color: #1f293b; }
-        .file-action-btn i { margin-right: 0.25rem; /* Space for icon if text is also used */ }
-
+        .file-action-btn i { margin-right: 0.25rem; }
 
         .flow-card-actions { margin-top: 0.75rem; padding-left: 1.75rem; display: flex; gap: 0.5rem; }
         .flow-card-action-btn {
@@ -169,69 +236,95 @@
     </style>
 </head>
 <body>
+    <!-- 
+    🌊 FLOW Functionality - Comprehensive Developer Guide & Specifications
+    (Full comment block with all 7 points and sub-points as provided by the user)
+    -->
+
     <div class="min-h-screen page-container">
         <div class="top-nav-bar">
             <a href="#" title="Back to Projects">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-                </svg>
-                Projects
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1"><path fill-rule="evenodd" d="M11.28 5.22a.75.75 0 00-1.06 0L6.97 8.47a.75.75 0 000 1.06l3.25 3.25a.75.75 0 101.06-1.06L9.06 10l2.22-2.22a.75.75 0 000-1.06z" clip-rule="evenodd" /></svg>
+                Back
             </a>
         </div>
 
-        <div class="header-content-wrapper">
-            <div class="project-primary-info-top">
-                <div class="project-details">
-                    <img src="https://placehold.co/64x64/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
-                    <div>
-                        <div class="project-name-and-button">
-                            <h1 class="project-name">Julián Ortiz</h1>
-                            <button class="add-record-button" id="projectAddRecordBtn" title="Add a general project record">+ Add Record</button>
-                        </div>
-                        <div class="project-sub-details"> 
-                            <p>Sales rep: Syris</p>
-                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
-                            <p><a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a></p>
-                            <p><a href="tel:6892674350">(689) 267-4350</a></p>
-                        </div>
+        <div class="project-header-container">
+            <div class="project-header-main">
+                <div class="project-header-avatar-name">
+                    <img src="https://placehold.co/72x72/A5B4FC/1E3A8A?text=JO" alt="Client Avatar" class="project-avatar">
+                    <div class="project-header-details-col1">
+                        <h1 class="project-name">Julián Ortiz</h1>
+                        <p class="project-status-duration">LEAD - For 13 days</p>
+                        <p class="project-contact-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.145l.002-.001L10 18.41l.293.293a1 1 0 001.414-1.414L10 15.586l1.293-1.293a1 1 0 00-1.414-1.414L10 14.172l-1.293-1.293a1 1 0 00-1.414 1.414L8.707 15.586 10 16.879l1.293-1.293a1 1 0 00-1.414-1.414L10 14.172l.293.293a1 1 0 001.414-1.414L10 11.586l4.243 4.242a1 1 0 001.414-1.414L11.414 10l2.829-2.828a1 1 0 10-1.414-1.414L10 8.586 7.172 5.757a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l.293.293a1 1 0 001.414-1.414L10 8.586l2.828-2.829a1 1 0 00-1.414-1.414L10 5.757 6.757 2.514a1 1 0 00-1.414 1.414L8.414 7H5.75A2.75 2.75 0 003 9.75v.5A2.75 2.75 0 005.75 13h4.5a2.75 2.75 0 002.75-2.75v-.5A2.75 2.75 0 0010.25 7h-1.5a.75.75 0 000 1.5h1.5a1.25 1.25 0 011.25 1.25v.5A1.25 1.25 0 0110.25 11.5h-4.5A1.25 1.25 0 014.5 10.25v-.5A1.25 1.25 0 015.75 8.5h2.75a.75.75 0 000-1.5H5.75A2.75 2.75 0 003 9.75v.5A2.75 2.75 0 005.75 13h4.5a2.75 2.75 0 002.75-2.75v-.5A2.75 2.75 0 0010.25 7H8.5a.75.75 0 000-1.5h1.75A2.75 2.75 0 0013 2.75V2.5A2.75 2.75 0 0010.25 0H9.69z" clip-rule="evenodd" /></svg>
+                            <span>56 Bates Rd, Brockton, Massachusetts 02302</span>
+                        </p>
+                        <p class="project-contact-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" /><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" /></svg>
+                            <a href="mailto:or.julian.s@gmail.com">or.julian.s@gmail.com</a>
+                        </p>
+                        <p class="project-contact-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clip-rule="evenodd" /></svg>
+                            <a href="tel:6892674350">(689) 267-4350</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="project-header-details-col2">
+                    <div class="detail-item">
+                        <span class="detail-label">LAST CONTACTED</span>
+                        <span class="detail-value">Never</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">SALES REP</span>
+                        <span class="detail-value">Syna</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">INSURANCE COMPANY</span>
+                        <span class="detail-value">-</span>
+                    </div>
+                     <div class="detail-item">
+                        <span class="detail-label">CLAIM NUMBER</span>
+                        <span class="detail-value">-</span>
                     </div>
                 </div>
             </div>
+            <div class="project-header-actions">
+                <button title="View Project Documents" id="headerDocButton" class="project-header-action-btn"><i class="fas fa-file-alt"></i></button>
+                <button title="View Project Calendar" id="headerCalendarButton" class="project-header-action-btn"><i class="fas fa-calendar-alt"></i></button>
+                <button title="Add New Flow Item" id="addNewFlowItemBtn" class="project-header-action-btn"><i class="fas fa-plus"></i></button>
+            </div>
         </div>
         
-        <div class="action-pills-bar">
-            <div>
-                <span class="action-pill highlight" id="actionPill3Plus" title="More project actions">3+</span>
-                <span class="action-pill" id="actionPillConvo" title="Open Conversations">CONVO</span>
-                <span class="action-pill" id="actionPillFlow" title="View Project Flow">FLOW</span>
-                <span class="action-pill" id="actionPillStatus" title="View Project Status">STATUS</span>
-            </div>
-            <div class="action-icon-buttons">
-                <button title="View Project Documents" id="headerDocButton"><i class="fas fa-file-lines"></i></button>
-                <button title="View Project Calendar" id="headerCalendarButton"><i class="fas fa-calendar-days"></i></button>
-                <button title="Add New Flow Item" id="addNewFlowItemBtn"><i class="fas fa-plus"></i></button>
-            </div>
-        </div>
-
         <div class="tabs-container">
-            <button class="tab-button" data-tab="snapshots" title="View Project Snapshots">SNAPSHOTS</button>
-            <button class="tab-button active" data-tab="flow" title="View Project Flow">FLOW</button>
-            <button class="tab-button" data-tab="status" title="View Overall Project Status">STATUS</button>
-            <button class="tab-button" data-tab="tasks" title="View Project Tasks">TASKS</button>
-            <button class="tab-button" data-tab="tickets" title="View Project Tickets">TICKETS</button>
-            <button class="tab-button" data-tab="details" title="View Full Project Details">DETAILS</button>
-            <button class="tab-button" data-tab="contact" title="View Project Contacts">CONTACT</button>
+            <button class="tab-scroll-btn" id="tabScrollLeft" aria-label="Scroll tabs left">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" /></svg>
+            </button>
+            <div class="tab-list-wrapper" id="tabListWrapper">
+                <button class="tab-button" data-tab="snapshots" title="View Project Snapshots">SNAPSHOTS</button>
+                <button class="tab-button" data-tab="plus3" title="More Options">3+</button>
+                <button class="tab-button" data-tab="convo" title="View Conversations">CONVO</button>
+                <button class="tab-button active" data-tab="flow" title="View Project Flow">FLOW</button>
+                <button class="tab-button" data-tab="status" title="View Overall Project Status">STATUS</button>
+                <button class="tab-button" data-tab="tasks" title="View Project Tasks">TASKS</button>
+                <button class="tab-button" data-tab="tickets" title="View Project Tickets">TICKETS</button>
+                <button class="tab-button" data-tab="details" title="View Full Project Details">DETAILS</button>
+                </div>
+            <button class="tab-scroll-btn" id="tabScrollRight" aria-label="Scroll tabs right">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" /></svg>
+            </button>
         </div>
 
         <div class="tab-content-area">
-            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content (Placeholder)</h2><p>This section will display project overview, key metrics, and summaries.</p></div>
+            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2></div>
+            <div id="plus3Content" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">3+ Content</h2></div>
+            <div id="convoContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Convo Content</h2></div>
             <div id="flowContent" class="tab-pane">
                 </div>
-            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content (Placeholder)</h2><p>Detailed status information and history for the overall project will appear here.</p></div>
-            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content (Placeholder)</h2><p>Task management for this project will appear here.</p></div>
-            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content (Placeholder)</h2><p>Support tickets related to this project will appear here.</p></div>
-            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content (Placeholder)</h2><p>Full, comprehensive project details will appear here.</p></div>
-            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content (Placeholder)</h2><p>Contact information and management related to this project will appear here.</p></div>
+            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content</h2></div>
+            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
+            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
         </div>
     </div>
 
@@ -251,7 +344,9 @@
                         <option value="project_doc">Project Document</option>
                         <option value="material_pickup">Material Pickup</option>
                         <option value="bill_home">Bill Home</option>
-                        <option value="ifc_hub">@IFC Project Hub</option> <option value="trade_card">Trade Card (Generic)</option> <option value="other">Other</option>
+                        <option value="ifc_hub">@IFC Project Hub</option> 
+                        <option value="trade_card">Trade Card (Generic)</option> 
+                        <option value="other">Other</option>
                     </select>
                 </div>
                 <div class="form-group hidden" id="tradeGroup">
@@ -265,12 +360,12 @@
                         <option value="@pool">@pool</option>
                         <option value="@repair">@repair</option>
                         <option value="@skylight">@skylight</option>
-                        </select>
+                    </select>
                 </div>
                  <div class="form-group">
                     <label for="flowItemTitle" class="form-label">Title / Identifier <span class="text-red-500">*</span></label>
                     <input type="text" id="flowItemTitle" name="flowItemTitle" class="form-input" placeholder="e.g., @pool, Roof Tear Off, Final Walkthrough" required>
-                    </div>
+                </div>
                 <div class="form-group">
                     <label for="flowItemNotes" class="form-label">Notes</label>
                     <textarea id="flowItemNotes" name="flowItemNotes" rows="3" class="form-textarea"></textarea>
@@ -286,10 +381,12 @@
     <div id="uploadFileModal" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="uploadModalTitle">Upload File</h3> <button class="modal-close-btn" id="closeUploadModalBtn" aria-label="Close modal">&times;</button>
+                <h3 class="modal-title" id="uploadModalTitle">Upload File</h3> 
+                <button class="modal-close-btn" id="closeUploadModalBtn" aria-label="Close modal">&times;</button>
             </div>
             <form id="uploadFileForm">
-                <input type="hidden" id="uploadCardId"> <div class="form-group">
+                <input type="hidden" id="uploadCardId"> 
+                <div class="form-group">
                     <label for="fileInput" class="form-file-input-label" id="fileDropArea">
                         <span id="fileInputLabelText">Click or drag file here</span>
                         <input type="file" id="fileInput" class="hidden" multiple> 
@@ -306,7 +403,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
-        // JavaScript for interactivity 
         document.addEventListener('DOMContentLoaded', function () {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
@@ -336,16 +432,16 @@
             let flowCardsData = [
                 {
                     id: 'card-ifc1', 
-                    type: 'PROJECT HUB', 
-                    title: '@IFC - Julián Ortiz Project',
-                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }), 
-                    notes: 'Main project information and overview. All trades and activities link back here. This card represents the overall project status and can contain high-level documents or links.',
+                    type: 'PROJECT CREATED', 
+                    title: '@ifc', 
+                    timestamp: 'Wed, May 7, 2025, 10:12:25 AM', 
+                    notes: '@ifc testing',
                     scheduledFor: null,
-                    primaryStatus: 'Active',
-                    attachments: [{ name: 'Project_Charter_v1.pdf', userInitials: 'JO', url: '#' }],
-                    secondaryTags: [{text: 'High Priority', type: 'action'}, {text: 'Phase 1: Planning', type: 'default'}],
-                    detailsProgress: 10, 
-                    financialEmoji: '⏳',
+                    primaryStatus: 'Info', 
+                    attachments: [{ name: 'No Contract Attached', userInitials: 'S', isPlaceholder: true }], 
+                    secondaryTags: [],
+                    detailsProgress: 0, 
+                    financialEmoji: null,
                     phases: [] 
                 },
                 {
@@ -353,60 +449,31 @@
                     type: 'BID REQUEST',
                     title: '@pool',
                     timestamp: 'Tue, May 20, 2025, 3:38:22 PM',
-                    notes: 'TestQA - Client requested a quote for pool resurfacing and new tile work. Needs quick turnaround.',
-                    scheduledFor: null,
+                    notes: 'TestQA',
+                    scheduledFor: null, 
                     primaryStatus: 'Requested',
-                    attachments: [{ name: 'Pool_Inspiration_11619772.jpg', userInitials: 'CC', url: '#' }],
-                    secondaryTags: [{text: 'Needs Follow-up', type: 'action'}, {text: 'Client Provided Specs', type: 'default'}],
-                    detailsProgress: 25, 
-                    financialEmoji: '💰',
+                    attachments: [{ name: '11619772.jpg', userInitials: 'CC', url: '#' }],
+                    secondaryTags: [], 
+                    detailsProgress: 0, 
+                    financialEmoji: null,
                     phases: [] 
                 },
                 {
                     id: 'card-roofrepair1',
-                    type: 'ROOF WORK', // Changed from BID REQUEST to represent an active trade
+                    type: 'BID REQUEST', 
                     title: '@roofrepair',
                     timestamp: 'Wed, May 14, 2025, 11:52:46 AM',
-                    notes: 'Full shingle replacement, check for decking damage. Use CertainTeed Landmark Weathered Wood.',
-                    scheduledFor: null, // Overall schedule for the trade, phases have specific dates
-                    primaryStatus: 'In Progress', 
-                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }, {name: 'Roof_Spec_Sheet_v2.pdf', userInitials: 'WM', url:'#'}],
-                    secondaryTags: [{text: 'Scheduled', type: 'scheduled'}, {text: 'Pickup Material', type: 'action'}],
-                    detailsProgress: 80,
-                    financialEmoji: '👍',
+                    notes: 'This is cool',
+                    scheduledFor: 'Sat, May 31, 2025', 
+                    primaryStatus: 'Requested', 
+                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }],
+                    secondaryTags: [], 
+                    detailsProgress: 0,
+                    financialEmoji: null,
                     phases: [ 
                         { name: 'Tear Off & Dry-in', startDate: '2025-06-02', endDate: '2025-06-03', status: 'Pending Stucco', notes: 'Schedule dumpster drop-off. Stucco tie-in required.'},
                         { name: 'Shingle Install', startDate: '2025-06-04', endDate: '2025-06-06', status: 'Not Started', notes: 'Verify shingle color match with client prior to install.'},
-                        { name: 'Final Inspection', startDate: '2025-06-07', endDate: '2025-06-07', status: 'Not Started', notes: 'Coordinate with homeowner for final walkthrough.'}
                     ]
-                },
-                {
-                    id: 'card-materialpickup1',
-                    type: 'MATERIAL PICKUP',
-                    title: 'Shingles & Underlayment for @roofrepair',
-                    timestamp: 'Thu, May 15, 2025, 09:00:00 AM',
-                    notes: 'Pick up from ABC Supply. PO#12345. Confirm quantity matches SOT. Deliver to Julián Ortiz job site.',
-                    scheduledFor: 'Fri, May 16, 2025',
-                    primaryStatus: 'Completed', 
-                    attachments: [{name: 'Pickup_Confirmation.pdf', userInitials: 'SY', url: '#'}],
-                    secondaryTags: [{text: 'Materials Acquired', type: 'warranty-done'}], 
-                    detailsProgress: 100,
-                    financialEmoji: null,
-                    phases: []
-                },
-                 {
-                    id: 'card-punchlist1',
-                    type: 'PUNCHLIST ITEM',
-                    title: 'Fix gutter alignment - @gutters (West Side)',
-                    timestamp: 'Mon, May 26, 2025, 10:00:00 AM',
-                    notes: 'Client reported slight misalignment on the west side after initial gutter install. Requires adjustment and re-securing.',
-                    scheduledFor: 'Wed, May 28, 2025',
-                    primaryStatus: 'To Do',
-                    attachments: [],
-                    secondaryTags: [{text: 'Leak Repair Done', type: 'warranty-done'}, {text: 'Client Notified', type: 'default'}],
-                    detailsProgress: 50,
-                    financialEmoji: '👏',
-                    phases: [] 
                 }
             ];
 
@@ -437,7 +504,7 @@
                 tradeGroup.classList.toggle('hidden', !showTrade);
                 flowItemTradeSelect.required = showTrade;
                  if (!showTrade) {
-                    flowItemTradeSelect.value = ''; // Clear trade if not applicable
+                    flowItemTradeSelect.value = ''; 
                     flowItemTitleInput.placeholder = "e.g., Final Walkthrough, Warranty Check";
                 } else {
                     flowItemTitleInput.placeholder = "e.g., @pool or specific description";
@@ -445,7 +512,7 @@
             });
             
             flowItemTradeSelect.addEventListener('change', function() {
-                if ((flowItemTypeSelect.value === 'bid_request' || flowItemTypeSelect.value === 'trade_card') && this.value && !flowItemTitleInput.value) {
+                if ((flowItemTypeSelect.value === 'bid_request' || flowItemTypeSelect.value === 'trade_card') && this.value && !flowItemTitleInput.value.startsWith('@')) {
                     flowItemTitleInput.value = this.selectedOptions[0].text;
                 }
             });
@@ -487,7 +554,7 @@
                 this.reset();
                 tradeGroup.classList.add('hidden');
                 flowItemTradeSelect.required = false;
-                alert(`Flow card "${newCardData.title}" created (simulated)!`);
+                alert(\`Flow card "\${newCardData.title}" created (simulated)!\`);
             });
 
             // --- Render Flow Cards ---
@@ -515,51 +582,54 @@
                 let secondaryTagsHTML = '';
                 if (data.secondaryTags && data.secondaryTags.length > 0) {
                     secondaryTagsHTML = data.secondaryTags.map(tag => 
-                        `<span class="flow-card-secondary-tag ${getTagClass(tag.type)}">${tag.text}</span>`
+                        \`<span class="flow-card-secondary-tag \${getTagClass(tag.type)}">\${tag.text}</span>\`
                     ).join('');
                 }
                 
                 let attachmentSectionHTML = '';
-                if (data.attachments && data.attachments.length > 0) {
-                    attachmentSectionHTML = data.attachments.map(attachment => `
-                        <div class="flow-card-attachment" data-filename="${attachment.name}">
-                            <div class="flow-card-attachment-details">
-                                <div class="flow-card-attachment-user avatar-initials">${attachment.userInitials}</div>
-                                <span class="flow-card-filename" title="Click to view ${attachment.name}">${attachment.name}</span>
-                            </div>
-                            <div class="file-actions-bar">
-                                <button class="file-action-btn view-file-btn" title="View File"><i class="fas fa-eye"></i></button>
-                                <button class="file-action-btn archive-file-btn" title="Archive File"><i class="fas fa-archive"></i></button>
-                                <button class="file-action-btn edit-file-btn" title="Edit File Details"><i class="fas fa-pencil-alt"></i></button>
-                                <button class="file-action-btn remove-file-btn" title="Remove File"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                     attachmentSectionHTML = `
+                if (data.attachments && data.attachments.length > 0 && data.attachments[0].isPlaceholder) {
+                     attachmentSectionHTML = \`
                         <div class="flow-card-attachment">
                             <div class="flow-card-attachment-details">
-                                <span class="text-xs text-gray-400 italic">No Documents Attached</span>
+                                <span class="text-xs text-gray-500 italic">\${data.attachments[0].name}</span>
+                            </div>
+                            <div class="flow-card-attachment-user avatar-initials">\${data.attachments[0].userInitials}</div>
+                            </div>\`;
+                } else if (data.attachments && data.attachments.length > 0) {
+                    attachmentSectionHTML = data.attachments.map(attachment => \`
+                        <div class="flow-card-attachment" data-filename="\${attachment.name}">
+                            <div class="flow-card-attachment-details">
+                                <div class="flow-card-attachment-user avatar-initials">\${attachment.userInitials}</div>
+                                <span class="flow-card-filename" title="Click to view \${attachment.name}">\${attachment.name}</span>
+                            </div>
+                            <button class="flow-card-view-files-btn">View Files</button> 
+                            </div>
+                    \`).join('');
+                } else { 
+                     attachmentSectionHTML = \`
+                        <div class="flow-card-attachment">
+                            <div class="flow-card-attachment-details">
+                                <span class="text-xs text-gray-400 italic">No Bid/Contract Attached</span>
                             </div>
                             <button class="flow-card-action-btn upload-bid-btn">Upload</button>
-                        </div>`;
+                        </div>\`;
                 }
                 
                 let phasesHTML = '';
                 if (data.phases && Array.isArray(data.phases) && data.phases.length > 0) {
-                    phasesHTML += `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>`;
+                    phasesHTML += \`<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>\`;
                     data.phases.forEach((phase, index) => {
-                        phasesHTML += `<div class="pl-2 my-2 py-1 border-l-2 border-slate-200">
-                                         <p class="text-sm font-medium text-slate-700">${phase.name}</p>
-                                         <p class="text-xs text-slate-500">Start: ${phase.startDate || 'N/A'} - End: ${phase.endDate || 'N/A'} - Status: ${phase.status}</p>
-                                         ${phase.notes ? `<p class="text-xs text-slate-500 italic">Note: ${phase.notes}</p>` : ''}
-                                       </div>`;
+                        phasesHTML += \`<div class="pl-2 my-2 py-1 border-l-2 border-slate-200">
+                                         <p class="text-sm font-medium text-slate-700">\${phase.name}</p>
+                                         <p class="text-xs text-slate-500">Start: \${phase.startDate || 'N/A'} - End: \${phase.endDate || 'N/A'} - Status: \${phase.status}</p>
+                                         \${phase.notes ? \`<p class="text-xs text-slate-500 italic">Note: \${phase.notes}</p>\` : ''}
+                                       </div>\`;
                     });
-                    phasesHTML += `<button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
+                    phasesHTML += \`<button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="\${data.id}">+ Add Phase</button></div>\`;
                 } else if (data.type.toUpperCase().includes('TRADE') || data.type.toUpperCase().includes('ROOF') || data.type.toUpperCase().includes('POOL') || data.type.toUpperCase().includes('GUTTER')) { 
-                     phasesHTML = `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>
+                     phasesHTML = \`<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>
                                    <p class="text-xs text-gray-400 italic">No phases defined yet.</p>
-                                   <button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
+                                   <button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="\${data.id}">+ Add Phase</button></div>\`;
                 }
 
 
@@ -573,7 +643,7 @@
                             <h4 class="flow-card-title">\${data.title}</h4>
                         </div>
                         <div class="flow-card-header-right">
-                            <span class="flow-card-primary-status-tag">\${data.primaryStatus} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                            <span class="flow-card-primary-status-tag">\${data.primaryStatus || 'Status'} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
                             <div class="flow-card-options">
                                 <button title="More options"><i class="fas fa-ellipsis-v"></i></button>
                             </div>
@@ -584,13 +654,8 @@
                     \${data.scheduledFor && !(data.phases && data.phases.length > 0) ? \`<div class="flow-card-section"><p class="flow-card-section-label">Scheduled For</p><p class="flow-card-section-content">\${data.scheduledFor}</p></div>\` : ''}
                     \${phasesHTML}
                     <div class="flow-card-secondary-tags">\${secondaryTagsHTML}</div>
-                    <div class="progress-indicator">Details: \${data.detailsProgress || 0}% complete <span class="financial-emoji">\${data.financialEmoji || ''}</span></div>
                     \${attachmentSectionHTML}
-                    <div class="flow-card-actions">
-                        <button class="flow-card-action-btn edit-details-btn">Edit Details</button>
-                        <button class="flow-card-action-btn open-in-drive-btn">Open in Drive</button>
-                    </div>
-                \`;
+                    \`;
 
                 // Add event listeners for card-specific actions
                 card.querySelector('.upload-bid-btn')?.addEventListener('click', () => openUploadModal(data.id, data.title));
@@ -598,45 +663,12 @@
                 card.querySelectorAll('.flow-card-filename').forEach(el => {
                     el.addEventListener('click', (e) => alert(\`Simulating: Viewing \${e.target.textContent}\`));
                 });
-                card.querySelectorAll('.view-file-btn').forEach(el => {
+                card.querySelectorAll('.flow-card-view-files-btn').forEach(el => { 
                      el.addEventListener('click', (e) => {
-                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        alert(\`Simulating: Viewing file "\${filename}" for \${data.title}\`);
+                        alert(\`Simulating: Viewing all files for \${data.title}\`);
                     });
                 });
-                 card.querySelectorAll('.archive-file-btn').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        if(confirm(\`Are you sure you want to archive "\${filename}" for \${data.title}?\`)){
-                            alert(\`Simulating: Archiving file "\${filename}" (moved to GDrive Archived folder).\`);
-                            const cardToUpdate = flowCardsData.find(c => c.id === data.id);
-                            if (cardToUpdate && cardToUpdate.attachments) {
-                                const attachment = cardToUpdate.attachments.find(att => att.name === filename);
-                                if (attachment) attachment.archived = true; 
-                                e.target.closest('.file-actions-bar').innerHTML = '<span class="text-xs text-gray-500 italic">Archived</span>';
-                            }
-                        }
-                    });
-                });
-                 card.querySelectorAll('.edit-file-btn').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        alert(\`Simulating: Editing details for file "\${filename}" for \${data.title}.\`);
-                    });
-                });
-                 card.querySelectorAll('.remove-file-btn').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        if(confirm(\`Are you sure you want to PERMANENTLY DELETE "\${filename}" for \${data.title}? This cannot be undone.\`)){
-                            alert(\`Simulating: Deleting file "\${filename}" from GDrive.\`);
-                            const cardToUpdate = flowCardsData.find(c => c.id === data.id);
-                            if (cardToUpdate && cardToUpdate.attachments) {
-                                cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename);
-                                renderFlowCards();
-                            }
-                        }
-                    });
-                });
+                
                 card.querySelectorAll('.add-phase-btn').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const cardId = e.target.dataset.cardId;
@@ -655,11 +687,8 @@
                     alert(\`Simulating: Clicked primary status for "\${data.title}". A dropdown with status options would appear here to change status.\`);
                 });
                  card.querySelector('.flow-card-options button')?.addEventListener('click', () => {
-                    alert(\`Simulating: Clicked more options for "\${data.title}". A menu with 'Add Phase', 'Edit Card Title/Notes', 'View Full History', 'Delete Card' would appear.\`);
+                    alert(\`Simulating: Clicked more options for "\${data.title}". A menu would appear here.\`);
                 });
-
-                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(\`Simulating: Opening detailed construction plan form (like the "Source of Truth Spreadsheet") for "\${data.title}".\`));
-                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(\`Simulating: Opening Google Drive folder for "\${data.title}".\`));
 
                 return card;
             }
@@ -715,6 +744,9 @@
                     if (!flowCardsData[cardIndex].attachments) {
                         flowCardsData[cardIndex].attachments = [];
                     }
+                    if (flowCardsData[cardIndex].attachments.length === 1 && flowCardsData[cardIndex].attachments[0].isPlaceholder) {
+                        flowCardsData[cardIndex].attachments = []; // Remove placeholder
+                    }
                     if (!flowCardsData[cardIndex].attachments.find(att => att.name === fileName)) {
                         flowCardsData[cardIndex].attachments.push({ name: fileName, userInitials: 'ME', url: '#' }); 
                     }
@@ -748,8 +780,6 @@
                         newIndex = target.children.length; 
                     }
                     flowCardsData.splice(newIndex, 0, cardData); 
-                    // console.log(\`Card \${cardId} moved. New data order (simulated):\`, flowCardsData.map(c=>c.title));
-                    // No re-render needed here, Dragula handles the DOM update.
                 });
             } else {
                 console.warn('Dragula library not found. Drag and drop will not work.');
@@ -759,36 +789,28 @@
             document.getElementById('headerDocButton')?.addEventListener('click', () => alert('Simulating: Open Project Documents Folder'));
             document.getElementById('headerCalendarButton')?.addEventListener('click', () => alert('Simulating: Open Project Calendar View'));
             document.getElementById('projectAddRecordBtn')?.addEventListener('click', () => alert('Simulating: Add General Record for Julián Ortiz'));
-            document.getElementById('actionPill3Plus')?.addEventListener('click', () => alert('Simulating: 3+ Action Pill Clicked (More Project Actions)'));
-            document.getElementById('actionPillConvo')?.addEventListener('click', () => {
-                // Simulate switching to CONVO tab
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabPanes.forEach(pane => pane.classList.add('hidden'));
-                const convoTabBtn = document.querySelector('.tab-button[data-tab="contact"]'); // Assuming CONVO is like Contact for now
-                const convoPane = document.getElementById('contactContent'); // Assuming CONVO content is in Contact pane for now
-                if(convoTabBtn && convoPane) {
-                    convoTabBtn.classList.add('active');
-                    convoPane.classList.remove('hidden');
-                    convoPane.innerHTML = '<h2 class="text-xl font-semibold text-slate-700 mb-4">CONVO Content (Placeholder)</h2><p>Project conversations and messages will appear here.</p>';
-                } else {
-                    alert('Simulating: CONVO Action Pill Clicked (Open Project Conversations)');
+            
+            // Simulate tab clicks for action pills
+            const actionPills = {
+                'actionPill3Plus': 'plus3',
+                'actionPillConvo': 'convo',
+                'actionPillFlow': 'flow',
+                'actionPillStatus': 'status'
+            };
+            for (const pillId in actionPills) {
+                const pillElement = document.getElementById(pillId);
+                if (pillElement) {
+                    pillElement.addEventListener('click', () => {
+                        const tabToActivate = actionPills[pillId];
+                        const targetTabButton = document.querySelector(\`.tab-button[data-tab="\${tabToActivate}"]\`);
+                        if (targetTabButton) {
+                            targetTabButton.click(); // Simulate click on the main tab
+                        } else {
+                            alert(\`Simulating: \${pillElement.textContent} Action Pill Clicked (Tab not found)\`);
+                        }
+                    });
                 }
-            });
-            document.getElementById('actionPillFlow')?.addEventListener('click', () => { /* Already on flow tab */ });
-            document.getElementById('actionPillStatus')?.addEventListener('click', () => {
-                 // Simulate switching to STATUS tab
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabPanes.forEach(pane => pane.classList.add('hidden'));
-                const statusTabBtn = document.querySelector('.tab-button[data-tab="status"]');
-                const statusPane = document.getElementById('statusContent');
-                if(statusTabBtn && statusPane) {
-                    statusTabBtn.classList.add('active');
-                    statusPane.classList.remove('hidden');
-                } else {
-                     alert('Simulating: STATUS Action Pill Clicked (View Overall Project Status)');
-                }
-            });
-
+            }
             renderFlowCards();
         });
     </script>
