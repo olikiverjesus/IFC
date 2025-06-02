@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Flow View - Interactive Simulation</title>
+    <title>Project Flow View - Comprehensive Interactive Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
@@ -104,7 +104,7 @@
             cursor: pointer; 
         }
         .flow-card-primary-status-tag svg { width: 0.75rem; height: 0.75rem; margin-left: 0.25rem; }
-        .flow-card-options button { color: #9ca3af; background: none; border: none; cursor: pointer; }
+        .flow-card-options button { color: #9ca3af; background: none; border: none; cursor: pointer; padding:0.25rem; }
         .flow-card-options button:hover { color: #4b5563; }
         .flow-card-timestamp { font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem; padding-left: 1.75rem; } 
         .flow-card-section { margin-bottom: 0.75rem; padding-left: 1.75rem; }
@@ -130,15 +130,11 @@
         }
         .flow-card-filename { font-size: 0.875rem; color: #2563eb; cursor: pointer; }
         .flow-card-filename:hover { text-decoration: underline; }
-        .flow-card-view-files-btn { /* Updated to match image */
-            font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; /* Darker blue */
-            padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none; cursor: pointer;
-        }
-        .flow-card-view-files-btn:hover { background-color: #1c3274; } /* Even darker blue on hover */
-        .file-actions-bar { display: flex; gap: 0.5rem; margin-top: 0.25rem; align-items: center; } /* Added align-items-center */
+        /* .flow-card-view-files-btn was removed as file actions bar is more comprehensive */
+        .file-actions-bar { display: flex; gap: 0.5rem; align-items: center; } 
         .file-action-btn { font-size: 0.75rem; color: #4b5563; padding: 0.125rem 0.25rem; cursor: pointer; background: none; border: none; }
         .file-action-btn:hover { text-decoration: underline; color: #1f293b; }
-        .file-action-btn i { margin-right: 0.25rem; }
+        .file-action-btn i { margin-right: 0.25rem; /* Space for icon if text is also used */ }
 
 
         .flow-card-actions { margin-top: 0.75rem; padding-left: 1.75rem; display: flex; gap: 0.5rem; }
@@ -173,100 +169,10 @@
     </style>
 </head>
 <body>
-    <!-- 
-    🌊 FLOW Functionality - Comprehensive Developer Guide & Specifications
-    Document Version: 1.0
-    Last Updated: June 2, 2025 (Based on meetings from May 13, 19, & 29, 2025)
-    Primary Stakeholder: Will Merrifield
-
-    🎯 1. Vision & Core Objective of "Flow"
-    The "Flow" functionality is envisioned as the central nervous system for end-to-end project management at IFC Roofing. 
-    Its primary objective is to replace fragmented processes and external spreadsheets, evolving into the definitive platform for:
-    - Job Specification
-    - Dynamic Construction Scheduling
-    - Centralized Information & Document Hub
-    - Actionable Insights & Decision Facilitation
-    The "Flow" must be intuitive, visually clear, highly interactive, and robust.
-
-    🏗️ 2. The "Flow" Tab: Project's Operational Dashboard
-    - Location: Primary, dedicated view within each specific project.
-    - Main Content Area (flowCardContainer): Displays a vertically scrollable and reorderable list of "Flow Cards."
-    - "Add New Flow Item" Button (addNewFlowItemBtn / Header "+" Button):
-        - A prominent "+" button in the project's "action pills bar" initiates adding a new Flow Card.
-    
-    🃏 3. Flow Cards: The Building Blocks
-    - Represent primary project components, trades, phases, or key activities.
-
-    3.1. Creating Flow Cards
-    A. Manual Creation (via Header "+" Button):
-        - Modal ("Add New Flow Item"):
-            - Item Type: Dropdown (Bid Request, Punchlist Item, etc. - extensible).
-            - Trade: Conditional Dropdown (if "Bid Request" - @roof, @gutter, etc. - manageable).
-            - Title: Required Text Input. Defaults to Trade if Bid Request and title blank.
-            - Notes: Optional Textarea.
-        - Outcome: New card added to flowCardContainer with a default status.
-    B. Automated Creation (e.g., via Company Cam):
-        - Maintain/integrate existing functionality for creating "Bid Request" cards from Company Cam tags.
-
-    3.2. Core Visual Structure & Static Content of a Flow Card
-    - Drag Handle: Icon (e.g., Font Awesome fas fa-grip-vertical) on the far left.
-    - Main Content Area:
-        - Card Type: Small, uppercase text (e.g., "BID REQUEST").
-        - Card Title: Prominent (e.g., "@pool").
-    - Right-Side Header Elements:
-        - Primary Status Tag: Visual tag (e.g., "Requested") with dropdown arrow icon.
-        - "More Options" Icon: Three-vertical-dots icon.
-    - Timestamp: Creation or last update.
-    - "NOTES" Section: Viewable and editable notes.
-    - "SCHEDULED FOR" / Phase Dates Section: Single date or "Not Scheduled".
-    - "Phases / Schedule Details" Section (NEW - for Trade Cards):
-        - Lists individual, schedulable phases (Name, Start, End, Status).
-        - "Add Phase" button within this section.
-    - Document Attachments & Specifications Section:
-        - Initial: "No Bid Attached" + "Upload" button.
-        - With Attachments: Lists files (filename, uploader, type icon) with View, Archive, Remove, Edit actions.
-        - Spec Sheets: Clear way to access/link spec sheets.
-    - Visual Indicators (Placeholders):
-        - Secondary Tags/Badges: Area for multiple status/info badges.
-        - Details Progress: "Details: X% complete."
-        - Financial Emoji: Placeholder (💰, 👍, 🛑, 👏).
-    - Card Footer Actions:
-        - "Edit Details" Button: Opens "Construction Plan" form/modal.
-        - "Open in Drive" Button: Deep links to GDrive.
-
-    3.3. Flow Card Evolution: Bid Request to Phased Schedule & History
-    - Trade Card (@roof) manages entire lifecycle with user-definable "Phases".
-    - Phase Attributes: Name, Start Date, End Date, Status, Notes, Attachments.
-    - UI: Parent Trade Card lists phases, statuses, dates (expand/collapse).
-    - Card History Log: Tracks Bid Requested/Uploaded/Accepted, Phase Scheduled/Status Changes, Notes. (Accessible via "More Options").
-
-    3.4. Interactivity & Actions on Flow Cards
-    a. Reordering: Drag-and-drop via "Drag Handle". Updates visual order.
-    b. Changing Primary Status: Click tag -> Dropdown with options -> Updates tag & history.
-    c. "More Options" Menu: (Simulated) "Add Phase", "Edit Card", "View History", "Delete Card".
-    d. Document Attachments:
-        - Upload: Button opens uploadFileModal (dynamic title, file input only). Updates card.
-        - Actions on Attached File: View (alert), Archive (confirm, visual change), Edit (alert), Remove (confirm, revert UI).
-    e. Editing Details (Construction Plan): "Edit Details" button -> S4 Simulation: alert. (Future: modal with full form). "Details: X% complete" indicator.
-    f. "Open in Drive": S4 Simulation: alert.
-
-    3.5. Financial Emojis & Operational Flags
-    a. Automated Financial Emojis: Based on "Cash Bid Price" vs "Insurance Approved Amount" & "Doing the Work? (Yes/No)". (Inputs in "Edit Details" form).
-    b. Manual Operational Flags: Mechanism to add/remove flags (e.g., "Homeowner Concern").
-
-    🔗 4. Key Integrations
-    - Google Drive: Folder creation, file sync, deep linking.
-    - Notion (Future): Link spec sheets, trigger Warranty Inspection Protocol page.
-    - Tasks & Tickets (Future Automation): Completion updates Flow card tags/status based on mappings.
-
-    📱 5. UI/UX Principles
-    - Consistency, Clarity, Intuitiveness, Responsiveness.
-    -->
-
     <div class="min-h-screen page-container">
         <div class="top-nav-bar">
-            <a href="#" class="text-gray-600 hover:text-blue-600 flex items-center text-sm font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-1">
+            <a href="#" title="Back to Projects">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
                 </svg>
                 Projects
@@ -280,7 +186,7 @@
                     <div>
                         <div class="project-name-and-button">
                             <h1 class="project-name">Julián Ortiz</h1>
-                            <button class="add-record-button" id="projectAddRecordBtn">+ Add Record</button>
+                            <button class="add-record-button" id="projectAddRecordBtn" title="Add a general project record">+ Add Record</button>
                         </div>
                         <div class="project-sub-details"> 
                             <p>Sales rep: Syris</p>
@@ -295,37 +201,37 @@
         
         <div class="action-pills-bar">
             <div>
-                <span class="action-pill highlight" id="actionPill3Plus">3+</span>
-                <span class="action-pill" id="actionPillConvo">CONVO</span>
-                <span class="action-pill" id="actionPillFlow">FLOW</span>
-                <span class="action-pill" id="actionPillStatus">STATUS</span>
+                <span class="action-pill highlight" id="actionPill3Plus" title="More project actions">3+</span>
+                <span class="action-pill" id="actionPillConvo" title="Open Conversations">CONVO</span>
+                <span class="action-pill" id="actionPillFlow" title="View Project Flow">FLOW</span>
+                <span class="action-pill" id="actionPillStatus" title="View Project Status">STATUS</span>
             </div>
             <div class="action-icon-buttons">
-                <button title="Document" id="headerDocButton"><i class="fas fa-file-lines"></i></button>
-                <button title="Calendar" id="headerCalendarButton"><i class="fas fa-calendar-days"></i></button>
+                <button title="View Project Documents" id="headerDocButton"><i class="fas fa-file-lines"></i></button>
+                <button title="View Project Calendar" id="headerCalendarButton"><i class="fas fa-calendar-days"></i></button>
                 <button title="Add New Flow Item" id="addNewFlowItemBtn"><i class="fas fa-plus"></i></button>
             </div>
         </div>
 
         <div class="tabs-container">
-            <button class="tab-button" data-tab="snapshots">SNAPSHOTS</button>
-            <button class="tab-button active" data-tab="flow">FLOW</button>
-            <button class="tab-button" data-tab="status">STATUS</button>
-            <button class="tab-button" data-tab="tasks">TASKS</button>
-            <button class="tab-button" data-tab="tickets">TICKETS</button>
-            <button class="tab-button" data-tab="details">DETAILS</button>
-            <button class="tab-button" data-tab="contact">CONTACT</button>
+            <button class="tab-button" data-tab="snapshots" title="View Project Snapshots">SNAPSHOTS</button>
+            <button class="tab-button active" data-tab="flow" title="View Project Flow">FLOW</button>
+            <button class="tab-button" data-tab="status" title="View Overall Project Status">STATUS</button>
+            <button class="tab-button" data-tab="tasks" title="View Project Tasks">TASKS</button>
+            <button class="tab-button" data-tab="tickets" title="View Project Tickets">TICKETS</button>
+            <button class="tab-button" data-tab="details" title="View Full Project Details">DETAILS</button>
+            <button class="tab-button" data-tab="contact" title="View Project Contacts">CONTACT</button>
         </div>
 
         <div class="tab-content-area">
-            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content (Placeholder)</h2><p>Project overview and key metrics will appear here.</p></div>
+            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content (Placeholder)</h2><p>This section will display project overview, key metrics, and summaries.</p></div>
             <div id="flowContent" class="tab-pane">
                 </div>
-            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content (Placeholder)</h2><p>Detailed status information and history will appear here.</p></div>
+            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content (Placeholder)</h2><p>Detailed status information and history for the overall project will appear here.</p></div>
             <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content (Placeholder)</h2><p>Task management for this project will appear here.</p></div>
             <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content (Placeholder)</h2><p>Support tickets related to this project will appear here.</p></div>
-            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content (Placeholder)</h2><p>Full project details will appear here.</p></div>
-            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content (Placeholder)</h2><p>Contact information related to this project will appear here.</p></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content (Placeholder)</h2><p>Full, comprehensive project details will appear here.</p></div>
+            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content (Placeholder)</h2><p>Contact information and management related to this project will appear here.</p></div>
         </div>
     </div>
 
@@ -345,7 +251,7 @@
                         <option value="project_doc">Project Document</option>
                         <option value="material_pickup">Material Pickup</option>
                         <option value="bill_home">Bill Home</option>
-                        <option value="other">Other</option>
+                        <option value="ifc_hub">@IFC Project Hub</option> <option value="trade_card">Trade Card (Generic)</option> <option value="other">Other</option>
                     </select>
                 </div>
                 <div class="form-group hidden" id="tradeGroup">
@@ -364,7 +270,7 @@
                  <div class="form-group">
                     <label for="flowItemTitle" class="form-label">Title / Identifier <span class="text-red-500">*</span></label>
                     <input type="text" id="flowItemTitle" name="flowItemTitle" class="form-input" placeholder="e.g., @pool, Roof Tear Off, Final Walkthrough" required>
-                </div>
+                    </div>
                 <div class="form-group">
                     <label for="flowItemNotes" class="form-label">Notes</label>
                     <textarea id="flowItemNotes" name="flowItemNotes" rows="3" class="form-textarea"></textarea>
@@ -380,15 +286,13 @@
     <div id="uploadFileModal" class="modal-overlay hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="uploadModalTitle">Upload File</h3>
-                <button class="modal-close-btn" id="closeUploadModalBtn" aria-label="Close modal">&times;</button>
+                <h3 class="modal-title" id="uploadModalTitle">Upload File</h3> <button class="modal-close-btn" id="closeUploadModalBtn" aria-label="Close modal">&times;</button>
             </div>
             <form id="uploadFileForm">
-                <input type="hidden" id="uploadCardId">
-                <div class="form-group">
+                <input type="hidden" id="uploadCardId"> <div class="form-group">
                     <label for="fileInput" class="form-file-input-label" id="fileDropArea">
                         <span id="fileInputLabelText">Click or drag file here</span>
-                        <input type="file" id="fileInput" class="hidden">
+                        <input type="file" id="fileInput" class="hidden" multiple> 
                     </label>
                     <p id="fileNameDisplay" class="file-name-display"></p>
                 </div>
@@ -402,9 +306,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
-        // JavaScript for interactivity will be extensive and added here
-        // This includes: Tab Switching, Modal Handling, Dynamic Card Creation,
-        // File Upload Simulation, Drag and Drop with Dragula.
+        // JavaScript for interactivity 
         document.addEventListener('DOMContentLoaded', function () {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
@@ -436,46 +338,46 @@
                     id: 'card-ifc1', 
                     type: 'PROJECT HUB', 
                     title: '@IFC - Julián Ortiz Project',
-                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }), 
+                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }), 
                     notes: 'Main project information and overview. All trades and activities link back here. This card represents the overall project status and can contain high-level documents or links.',
                     scheduledFor: null,
                     primaryStatus: 'Active',
-                    attachments: [],
+                    attachments: [{ name: 'Project_Charter_v1.pdf', userInitials: 'JO', url: '#' }],
                     secondaryTags: [{text: 'High Priority', type: 'action'}, {text: 'Phase 1: Planning', type: 'default'}],
                     detailsProgress: 10, 
                     financialEmoji: '⏳',
-                    phases: [] // Project Hub might not have phases like trades
+                    phases: [] 
                 },
                 {
                     id: 'card-pool1',
                     type: 'BID REQUEST',
                     title: '@pool',
                     timestamp: 'Tue, May 20, 2025, 3:38:22 PM',
-                    notes: 'TestQA - Client requested a quote for pool resurfacing and new tile work.',
+                    notes: 'TestQA - Client requested a quote for pool resurfacing and new tile work. Needs quick turnaround.',
                     scheduledFor: null,
                     primaryStatus: 'Requested',
                     attachments: [{ name: 'Pool_Inspiration_11619772.jpg', userInitials: 'CC', url: '#' }],
                     secondaryTags: [{text: 'Needs Follow-up', type: 'action'}, {text: 'Client Provided Specs', type: 'default'}],
                     detailsProgress: 25, 
                     financialEmoji: '💰',
-                    phases: [] // Bid requests might not have phases initially
+                    phases: [] 
                 },
                 {
                     id: 'card-roofrepair1',
-                    type: 'BID REQUEST', // This could evolve into a "ROOF WORK" card
+                    type: 'ROOF WORK', // Changed from BID REQUEST to represent an active trade
                     title: '@roofrepair',
                     timestamp: 'Wed, May 14, 2025, 11:52:46 AM',
-                    notes: 'This is cool. Ensure all flashing details are included in the bid. Full shingle replacement, check for decking damage.',
-                    scheduledFor: 'Sat, May 31, 2025', // This might be overall target, phases have specific dates
-                    primaryStatus: 'Bid Accepted', // Example of evolved status
+                    notes: 'Full shingle replacement, check for decking damage. Use CertainTeed Landmark Weathered Wood.',
+                    scheduledFor: null, // Overall schedule for the trade, phases have specific dates
+                    primaryStatus: 'In Progress', 
                     attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }, {name: 'Roof_Spec_Sheet_v2.pdf', userInitials: 'WM', url:'#'}],
                     secondaryTags: [{text: 'Scheduled', type: 'scheduled'}, {text: 'Pickup Material', type: 'action'}],
                     detailsProgress: 80,
                     financialEmoji: '👍',
-                    phases: [ // Example of phases for a trade card
-                        { name: 'Tear Off & Dry-in', startDate: '2025-06-02', endDate: '2025-06-03', status: 'Not Started', notes: 'Schedule dumpster drop-off.'},
-                        { name: 'Shingle Install', startDate: '2025-06-04', endDate: '2025-06-06', status: 'Not Started', notes: 'Verify shingle color match.'},
-                        { name: 'Final Inspection', startDate: '2025-06-07', endDate: '2025-06-07', status: 'Not Started', notes: 'Coordinate with homeowner.'}
+                    phases: [ 
+                        { name: 'Tear Off & Dry-in', startDate: '2025-06-02', endDate: '2025-06-03', status: 'Pending Stucco', notes: 'Schedule dumpster drop-off. Stucco tie-in required.'},
+                        { name: 'Shingle Install', startDate: '2025-06-04', endDate: '2025-06-06', status: 'Not Started', notes: 'Verify shingle color match with client prior to install.'},
+                        { name: 'Final Inspection', startDate: '2025-06-07', endDate: '2025-06-07', status: 'Not Started', notes: 'Coordinate with homeowner for final walkthrough.'}
                     ]
                 },
                 {
@@ -483,11 +385,11 @@
                     type: 'MATERIAL PICKUP',
                     title: 'Shingles & Underlayment for @roofrepair',
                     timestamp: 'Thu, May 15, 2025, 09:00:00 AM',
-                    notes: 'Pick up from ABC Supply. PO#12345. Confirm quantity matches SOT.',
+                    notes: 'Pick up from ABC Supply. PO#12345. Confirm quantity matches SOT. Deliver to Julián Ortiz job site.',
                     scheduledFor: 'Fri, May 16, 2025',
-                    primaryStatus: 'Completed', // Example
+                    primaryStatus: 'Completed', 
                     attachments: [{name: 'Pickup_Confirmation.pdf', userInitials: 'SY', url: '#'}],
-                    secondaryTags: [{text: 'Materials Acquired', type: 'warranty-done'}], // Using warranty-done for green
+                    secondaryTags: [{text: 'Materials Acquired', type: 'warranty-done'}], 
                     detailsProgress: 100,
                     financialEmoji: null,
                     phases: []
@@ -497,7 +399,7 @@
                     type: 'PUNCHLIST ITEM',
                     title: 'Fix gutter alignment - @gutters (West Side)',
                     timestamp: 'Mon, May 26, 2025, 10:00:00 AM',
-                    notes: 'Client reported slight misalignment on the west side after initial gutter install. Requires adjustment.',
+                    notes: 'Client reported slight misalignment on the west side after initial gutter install. Requires adjustment and re-securing.',
                     scheduledFor: 'Wed, May 28, 2025',
                     primaryStatus: 'To Do',
                     attachments: [],
@@ -531,21 +433,22 @@
             cancelAddFlowItemBtn.addEventListener('click', () => addFlowItemModal.classList.add('hidden'));
 
             flowItemTypeSelect.addEventListener('change', function() {
-                tradeGroup.classList.toggle('hidden', this.value !== 'bid_request');
-                if (this.value === 'bid_request') {
-                    flowItemTradeSelect.required = true;
+                const showTrade = this.value === 'bid_request' || this.value === 'trade_card';
+                tradeGroup.classList.toggle('hidden', !showTrade);
+                flowItemTradeSelect.required = showTrade;
+                 if (!showTrade) {
+                    flowItemTradeSelect.value = ''; // Clear trade if not applicable
+                    flowItemTitleInput.placeholder = "e.g., Final Walkthrough, Warranty Check";
                 } else {
-                    flowItemTradeSelect.required = false;
+                    flowItemTitleInput.placeholder = "e.g., @pool or specific description";
                 }
             });
             
-            // Auto-populate title if Bid Request and trade is selected
             flowItemTradeSelect.addEventListener('change', function() {
-                if (flowItemTypeSelect.value === 'bid_request' && this.value && !flowItemTitleInput.value) {
+                if ((flowItemTypeSelect.value === 'bid_request' || flowItemTypeSelect.value === 'trade_card') && this.value && !flowItemTitleInput.value) {
                     flowItemTitleInput.value = this.selectedOptions[0].text;
                 }
             });
-
 
             addFlowItemForm.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -554,22 +457,21 @@
                 let title = flowItemTitleInput.value.trim();
                 const notes = document.getElementById('flowItemNotes').value.trim();
                 const tradeValue = flowItemTradeSelect.value;
-                const tradeText = tradeValue ? flowItemTradeSelect.selectedOptions[0].text : '';
-
-                if (itemTypeRaw === 'bid_request' && !tradeValue) {
-                    alert('Please select a trade for Bid Request.');
+                
+                if ((itemTypeRaw === 'bid_request' || itemTypeRaw === 'trade_card') && !tradeValue) {
+                    alert('Please select a trade for this item type.');
                     return;
                 }
-                if (!title) { // Title is always required now
+                if (!title) { 
                     alert('Please provide a title for the flow item.');
                     return;
                 }
                 
                 const newCardData = {
                     id: 'card-' + Date.now(),
-                    type: typeDisplay.toUpperCase().replace(' ITEM', ''),
+                    type: typeDisplay.toUpperCase().replace(' ITEM', '').replace(' CARD', ''),
                     title: title,
-                    timestamp: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }),
+                    timestamp: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }),
                     notes: notes,
                     scheduledFor: null,
                     primaryStatus: 'New', 
@@ -577,7 +479,7 @@
                     secondaryTags: [],
                     detailsProgress: 0,
                     financialEmoji: null,
-                    phases: (itemTypeRaw === 'bid_request' || typeDisplay.includes('Trade')) ? [] : undefined // Add phases array for relevant types
+                    phases: (itemTypeRaw === 'bid_request' || itemTypeRaw === 'trade_card') ? [] : undefined 
                 };
                 flowCardsData.unshift(newCardData); 
                 renderFlowCards();
@@ -637,24 +539,24 @@
                      attachmentSectionHTML = `
                         <div class="flow-card-attachment">
                             <div class="flow-card-attachment-details">
-                                <span class="text-xs text-gray-400 italic">No Bid Attached</span>
+                                <span class="text-xs text-gray-400 italic">No Documents Attached</span>
                             </div>
                             <button class="flow-card-action-btn upload-bid-btn">Upload</button>
                         </div>`;
                 }
                 
                 let phasesHTML = '';
-                if (data.phases && data.phases.length > 0) {
+                if (data.phases && Array.isArray(data.phases) && data.phases.length > 0) {
                     phasesHTML += `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>`;
-                    data.phases.forEach(phase => {
-                        phasesHTML += `<div class="pl-2 my-1 border-l-2 border-slate-200">
+                    data.phases.forEach((phase, index) => {
+                        phasesHTML += `<div class="pl-2 my-2 py-1 border-l-2 border-slate-200">
                                          <p class="text-sm font-medium text-slate-700">${phase.name}</p>
                                          <p class="text-xs text-slate-500">Start: ${phase.startDate || 'N/A'} - End: ${phase.endDate || 'N/A'} - Status: ${phase.status}</p>
                                          ${phase.notes ? `<p class="text-xs text-slate-500 italic">Note: ${phase.notes}</p>` : ''}
                                        </div>`;
                     });
                     phasesHTML += `<button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
-                } else if (data.type.includes('REQUEST') || data.type.includes('TRADE')) { // Show "Add Phase" for relevant card types even if no phases yet
+                } else if (data.type.toUpperCase().includes('TRADE') || data.type.toUpperCase().includes('ROOF') || data.type.toUpperCase().includes('POOL') || data.type.toUpperCase().includes('GUTTER')) { 
                      phasesHTML = `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>
                                    <p class="text-xs text-gray-400 italic">No phases defined yet.</p>
                                    <button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
@@ -710,8 +612,8 @@
                             const cardToUpdate = flowCardsData.find(c => c.id === data.id);
                             if (cardToUpdate && cardToUpdate.attachments) {
                                 const attachment = cardToUpdate.attachments.find(att => att.name === filename);
-                                if (attachment) attachment.archived = true; // Mark as archived
-                                renderFlowCards(); // Re-render to update UI
+                                if (attachment) attachment.archived = true; 
+                                e.target.closest('.file-actions-bar').innerHTML = '<span class="text-xs text-gray-500 italic">Archived</span>';
                             }
                         }
                     });
@@ -738,19 +640,26 @@
                 card.querySelectorAll('.add-phase-btn').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const cardId = e.target.dataset.cardId;
-                        alert(\`Simulating: Add Phase to card ID: \${cardId}\`);
-                        // In a real app, this would open a modal to define the new phase
                         const cardToUpdate = flowCardsData.find(c => c.id === cardId);
                         if (cardToUpdate) {
-                            if (!cardToUpdate.phases) cardToUpdate.phases = [];
-                            cardToUpdate.phases.push({name: 'New Phase (Edit Me)', startDate: '', endDate: '', status: 'Not Started', notes: ''});
-                            renderFlowCards();
+                            const phaseName = prompt(\`Enter name for new phase in "\${cardToUpdate.title}":\`);
+                            if (phaseName && phaseName.trim() !== '') {
+                                if (!cardToUpdate.phases) cardToUpdate.phases = [];
+                                cardToUpdate.phases.push({name: phaseName.trim(), startDate: '', endDate: '', status: 'Not Started', notes: ''});
+                                renderFlowCards();
+                            }
                         }
                     });
                 });
+                card.querySelector('.flow-card-primary-status-tag')?.addEventListener('click', () => {
+                    alert(\`Simulating: Clicked primary status for "\${data.title}". A dropdown with status options would appear here to change status.\`);
+                });
+                 card.querySelector('.flow-card-options button')?.addEventListener('click', () => {
+                    alert(\`Simulating: Clicked more options for "\${data.title}". A menu with 'Add Phase', 'Edit Card Title/Notes', 'View Full History', 'Delete Card' would appear.\`);
+                });
 
-                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(\`Simulating: Opening detailed construction plan form for \${data.title}.\`));
-                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(\`Simulating: Opening Google Drive for \${data.title}.\`));
+                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(\`Simulating: Opening detailed construction plan form (like the "Source of Truth Spreadsheet") for "\${data.title}".\`));
+                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(\`Simulating: Opening Google Drive folder for "\${data.title}".\`));
 
                 return card;
             }
@@ -779,8 +688,8 @@
                 event.preventDefault();
                 fileDropArea.classList.remove('border-blue-500', 'bg-blue-50');
                 if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-                    fileInput.files = event.dataTransfer.files; // Assign dropped files to input
-                    handleFileSelect(); // Process the files
+                    fileInput.files = event.dataTransfer.files; 
+                    handleFileSelect(); 
                 }
             });
 
@@ -839,20 +748,46 @@
                         newIndex = target.children.length; 
                     }
                     flowCardsData.splice(newIndex, 0, cardData); 
-                    console.log(\`Card \${cardId} moved. New data order (simulated):\`, flowCardsData.map(c=>c.title));
+                    // console.log(\`Card \${cardId} moved. New data order (simulated):\`, flowCardsData.map(c=>c.title));
+                    // No re-render needed here, Dragula handles the DOM update.
                 });
             } else {
                 console.warn('Dragula library not found. Drag and drop will not work.');
             }
 
             // --- Header Icon Button Simulators ---
-            document.getElementById('headerDocButton')?.addEventListener('click', () => alert('Simulating: Open Documents'));
-            document.getElementById('headerCalendarButton')?.addEventListener('click', () => alert('Simulating: Open Calendar'));
-            document.getElementById('projectAddRecordBtn')?.addEventListener('click', () => alert('Simulating: Add Record for Julián Ortiz'));
-            document.getElementById('actionPill3Plus')?.addEventListener('click', () => alert('Simulating: 3+ Action Pill Clicked'));
-            document.getElementById('actionPillConvo')?.addEventListener('click', () => alert('Simulating: CONVO Action Pill Clicked'));
-            document.getElementById('actionPillFlow')?.addEventListener('click', () => { /* Already on flow tab, or switch to it */ });
-            document.getElementById('actionPillStatus')?.addEventListener('click', () => alert('Simulating: STATUS Action Pill Clicked'));
+            document.getElementById('headerDocButton')?.addEventListener('click', () => alert('Simulating: Open Project Documents Folder'));
+            document.getElementById('headerCalendarButton')?.addEventListener('click', () => alert('Simulating: Open Project Calendar View'));
+            document.getElementById('projectAddRecordBtn')?.addEventListener('click', () => alert('Simulating: Add General Record for Julián Ortiz'));
+            document.getElementById('actionPill3Plus')?.addEventListener('click', () => alert('Simulating: 3+ Action Pill Clicked (More Project Actions)'));
+            document.getElementById('actionPillConvo')?.addEventListener('click', () => {
+                // Simulate switching to CONVO tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.add('hidden'));
+                const convoTabBtn = document.querySelector('.tab-button[data-tab="contact"]'); // Assuming CONVO is like Contact for now
+                const convoPane = document.getElementById('contactContent'); // Assuming CONVO content is in Contact pane for now
+                if(convoTabBtn && convoPane) {
+                    convoTabBtn.classList.add('active');
+                    convoPane.classList.remove('hidden');
+                    convoPane.innerHTML = '<h2 class="text-xl font-semibold text-slate-700 mb-4">CONVO Content (Placeholder)</h2><p>Project conversations and messages will appear here.</p>';
+                } else {
+                    alert('Simulating: CONVO Action Pill Clicked (Open Project Conversations)');
+                }
+            });
+            document.getElementById('actionPillFlow')?.addEventListener('click', () => { /* Already on flow tab */ });
+            document.getElementById('actionPillStatus')?.addEventListener('click', () => {
+                 // Simulate switching to STATUS tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.add('hidden'));
+                const statusTabBtn = document.querySelector('.tab-button[data-tab="status"]');
+                const statusPane = document.getElementById('statusContent');
+                if(statusTabBtn && statusPane) {
+                    statusTabBtn.classList.add('active');
+                    statusPane.classList.remove('hidden');
+                } else {
+                     alert('Simulating: STATUS Action Pill Clicked (View Overall Project Status)');
+                }
+            });
 
             renderFlowCards();
         });
