@@ -18,6 +18,7 @@
             margin: 0 auto;
             background-color: white; 
         }
+        /* Top Navigation Bar (e.g., "< Projects") */
         .top-nav-bar {
             background-color: white; padding: 0.75rem 1.5rem;
             border-bottom: 1px solid #e2e8f0; display: flex; align-items: center;
@@ -28,6 +29,7 @@
         }
         .top-nav-bar svg { width: 1.25rem; height: 1.25rem; margin-right: 0.375rem; }
 
+        /* Project Header Area (Avatar, Name, Details, +Add Record) */
         .header-content-wrapper { background-color: white; padding: 1.5rem; }
         .project-primary-info-top {
             display: flex; flex-direction: column; md:flex-direction: row; 
@@ -47,6 +49,7 @@
         .project-sub-details a { color: #2563eb; }
         .project-sub-details a:hover { text-decoration: underline; }
 
+        /* Action Pills Bar (3+, CONVO, FLOW, STATUS, Icons) */
         .action-pills-bar {
             display: flex; align-items: center; padding: 0.75rem 1.5rem; 
             background-color: white; border-bottom: 1px solid #e2e8f0; 
@@ -65,6 +68,7 @@
         .action-icon-buttons button:hover { background-color: #f3f4f6; color: #1f293b; }
         .action-icon-buttons svg, .action-icon-buttons i { font-size: 1.125rem; width: 1.125rem; height: 1.125rem; }
 
+        /* Main Navigation Tabs (SNAPSHOTS, FLOW, etc.) */
         .tabs-container {
             background-color: white; border-bottom: 1px solid #e2e8f0;
             padding: 0 1.5rem; overflow-x: auto; white-space: nowrap;
@@ -112,10 +116,10 @@
             font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.625rem; 
             border-radius: 0.75rem; border: 1px solid;
         }
-        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } 
-        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } 
-        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } 
-        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } 
+        .tag-pickup-material { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; } /* Amber */
+        .tag-punch-list { background-color: #FEE2E2; color: #991B1B; border-color: #FECACA; } /* Red */
+        .tag-warranty-done { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; } /* Green */
+        .tag-default { background-color: #E0E7FF; color: #4338CA; border-color: #C7D2FE; } /* Indigo */
 
         .flow-card-attachment { display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-left: 1.75rem; }
         .flow-card-attachment-details { display: flex; align-items: center; }
@@ -126,14 +130,15 @@
         }
         .flow-card-filename { font-size: 0.875rem; color: #2563eb; cursor: pointer; }
         .flow-card-filename:hover { text-decoration: underline; }
-        .flow-card-view-files-btn {
-            font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; 
+        .flow-card-view-files-btn { /* Updated to match image */
+            font-size: 0.75rem; font-weight: 500; color: white; background-color: #1e3a8a; /* Darker blue */
             padding: 0.375rem 0.75rem; border-radius: 0.25rem; border: none; cursor: pointer;
         }
-        .flow-card-view-files-btn:hover { background-color: #1c3274; }
-        .file-actions-bar { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
-        .file-action-btn { font-size: 0.75rem; color: #4b5563; padding: 0.125rem 0.25rem; cursor: pointer; }
+        .flow-card-view-files-btn:hover { background-color: #1c3274; } /* Even darker blue on hover */
+        .file-actions-bar { display: flex; gap: 0.5rem; margin-top: 0.25rem; align-items: center; } /* Added align-items-center */
+        .file-action-btn { font-size: 0.75rem; color: #4b5563; padding: 0.125rem 0.25rem; cursor: pointer; background: none; border: none; }
         .file-action-btn:hover { text-decoration: underline; color: #1f293b; }
+        .file-action-btn i { margin-right: 0.25rem; }
 
 
         .flow-card-actions { margin-top: 0.75rem; padding-left: 1.75rem; display: flex; gap: 0.5rem; }
@@ -168,6 +173,96 @@
     </style>
 </head>
 <body>
+    <!-- 
+    🌊 FLOW Functionality - Comprehensive Developer Guide & Specifications
+    Document Version: 1.0
+    Last Updated: June 2, 2025 (Based on meetings from May 13, 19, & 29, 2025)
+    Primary Stakeholder: Will Merrifield
+
+    🎯 1. Vision & Core Objective of "Flow"
+    The "Flow" functionality is envisioned as the central nervous system for end-to-end project management at IFC Roofing. 
+    Its primary objective is to replace fragmented processes and external spreadsheets, evolving into the definitive platform for:
+    - Job Specification
+    - Dynamic Construction Scheduling
+    - Centralized Information & Document Hub
+    - Actionable Insights & Decision Facilitation
+    The "Flow" must be intuitive, visually clear, highly interactive, and robust.
+
+    🏗️ 2. The "Flow" Tab: Project's Operational Dashboard
+    - Location: Primary, dedicated view within each specific project.
+    - Main Content Area (flowCardContainer): Displays a vertically scrollable and reorderable list of "Flow Cards."
+    - "Add New Flow Item" Button (addNewFlowItemBtn / Header "+" Button):
+        - A prominent "+" button in the project's "action pills bar" initiates adding a new Flow Card.
+    
+    🃏 3. Flow Cards: The Building Blocks
+    - Represent primary project components, trades, phases, or key activities.
+
+    3.1. Creating Flow Cards
+    A. Manual Creation (via Header "+" Button):
+        - Modal ("Add New Flow Item"):
+            - Item Type: Dropdown (Bid Request, Punchlist Item, etc. - extensible).
+            - Trade: Conditional Dropdown (if "Bid Request" - @roof, @gutter, etc. - manageable).
+            - Title: Required Text Input. Defaults to Trade if Bid Request and title blank.
+            - Notes: Optional Textarea.
+        - Outcome: New card added to flowCardContainer with a default status.
+    B. Automated Creation (e.g., via Company Cam):
+        - Maintain/integrate existing functionality for creating "Bid Request" cards from Company Cam tags.
+
+    3.2. Core Visual Structure & Static Content of a Flow Card
+    - Drag Handle: Icon (e.g., Font Awesome fas fa-grip-vertical) on the far left.
+    - Main Content Area:
+        - Card Type: Small, uppercase text (e.g., "BID REQUEST").
+        - Card Title: Prominent (e.g., "@pool").
+    - Right-Side Header Elements:
+        - Primary Status Tag: Visual tag (e.g., "Requested") with dropdown arrow icon.
+        - "More Options" Icon: Three-vertical-dots icon.
+    - Timestamp: Creation or last update.
+    - "NOTES" Section: Viewable and editable notes.
+    - "SCHEDULED FOR" / Phase Dates Section: Single date or "Not Scheduled".
+    - "Phases / Schedule Details" Section (NEW - for Trade Cards):
+        - Lists individual, schedulable phases (Name, Start, End, Status).
+        - "Add Phase" button within this section.
+    - Document Attachments & Specifications Section:
+        - Initial: "No Bid Attached" + "Upload" button.
+        - With Attachments: Lists files (filename, uploader, type icon) with View, Archive, Remove, Edit actions.
+        - Spec Sheets: Clear way to access/link spec sheets.
+    - Visual Indicators (Placeholders):
+        - Secondary Tags/Badges: Area for multiple status/info badges.
+        - Details Progress: "Details: X% complete."
+        - Financial Emoji: Placeholder (💰, 👍, 🛑, 👏).
+    - Card Footer Actions:
+        - "Edit Details" Button: Opens "Construction Plan" form/modal.
+        - "Open in Drive" Button: Deep links to GDrive.
+
+    3.3. Flow Card Evolution: Bid Request to Phased Schedule & History
+    - Trade Card (@roof) manages entire lifecycle with user-definable "Phases".
+    - Phase Attributes: Name, Start Date, End Date, Status, Notes, Attachments.
+    - UI: Parent Trade Card lists phases, statuses, dates (expand/collapse).
+    - Card History Log: Tracks Bid Requested/Uploaded/Accepted, Phase Scheduled/Status Changes, Notes. (Accessible via "More Options").
+
+    3.4. Interactivity & Actions on Flow Cards
+    a. Reordering: Drag-and-drop via "Drag Handle". Updates visual order.
+    b. Changing Primary Status: Click tag -> Dropdown with options -> Updates tag & history.
+    c. "More Options" Menu: (Simulated) "Add Phase", "Edit Card", "View History", "Delete Card".
+    d. Document Attachments:
+        - Upload: Button opens uploadFileModal (dynamic title, file input only). Updates card.
+        - Actions on Attached File: View (alert), Archive (confirm, visual change), Edit (alert), Remove (confirm, revert UI).
+    e. Editing Details (Construction Plan): "Edit Details" button -> S4 Simulation: alert. (Future: modal with full form). "Details: X% complete" indicator.
+    f. "Open in Drive": S4 Simulation: alert.
+
+    3.5. Financial Emojis & Operational Flags
+    a. Automated Financial Emojis: Based on "Cash Bid Price" vs "Insurance Approved Amount" & "Doing the Work? (Yes/No)". (Inputs in "Edit Details" form).
+    b. Manual Operational Flags: Mechanism to add/remove flags (e.g., "Homeowner Concern").
+
+    🔗 4. Key Integrations
+    - Google Drive: Folder creation, file sync, deep linking.
+    - Notion (Future): Link spec sheets, trigger Warranty Inspection Protocol page.
+    - Tasks & Tickets (Future Automation): Completion updates Flow card tags/status based on mappings.
+
+    📱 5. UI/UX Principles
+    - Consistency, Clarity, Intuitiveness, Responsiveness.
+    -->
+
     <div class="min-h-screen page-container">
         <div class="top-nav-bar">
             <a href="#" class="text-gray-600 hover:text-blue-600 flex items-center text-sm font-medium">
@@ -223,14 +318,14 @@
         </div>
 
         <div class="tab-content-area">
-            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content</h2></div>
+            <div id="snapshotsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Snapshots Content (Placeholder)</h2><p>Project overview and key metrics will appear here.</p></div>
             <div id="flowContent" class="tab-pane">
                 </div>
-            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content</h2></div>
-            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content</h2></div>
-            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content</h2></div>
-            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content</h2></div>
-            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content</h2></div>
+            <div id="statusContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Status Content (Placeholder)</h2><p>Detailed status information and history will appear here.</p></div>
+            <div id="tasksContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tasks Content (Placeholder)</h2><p>Task management for this project will appear here.</p></div>
+            <div id="ticketsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Tickets Content (Placeholder)</h2><p>Support tickets related to this project will appear here.</p></div>
+            <div id="detailsContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Details Content (Placeholder)</h2><p>Full project details will appear here.</p></div>
+            <div id="contactContent" class="tab-pane hidden"><h2 class="text-xl font-semibold text-slate-700 mb-4">Contact Content (Placeholder)</h2><p>Contact information related to this project will appear here.</p></div>
         </div>
     </div>
 
@@ -238,12 +333,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Add New Flow Item</h3>
-                <button class="modal-close-btn" id="closeAddFlowItemModalBtn">&times;</button>
+                <button class="modal-close-btn" id="closeAddFlowItemModalBtn" aria-label="Close modal">&times;</button>
             </div>
             <form id="addFlowItemForm">
                 <div class="form-group">
-                    <label for="flowItemType" class="form-label">Item Type</label>
-                    <select id="flowItemType" name="flowItemType" class="form-select">
+                    <label for="flowItemType" class="form-label">Item Type <span class="text-red-500">*</span></label>
+                    <select id="flowItemType" name="flowItemType" class="form-select" required>
                         <option value="bid_request">Bid Request</option>
                         <option value="punchlist_item">Punchlist Item</option>
                         <option value="warranty_item">Warranty Item</option>
@@ -254,7 +349,7 @@
                     </select>
                 </div>
                 <div class="form-group hidden" id="tradeGroup">
-                    <label for="flowItemTrade" class="form-label">Trade</label>
+                    <label for="flowItemTrade" class="form-label">Trade <span class="text-red-500">*</span></label>
                     <select id="flowItemTrade" name="flowItemTrade" class="form-select">
                         <option value="">Select Trade...</option>
                         <option value="@roof">@roof</option>
@@ -264,11 +359,11 @@
                         <option value="@pool">@pool</option>
                         <option value="@repair">@repair</option>
                         <option value="@skylight">@skylight</option>
-                    </select>
+                        </select>
                 </div>
                  <div class="form-group">
-                    <label for="flowItemTitle" class="form-label">Title (e.g., @pool or specific description)</label>
-                    <input type="text" id="flowItemTitle" name="flowItemTitle" class="form-input" required>
+                    <label for="flowItemTitle" class="form-label">Title / Identifier <span class="text-red-500">*</span></label>
+                    <input type="text" id="flowItemTitle" name="flowItemTitle" class="form-input" placeholder="e.g., @pool, Roof Tear Off, Final Walkthrough" required>
                 </div>
                 <div class="form-group">
                     <label for="flowItemNotes" class="form-label">Notes</label>
@@ -286,12 +381,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="uploadModalTitle">Upload File</h3>
-                <button class="modal-close-btn" id="closeUploadModalBtn">&times;</button>
+                <button class="modal-close-btn" id="closeUploadModalBtn" aria-label="Close modal">&times;</button>
             </div>
             <form id="uploadFileForm">
                 <input type="hidden" id="uploadCardId">
                 <div class="form-group">
-                    <label for="fileInput" class="form-file-input-label">
+                    <label for="fileInput" class="form-file-input-label" id="fileDropArea">
                         <span id="fileInputLabelText">Click or drag file here</span>
                         <input type="file" id="fileInput" class="hidden">
                     </label>
@@ -307,6 +402,9 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
     <script>
+        // JavaScript for interactivity will be extensive and added here
+        // This includes: Tab Switching, Modal Handling, Dynamic Card Creation,
+        // File Upload Simulation, Drag and Drop with Dragula.
         document.addEventListener('DOMContentLoaded', function () {
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-content-area .tab-pane');
@@ -317,6 +415,8 @@
             const addFlowItemForm = document.getElementById('addFlowItemForm');
             const flowItemTypeSelect = document.getElementById('flowItemType');
             const tradeGroup = document.getElementById('tradeGroup');
+            const flowItemTradeSelect = document.getElementById('flowItemTrade');
+            const flowItemTitleInput = document.getElementById('flowItemTitle');
             const flowCardContainer = document.getElementById('flowContent'); 
 
             const uploadFileModal = document.getElementById('uploadFileModal');
@@ -327,6 +427,7 @@
             const fileInput = document.getElementById('fileInput');
             const fileInputLabelText = document.getElementById('fileInputLabelText');
             const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const fileDropArea = document.getElementById('fileDropArea');
             let currentUploadCardId = null;
 
             // Sample data for flow cards
@@ -335,66 +436,75 @@
                     id: 'card-ifc1', 
                     type: 'PROJECT HUB', 
                     title: '@IFC - Julián Ortiz Project',
-                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString(), 
-                    notes: 'Main project information and overview. All trades and activities link back here.',
+                    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }), 
+                    notes: 'Main project information and overview. All trades and activities link back here. This card represents the overall project status and can contain high-level documents or links.',
                     scheduledFor: null,
                     primaryStatus: 'Active',
                     attachments: [],
-                    secondaryTags: [{text: 'High Priority', type: 'action'}, {text: 'Phase 1', type: 'default'}],
+                    secondaryTags: [{text: 'High Priority', type: 'action'}, {text: 'Phase 1: Planning', type: 'default'}],
                     detailsProgress: 10, 
-                    financialEmoji: '⏳' 
+                    financialEmoji: '⏳',
+                    phases: [] // Project Hub might not have phases like trades
                 },
                 {
                     id: 'card-pool1',
                     type: 'BID REQUEST',
                     title: '@pool',
                     timestamp: 'Tue, May 20, 2025, 3:38:22 PM',
-                    notes: 'TestQA',
+                    notes: 'TestQA - Client requested a quote for pool resurfacing and new tile work.',
                     scheduledFor: null,
                     primaryStatus: 'Requested',
-                    attachments: [{ name: '11619772.jpg', userInitials: 'CC', url: '#' }],
-                    secondaryTags: [{text: 'Needs Follow-up', type: 'action'}],
+                    attachments: [{ name: 'Pool_Inspiration_11619772.jpg', userInitials: 'CC', url: '#' }],
+                    secondaryTags: [{text: 'Needs Follow-up', type: 'action'}, {text: 'Client Provided Specs', type: 'default'}],
                     detailsProgress: 25, 
-                    financialEmoji: '💰' 
+                    financialEmoji: '💰',
+                    phases: [] // Bid requests might not have phases initially
                 },
                 {
                     id: 'card-roofrepair1',
-                    type: 'BID REQUEST',
+                    type: 'BID REQUEST', // This could evolve into a "ROOF WORK" card
                     title: '@roofrepair',
                     timestamp: 'Wed, May 14, 2025, 11:52:46 AM',
-                    notes: 'This is cool. Ensure all flashing details are included in the bid.',
-                    scheduledFor: 'Sat, May 31, 2025',
-                    primaryStatus: 'Bid Received',
-                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }],
+                    notes: 'This is cool. Ensure all flashing details are included in the bid. Full shingle replacement, check for decking damage.',
+                    scheduledFor: 'Sat, May 31, 2025', // This might be overall target, phases have specific dates
+                    primaryStatus: 'Bid Accepted', // Example of evolved status
+                    attachments: [{ name: 'Contracts-2025-05-19-12-57.png', userInitials: 'AS', url: '#' }, {name: 'Roof_Spec_Sheet_v2.pdf', userInitials: 'WM', url:'#'}],
                     secondaryTags: [{text: 'Scheduled', type: 'scheduled'}, {text: 'Pickup Material', type: 'action'}],
                     detailsProgress: 80,
-                    financialEmoji: '👍'
+                    financialEmoji: '👍',
+                    phases: [ // Example of phases for a trade card
+                        { name: 'Tear Off & Dry-in', startDate: '2025-06-02', endDate: '2025-06-03', status: 'Not Started', notes: 'Schedule dumpster drop-off.'},
+                        { name: 'Shingle Install', startDate: '2025-06-04', endDate: '2025-06-06', status: 'Not Started', notes: 'Verify shingle color match.'},
+                        { name: 'Final Inspection', startDate: '2025-06-07', endDate: '2025-06-07', status: 'Not Started', notes: 'Coordinate with homeowner.'}
+                    ]
                 },
                 {
                     id: 'card-materialpickup1',
                     type: 'MATERIAL PICKUP',
-                    title: 'Shingles for @roofrepair',
+                    title: 'Shingles & Underlayment for @roofrepair',
                     timestamp: 'Thu, May 15, 2025, 09:00:00 AM',
-                    notes: 'Pick up from ABC Supply. PO#12345',
+                    notes: 'Pick up from ABC Supply. PO#12345. Confirm quantity matches SOT.',
                     scheduledFor: 'Fri, May 16, 2025',
-                    primaryStatus: 'Pending',
-                    attachments: [],
-                    secondaryTags: [{text: 'Urgent', type: 'punch-list'}], 
+                    primaryStatus: 'Completed', // Example
+                    attachments: [{name: 'Pickup_Confirmation.pdf', userInitials: 'SY', url: '#'}],
+                    secondaryTags: [{text: 'Materials Acquired', type: 'warranty-done'}], // Using warranty-done for green
                     detailsProgress: 100,
-                    financialEmoji: null 
+                    financialEmoji: null,
+                    phases: []
                 },
                  {
                     id: 'card-punchlist1',
                     type: 'PUNCHLIST ITEM',
-                    title: 'Fix gutter alignment - @gutters',
+                    title: 'Fix gutter alignment - @gutters (West Side)',
                     timestamp: 'Mon, May 26, 2025, 10:00:00 AM',
-                    notes: 'Client reported slight misalignment on the west side after install.',
+                    notes: 'Client reported slight misalignment on the west side after initial gutter install. Requires adjustment.',
                     scheduledFor: 'Wed, May 28, 2025',
                     primaryStatus: 'To Do',
                     attachments: [],
                     secondaryTags: [{text: 'Leak Repair Done', type: 'warranty-done'}, {text: 'Client Notified', type: 'default'}],
                     detailsProgress: 50,
-                    financialEmoji: '👏' 
+                    financialEmoji: '👏',
+                    phases: [] 
                 }
             ];
 
@@ -422,24 +532,35 @@
 
             flowItemTypeSelect.addEventListener('change', function() {
                 tradeGroup.classList.toggle('hidden', this.value !== 'bid_request');
+                if (this.value === 'bid_request') {
+                    flowItemTradeSelect.required = true;
+                } else {
+                    flowItemTradeSelect.required = false;
+                }
             });
+            
+            // Auto-populate title if Bid Request and trade is selected
+            flowItemTradeSelect.addEventListener('change', function() {
+                if (flowItemTypeSelect.value === 'bid_request' && this.value && !flowItemTitleInput.value) {
+                    flowItemTitleInput.value = this.selectedOptions[0].text;
+                }
+            });
+
 
             addFlowItemForm.addEventListener('submit', function(event) {
                 event.preventDefault();
-                const itemTypeRaw = document.getElementById('flowItemType').value;
-                const typeDisplay = document.getElementById('flowItemType').selectedOptions[0].text;
-                let title = document.getElementById('flowItemTitle').value.trim();
+                const itemTypeRaw = flowItemTypeSelect.value;
+                const typeDisplay = flowItemTypeSelect.selectedOptions[0].text;
+                let title = flowItemTitleInput.value.trim();
                 const notes = document.getElementById('flowItemNotes').value.trim();
-                const tradeValue = document.getElementById('flowItemTrade').value;
-                const tradeText = document.getElementById('flowItemTrade').selectedOptions[0].text;
+                const tradeValue = flowItemTradeSelect.value;
+                const tradeText = tradeValue ? flowItemTradeSelect.selectedOptions[0].text : '';
 
                 if (itemTypeRaw === 'bid_request' && !tradeValue) {
                     alert('Please select a trade for Bid Request.');
                     return;
                 }
-                if (!title && itemTypeRaw === 'bid_request' && tradeValue) {
-                    title = tradeText; 
-                } else if (!title) {
+                if (!title) { // Title is always required now
                     alert('Please provide a title for the flow item.');
                     return;
                 }
@@ -448,20 +569,22 @@
                     id: 'card-' + Date.now(),
                     type: typeDisplay.toUpperCase().replace(' ITEM', ''),
                     title: title,
-                    timestamp: new Date().toLocaleString(),
+                    timestamp: new Date().toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true }),
                     notes: notes,
                     scheduledFor: null,
                     primaryStatus: 'New', 
                     attachments: [],
                     secondaryTags: [],
                     detailsProgress: 0,
-                    financialEmoji: null
+                    financialEmoji: null,
+                    phases: (itemTypeRaw === 'bid_request' || typeDisplay.includes('Trade')) ? [] : undefined // Add phases array for relevant types
                 };
                 flowCardsData.unshift(newCardData); 
                 renderFlowCards();
                 addFlowItemModal.classList.add('hidden');
                 this.reset();
                 tradeGroup.classList.add('hidden');
+                flowItemTradeSelect.required = false;
                 alert(`Flow card "${newCardData.title}" created (simulated)!`);
             });
 
@@ -519,63 +642,76 @@
                             <button class="flow-card-action-btn upload-bid-btn">Upload</button>
                         </div>`;
                 }
+                
+                let phasesHTML = '';
+                if (data.phases && data.phases.length > 0) {
+                    phasesHTML += `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>`;
+                    data.phases.forEach(phase => {
+                        phasesHTML += `<div class="pl-2 my-1 border-l-2 border-slate-200">
+                                         <p class="text-sm font-medium text-slate-700">${phase.name}</p>
+                                         <p class="text-xs text-slate-500">Start: ${phase.startDate || 'N/A'} - End: ${phase.endDate || 'N/A'} - Status: ${phase.status}</p>
+                                         ${phase.notes ? `<p class="text-xs text-slate-500 italic">Note: ${phase.notes}</p>` : ''}
+                                       </div>`;
+                    });
+                    phasesHTML += `<button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
+                } else if (data.type.includes('REQUEST') || data.type.includes('TRADE')) { // Show "Add Phase" for relevant card types even if no phases yet
+                     phasesHTML = `<div class="flow-card-section"><p class="flow-card-section-label">Phases / Schedule Details</p>
+                                   <p class="text-xs text-gray-400 italic">No phases defined yet.</p>
+                                   <button class="text-xs text-blue-500 hover:underline mt-1 add-phase-btn" data-card-id="${data.id}">+ Add Phase</button></div>`;
+                }
 
 
-                card.innerHTML = `
+                card.innerHTML = \`
                     <div class="flow-card-header-top">
                         <div class="drag-handle" title="Drag to reorder">
                             <i class="fas fa-grip-vertical"></i>
                         </div>
                         <div class="flow-card-title-section">
-                            <span class="flow-card-type">${data.type}</span>
-                            <h4 class="flow-card-title">${data.title}</h4>
+                            <span class="flow-card-type">\${data.type}</span>
+                            <h4 class="flow-card-title">\${data.title}</h4>
                         </div>
                         <div class="flow-card-header-right">
-                            <span class="flow-card-primary-status-tag">${data.primaryStatus} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+                            <span class="flow-card-primary-status-tag">\${data.primaryStatus} <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
                             <div class="flow-card-options">
                                 <button title="More options"><i class="fas fa-ellipsis-v"></i></button>
                             </div>
                         </div>
                     </div>
-                    <p class="flow-card-timestamp">${data.timestamp}</p>
-                    ${data.notes ? `<div class="flow-card-section"><p class="flow-card-section-label">Notes</p><p class="flow-card-section-content">${data.notes}</p></div>` : ''}
-                    ${data.scheduledFor ? `<div class="flow-card-section"><p class="flow-card-section-label">Scheduled For</p><p class="flow-card-section-content">${data.scheduledFor}</p></div>` : ''}
-                    <div class="flow-card-secondary-tags">${secondaryTagsHTML}</div>
-                    <div class="progress-indicator">Details: ${data.detailsProgress || 0}% complete <span class="financial-emoji">${data.financialEmoji || ''}</span></div>
-                    ${attachmentSectionHTML}
+                    <p class="flow-card-timestamp">\${data.timestamp}</p>
+                    \${data.notes ? \`<div class="flow-card-section"><p class="flow-card-section-label">Notes</p><p class="flow-card-section-content">\${data.notes}</p></div>\` : ''}
+                    \${data.scheduledFor && !(data.phases && data.phases.length > 0) ? \`<div class="flow-card-section"><p class="flow-card-section-label">Scheduled For</p><p class="flow-card-section-content">\${data.scheduledFor}</p></div>\` : ''}
+                    \${phasesHTML}
+                    <div class="flow-card-secondary-tags">\${secondaryTagsHTML}</div>
+                    <div class="progress-indicator">Details: \${data.detailsProgress || 0}% complete <span class="financial-emoji">\${data.financialEmoji || ''}</span></div>
+                    \${attachmentSectionHTML}
                     <div class="flow-card-actions">
                         <button class="flow-card-action-btn edit-details-btn">Edit Details</button>
                         <button class="flow-card-action-btn open-in-drive-btn">Open in Drive</button>
                     </div>
-                `;
+                \`;
 
                 // Add event listeners for card-specific actions
                 card.querySelector('.upload-bid-btn')?.addEventListener('click', () => openUploadModal(data.id, data.title));
                 
                 card.querySelectorAll('.flow-card-filename').forEach(el => {
-                    el.addEventListener('click', (e) => alert(`Simulating: Viewing ${e.target.textContent}`));
+                    el.addEventListener('click', (e) => alert(\`Simulating: Viewing \${e.target.textContent}\`));
                 });
                 card.querySelectorAll('.view-file-btn').forEach(el => {
                      el.addEventListener('click', (e) => {
                         const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        alert(`Simulating: Viewing file "${filename}" for ${data.title}`);
+                        alert(\`Simulating: Viewing file "\${filename}" for \${data.title}\`);
                     });
                 });
                  card.querySelectorAll('.archive-file-btn').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        if(confirm(`Are you sure you want to archive "${filename}" for ${data.title}?`)){
-                            alert(`Simulating: Archiving file "${filename}" (moved to GDrive Archived folder).`);
+                        if(confirm(\`Are you sure you want to archive "\${filename}" for \${data.title}?\`)){
+                            alert(\`Simulating: Archiving file "\${filename}" (moved to GDrive Archived folder).\`);
                             const cardToUpdate = flowCardsData.find(c => c.id === data.id);
-                            if (cardToUpdate) {
-                                const attachmentIndex = cardToUpdate.attachments.findIndex(att => att.name === filename);
-                                if (attachmentIndex > -1) {
-                                     // Instead of removing, you might mark as archived
-                                     // For this simulation, we'll just log it.
-                                     console.log(`File ${filename} marked as archived for card ${data.id}`);
-                                     // Optionally, update UI to reflect archived state without removing
-                                     e.target.closest('.file-actions-bar').innerHTML = '<span class="text-xs text-gray-500 italic">Archived</span>';
-                                }
+                            if (cardToUpdate && cardToUpdate.attachments) {
+                                const attachment = cardToUpdate.attachments.find(att => att.name === filename);
+                                if (attachment) attachment.archived = true; // Mark as archived
+                                renderFlowCards(); // Re-render to update UI
                             }
                         }
                     });
@@ -583,26 +719,38 @@
                  card.querySelectorAll('.edit-file-btn').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        alert(`Simulating: Editing details for file "${filename}" for ${data.title}.`);
+                        alert(\`Simulating: Editing details for file "\${filename}" for \${data.title}.\`);
                     });
                 });
                  card.querySelectorAll('.remove-file-btn').forEach(el => {
                     el.addEventListener('click', (e) => {
                         const filename = e.target.closest('.flow-card-attachment').dataset.filename;
-                        if(confirm(`Are you sure you want to PERMANENTLY DELETE "${filename}" for ${data.title}? This cannot be undone.`)){
-                            alert(`Simulating: Deleting file "${filename}" from GDrive.`);
+                        if(confirm(\`Are you sure you want to PERMANENTLY DELETE "\${filename}" for \${data.title}? This cannot be undone.\`)){
+                            alert(\`Simulating: Deleting file "\${filename}" from GDrive.\`);
                             const cardToUpdate = flowCardsData.find(c => c.id === data.id);
-                            if (cardToUpdate) {
+                            if (cardToUpdate && cardToUpdate.attachments) {
                                 cardToUpdate.attachments = cardToUpdate.attachments.filter(att => att.name !== filename);
-                                renderFlowCards(); // Re-render to remove the attachment from UI
+                                renderFlowCards();
                             }
                         }
                     });
                 });
+                card.querySelectorAll('.add-phase-btn').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const cardId = e.target.dataset.cardId;
+                        alert(\`Simulating: Add Phase to card ID: \${cardId}\`);
+                        // In a real app, this would open a modal to define the new phase
+                        const cardToUpdate = flowCardsData.find(c => c.id === cardId);
+                        if (cardToUpdate) {
+                            if (!cardToUpdate.phases) cardToUpdate.phases = [];
+                            cardToUpdate.phases.push({name: 'New Phase (Edit Me)', startDate: '', endDate: '', status: 'Not Started', notes: ''});
+                            renderFlowCards();
+                        }
+                    });
+                });
 
-
-                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(`Simulating: Opening detailed construction plan form for ${data.title}.`));
-                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(`Simulating: Opening Google Drive for ${data.title}.`));
+                card.querySelector('.edit-details-btn')?.addEventListener('click', () => alert(\`Simulating: Opening detailed construction plan form for \${data.title}.\`));
+                card.querySelector('.open-in-drive-btn')?.addEventListener('click', () => alert(\`Simulating: Opening Google Drive for \${data.title}.\`));
 
                 return card;
             }
@@ -610,7 +758,7 @@
             // --- Upload File Modal & Logic ---
             function openUploadModal(cardId, cardTitle) {
                 currentUploadCardId = cardId;
-                uploadModalTitle.textContent = `Upload File for ${cardTitle}`;
+                uploadModalTitle.textContent = \`Upload File for \${cardTitle}\`;
                 fileNameDisplay.textContent = '';
                 fileInputLabelText.textContent = 'Click or drag file here';
                 fileInput.value = null; 
@@ -618,15 +766,34 @@
             }
             closeUploadModalBtn.addEventListener('click', () => uploadFileModal.classList.add('hidden'));
             cancelUploadBtn.addEventListener('click', () => uploadFileModal.classList.add('hidden'));
-            fileInput.addEventListener('change', function() {
-                if (this.files && this.files.length > 0) {
-                    fileNameDisplay.textContent = `Selected: ${this.files[0].name}`;
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            fileDropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.add('border-blue-500', 'bg-blue-50');
+            });
+            fileDropArea.addEventListener('dragleave', () => {
+                fileDropArea.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            fileDropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.remove('border-blue-500', 'bg-blue-50');
+                if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+                    fileInput.files = event.dataTransfer.files; // Assign dropped files to input
+                    handleFileSelect(); // Process the files
+                }
+            });
+
+            function handleFileSelect() {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = \`Selected: \${fileInput.files[0].name}\`;
                     fileInputLabelText.textContent = 'Change file';
                 } else {
                     fileNameDisplay.textContent = '';
                     fileInputLabelText.textContent = 'Click or drag file here';
                 }
-            });
+            }
+
             uploadFileForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 if (!fileInput.files || fileInput.files.length === 0) {
@@ -639,19 +806,18 @@
                     if (!flowCardsData[cardIndex].attachments) {
                         flowCardsData[cardIndex].attachments = [];
                     }
-                    // Prevent adding duplicate filenames for simplicity in this demo
                     if (!flowCardsData[cardIndex].attachments.find(att => att.name === fileName)) {
                         flowCardsData[cardIndex].attachments.push({ name: fileName, userInitials: 'ME', url: '#' }); 
                     }
                     renderFlowCards();
-                    alert(`File "${fileName}" uploaded successfully (simulated) for card ID ${currentUploadCardId}!`);
+                    alert(\`File "\${fileName}" uploaded successfully (simulated) for card ID \${currentUploadCardId}!\`);
                 }
                 uploadFileModal.classList.add('hidden');
             });
             
             // --- Drag and Drop with Dragula ---
             if (typeof dragula !== 'undefined') {
-                const drake = dragula([flowCardContainer], { // Dragula needs an array of containers
+                const drake = dragula([flowCardContainer], { 
                     moves: function (el, source, handle, sibling) {
                         return handle.classList.contains('drag-handle') || handle.closest('.drag-handle');
                     }
@@ -662,24 +828,18 @@
                     const cardDataIndex = flowCardsData.findIndex(c => c.id === cardId);
                     if (cardDataIndex === -1) return;
 
-                    const cardData = flowCardsData.splice(cardDataIndex, 1)[0]; // Remove and get the card data
+                    const cardData = flowCardsData.splice(cardDataIndex, 1)[0]; 
 
                     let newIndex = 0;
                     if (sibling) {
                         const siblingId = sibling.dataset.cardId;
                         newIndex = flowCardsData.findIndex(c => c.id === siblingId);
-                         if (newIndex === -1) { // Should not happen if sibling is valid
-                            newIndex = target.children.length -1; // Add to end if sibling somehow not in data
-                         }
+                         if (newIndex === -1) newIndex = target.children.length -1; 
                     } else {
-                        newIndex = target.children.length; // Dropped at the end of the visible list
+                        newIndex = target.children.length; 
                     }
-                    
                     flowCardsData.splice(newIndex, 0, cardData); 
-                    
-                    console.log(`Card ${cardId} moved. New order in array (simulated):`, flowCardsData.map(c=>c.title));
-                    // For this simulation, Dragula's DOM update is primary.
-                    // Re-rendering from data array would revert Dragula's DOM change unless DOM is cleared first.
+                    console.log(\`Card \${cardId} moved. New data order (simulated):\`, flowCardsData.map(c=>c.title));
                 });
             } else {
                 console.warn('Dragula library not found. Drag and drop will not work.');
