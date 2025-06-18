@@ -8,35 +8,47 @@
         /* --- Configurações Globais e Fontes --- */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            margin: 0;
-            padding: 20px;
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 12px;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        /* --- Container Principal --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Estrutura Principal --- */
         .container {
             max-width: 1200px;
             margin: auto;
-            background-color: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
             overflow: hidden;
         }
 
         /* --- Header (Barra Superior) --- */
-        .header {
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 24px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--medium-gray);
         }
 
-        .header .back-link {
+        .page-header .back-link {
             text-decoration: none;
             color: #555;
             font-weight: 500;
@@ -45,34 +57,40 @@
             gap: 8px;
         }
 
-        .header .user-actions {
+        .page-header .user-actions {
             display: flex;
             align-items: center;
             gap: 16px;
         }
+        
+        .page-header .user-actions .icon {
+             color: #555;
+        }
 
-        .header .user-actions img {
+        .page-header .user-actions .user-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
             cursor: pointer;
+            border: 2px solid #ddd;
         }
         
-        /* --- Conteúdo Principal (Snapshot) --- */
-        .snapshot-body {
+        /* --- Corpo do Cabeçalho (Informações de Contato) --- */
+        .header-body {
             padding: 24px;
         }
 
-        .main-content {
+        .header-main-content {
             display: flex;
+            flex-wrap: wrap;
             gap: 32px;
             padding-bottom: 24px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--medium-gray);
         }
 
-        /* --- Coluna da Esquerda (Informações do Contato) --- */
         .contact-info {
-            flex-shrink: 0;
+            flex: 1;
+            min-width: 280px;
         }
 
         .contact-info .profile-pic {
@@ -82,154 +100,104 @@
             object-fit: cover;
             margin-bottom: 16px;
         }
-
-        .contact-info h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .contact-info .status {
-            color: #888;
-            margin-bottom: 12px;
-        }
-
-        .contact-info .details p {
-            margin: 4px 0;
-            color: #555;
-            font-size: 14px;
-        }
         
-        .contact-info .contact-actions {
-            margin-top: 16px;
-            display: flex;
-            gap: 8px;
-        }
-
+        .contact-info h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .contact-info .status { color: var(--dark-gray); margin-bottom: 12px; }
+        .contact-info .details p { margin: 4px 0; color: #555; font-size: 14px; line-height: 1.5; }
+        
+        .contact-info .contact-actions { margin-top: 16px; display: flex; gap: 8px; }
         .contact-info .contact-actions button {
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
-            font-size: 20px;
-            cursor: pointer;
-            color: #555;
+            background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px;
+            width: 36px; height: 36px; font-size: 20px; cursor: pointer; color: #555;
         }
 
-        /* --- Coluna da Direita (Detalhes do Job) --- */
-        .job-details {
-            flex-grow: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
+        .job-details-header {
+            flex: 2; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px; min-width: 300px;
         }
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-        }
+        .detail-item { display: flex; flex-direction: column; }
+        .detail-item .label { font-size: 12px; font-weight: 600; color: var(--dark-gray); text-transform: uppercase; margin-bottom: 6px; }
+        .detail-item .value { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .detail-item .value.sales-rep img { width: 24px; height: 24px; border-radius: 50%; }
 
-        .detail-item .label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #888;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .detail-item .value {
-            font-size: 16px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .detail-item .value.sales-rep img {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-        }
-
-        /* --- Estilo para o Tooltip das Notas --- */
-        .tooltip {
-            position: relative;
-            cursor: help;
-            border-bottom: 1px dotted #555;
-        }
-
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 220px;
-            background-color: #333;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -110px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 13px;
-            font-weight: 400;
-        }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-
-        /* --- Navegação em Abas (Tabs) --- */
-        .tabs {
-            display: flex;
-            gap: 24px;
-            padding: 0 24px; /* Alinhado com o padding do corpo */
-            margin-top: 1px; /* Para ficar logo abaixo da borda */
-            position: relative;
-            top: -25px; /* Puxa as abas para cima */
-
-        }
-
+        /* --- Navegação em Abas --- */
+        .tabs-container { padding: 0 24px; margin-top: -1px; }
+        .tabs { display: flex; gap: 24px; overflow-x: auto; white-space: nowrap; }
         .tabs a {
-            padding: 12px 4px;
-            text-decoration: none;
-            color: #888;
-            font-weight: 600;
-            font-size: 14px;
-            border-bottom: 3px solid transparent;
+            padding: 12px 4px; text-decoration: none; color: var(--dark-gray); font-weight: 600;
+            font-size: 14px; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s;
+        }
+        .tabs a.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+
+        /* --- Conteúdo dos Snapshots (CARDS) --- */
+        .snapshots-content {
+            padding: 24px;
+            background-color: var(--light-gray);
         }
 
-        .tabs a.active {
-            color: #007bff;
-            border-bottom-color: #007bff;
+        .snapshot-card {
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px;
         }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-header .title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-header .title span { font-size: 18px; }
+        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); }
+        
+        .card-created-date { font-size: 13px; color: var(--dark-gray); margin-bottom: 24px; }
+        
+        .card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .card-section h3 {
+            font-size: 12px; font-weight: 700; color: var(--dark-gray); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 16px; border-bottom: 1px solid var(--medium-gray); padding-bottom: 8px;
+        }
+
+        .info-row { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
+        .info-row .info-label { color: var(--dark-gray); width: 120px; }
+        .info-row .info-value { font-weight: 500; }
+        .info-row .info-value.bold { font-weight: 700; }
+        .info-row .info-value .emoji { font-size: 18px; }
+        .info-row .info-value.non-recoverable { color: #c0392b; font-size: 13px; font-weight: 500; }
+        
+        .status-badge {
+            background-color: #e9f5ff; border: 1px solid #bde0ff; color: #0d6efd;
+            border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500;
+        }
+
+        .card-footer {
+            margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--medium-gray);
+            display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--dark-gray);
+        }
+        .card-footer .files-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
 
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header class="header">
+        <!-- CABEÇALHO DA PÁGINA (FIEL AO ORIGINAL) -->
+        <header class="page-header">
             <a href="#" class="back-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 Back
             </a>
             <div class="user-actions">
-                <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#555" d="M21 19v1H3v-1l2-2v-6c0-3.1 2.03-5.83 5-6.71V4a2 2 0 0 1 2-2a2 2 0 0 1 2 2v.29c2.97.88 5 3.61 5 6.71v6l2 2m-7 2a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2Z"/></svg>
-                <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#555" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9Z"/></svg>
-                <img src="https://i.pravatar.cc/40?u=user-avatar" alt="User Avatar">
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19v1H3v-1l2-2v-6c0-3.1 2.03-5.83 5-6.71V4a2 2 0 0 1 2-2a2 2 0 0 1 2 2v.29c2.97.88 5 3.61 5 6.71v6l2 2m-7 2a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2Z"/></svg>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9Z"/></svg>
+                <img src="https://i.pravatar.cc/40?u=user-avatar-123" alt="User Avatar" class="user-avatar" onerror="this.onerror=null;this.src='https://placehold.co/40x40/EFEFEF/333333?text=A';">
             </div>
         </header>
 
-        <div class="snapshot-body">
-            <main class="main-content">
+        <!-- Corpo do Cabeçalho com Informações de Contato -->
+        <div class="header-body">
+            <main class="header-main-content">
                 <section class="contact-info">
-                    <img src="https://i.imgur.com/e83wN5d.png" alt="Julian Ortiz" class="profile-pic">
+                    <img src="https://i.imgur.com/e83wN5d.png" alt="Foto de Julian Ortiz" class="profile-pic" onerror="this.onerror=null;this.src='https://placehold.co/120x120/EFEFEF/333333?text=Foto';">
                     <h1>Julian Ortiz</h1>
                     <p class="status">• For 0 days</p>
                     <div class="details">
@@ -238,65 +206,116 @@
                         <p>(681) 267-4351</p>
                     </div>
                     <div class="contact-actions">
-                        <button>💬</button>
-                        <button>+</button>
+                        <button title="Enviar Mensagem">💬</button>
+                        <button title="Adicionar">+</button>
                     </div>
                 </section>
-
-                <section class="job-details">
+                <section class="job-details-header">
                     <div class="detail-item">
-                        <span class="label">Last Contacted</span>
-                        <span class="value">Never</span>
+                        <span class="label">Last Contacted</span><span class="value">Never</span>
                     </div>
                     <div class="detail-item">
                         <span class="label">Sales Rep</span>
                         <span class="value sales-rep">
-                            <img src="https://i.pravatar.cc/32?u=jeff-wray" alt="Jeff Wray">
+                            <img src="https://i.pravatar.cc/32?u=jeff-wray-456" alt="Jeff Wray" onerror="this.onerror=null;this.src='https://placehold.co/32x32/EFEFEF/333333?text=JW';">
                             Jeff Wray
                         </span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Insurance Company</span>
-                        <span class="value">-</span>
+                        <span class="label">Insurance Company</span><span class="value">-</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Claim Number</span>
-                        <span class="value">-</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <span class="label">Trade</span>
-                        <span class="value">Roofing</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Prod Emoji</span>
-                        <span class="value">👍</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Supp Emoji</span>
-                        <span class="value">✅</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Supplement Notes</span>
-                        <div class="value tooltip">
-                            <span>Waiting on adjuster approval...</span>
-                            <span class="tooltip-text">Full Note: Waiting on adjuster approval for the ridge vent upgrade. Follow up scheduled for Friday.</span>
-                        </div>
+                        <span class="label">Claim Number</span><span class="value">-</span>
                     </div>
                 </section>
             </main>
         </div>
 
-        <nav class="tabs">
-            <a href="#" class="active">SNAPSHOTS</a>
-            <a href="#">3+</a>
-            <a href="#">CONVO</a>
-            <a href="#">FLOW</a>
-            <a href="#">STATUS</a>
-            <a href="#">TASKS</a>
-            <a href="#">TICKETS</a>
-            <a href="#">DETAIL</a>
-        </nav>
+        <!-- Navegação em Abas -->
+        <div class="tabs-container">
+            <nav class="tabs">
+                <a href="#" class="active">SNAPSHOTS</a>
+                <a href="#">3+</a><a href="#">CONVO</a><a href="#">FLOW</a><a href="#">STATUS</a>
+                <a href="#">TASKS</a><a href="#">TICKETS</a><a href="#">DETAIL</a>
+            </nav>
+        </div>
+
+        <!-- CONTEÚDO DA ABA SNAPSHOTS COM O CARD -->
+        <section class="snapshots-content">
+            <div class="snapshot-card">
+                <header class="card-header">
+                    <h2 class="title">@gutter <span class="emoji">👎</span><span class="emoji">🚩</span></h2>
+                    <div class="actions">
+                        <span>🔼</span>
+                        <span>🖨️</span>
+                        <span>⋮</span>
+                    </div>
+                </header>
+                <p class="card-created-date">Created: Thu, Jun 12, 2025, 5:28:30 PM</p>
+                
+                <div class="card-body">
+                    <div class="card-section">
+                        <h3>PRODUCTION</h3>
+                        <div class="info-row">
+                            <span class="info-label">Production Status:</span>
+                            <span class="info-value emoji">👎</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">NOTES</span>
+                            <span class="info-value">Production test</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">STATUS</span>
+                            <span class="info-value">
+                                <span class="status-badge">Ready For Install</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h3>SUPPLEMENT</h3>
+                        <div class="info-row">
+                            <span class="info-value non-recoverable">
+                                🚩 This trade has Non-Recoverable Depreciation
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Supp. Status:</span>
+                            <span class="info-value emoji">👎</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">How far off:</span>
+                            <span class="info-value">$100.00</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Why are we off?</span>
+                            <span class="info-value bold">Supp test</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Cash Bid:</span>
+                            <span class="info-value">$100.00</span>
+                        </div>
+                         <div class="info-row">
+                            <span class="info-label">INS RCV:</span>
+                            <span class="info-value">$100.00</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Our Supp:</span>
+                            <span class="info-value bold">$400.00</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">FINANCIAL NOTES</span>
+                            <span class="info-value">Testing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="card-footer">
+                    <span>No Bid Attached</span>
+                    <a href="#" class="files-link">📄 Files</a>
+                </footer>
+            </div>
+        </section>
 
     </div>
 
