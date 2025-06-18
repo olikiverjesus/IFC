@@ -144,36 +144,19 @@
             padding: 24px;
         }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .card-header .title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .card-header .title span { font-size: 18px; }
-        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); }
+        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); cursor: pointer; font-size: 20px; }
         
-        .card-created-date { font-size: 13px; color: var(--dark-gray); margin-bottom: 24px; }
-        
-        .card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .card-section h3 {
-            font-size: 12px; font-weight: 700; color: var(--dark-gray); text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 16px; border-bottom: 1px solid var(--medium-gray); padding-bottom: 8px;
+        .card-body {
+            padding-top: 16px;
+            border-top: 1px solid var(--medium-gray);
         }
 
-        .info-row { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
-        .info-row .info-label { color: var(--dark-gray); width: 120px; }
+        .info-row { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 14px; }
+        .info-row .info-label { color: var(--dark-gray); width: 150px; font-weight: 500; flex-shrink: 0; }
         .info-row .info-value { font-weight: 500; }
-        .info-row .info-value.bold { font-weight: 700; }
-        .info-row .info-value .emoji { font-size: 18px; }
-        .info-row .info-value.non-recoverable { color: #c0392b; font-size: 13px; font-weight: 500; }
-        
-        .status-badge {
-            background-color: #e9f5ff; border: 1px solid #bde0ff; color: #0d6efd;
-            border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500;
-        }
-
-        .card-footer {
-            margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--medium-gray);
-            display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--dark-gray);
-        }
-        .card-footer .files-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .info-row .info-value.emoji { font-size: 18px; }
 
     </style>
 </head>
@@ -240,80 +223,35 @@
             </nav>
         </div>
 
-        <!-- CONTEÚDO DA ABA SNAPSHOTS COM O CARD -->
+        <!-- CONTEÚDO DA ABA SNAPSHOTS COM O CARD CORRIGIDO -->
         <section class="snapshots-content">
             <div class="snapshot-card">
                 <header class="card-header">
-                    <h2 class="title">@gutter <span class="emoji">👎</span><span class="emoji">🚩</span></h2>
+                    <!-- 1. Trade -->
+                    <h2 class="title">Roofing</h2>
                     <div class="actions">
-                        <span>🔼</span>
-                        <span>🖨️</span>
                         <span>⋮</span>
                     </div>
                 </header>
-                <p class="card-created-date">Created: Thu, Jun 12, 2025, 5:28:30 PM</p>
                 
                 <div class="card-body">
-                    <div class="card-section">
-                        <h3>PRODUCTION</h3>
-                        <div class="info-row">
-                            <span class="info-label">Production Status:</span>
-                            <span class="info-value emoji">👎</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">NOTES</span>
-                            <span class="info-value">Production test</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">STATUS</span>
-                            <span class="info-value">
-                                <span class="status-badge">Ready For Install</span>
-                            </span>
-                        </div>
+                    <div class="info-row">
+                        <!-- 2. Prod Emoji -->
+                        <span class="info-label">Production Status</span>
+                        <span class="info-value emoji">👍</span>
                     </div>
-
-                    <div class="card-section">
-                        <h3>SUPPLEMENT</h3>
-                        <div class="info-row">
-                            <span class="info-value non-recoverable">
-                                🚩 This trade has Non-Recoverable Depreciation
-                            </span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Supp. Status:</span>
-                            <span class="info-value emoji">👎</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">How far off:</span>
-                            <span class="info-value">$100.00</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Why are we off?</span>
-                            <span class="info-value bold">Supp test</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Cash Bid:</span>
-                            <span class="info-value">$100.00</span>
-                        </div>
-                         <div class="info-row">
-                            <span class="info-label">INS RCV:</span>
-                            <span class="info-value">$100.00</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Our Supp:</span>
-                            <span class="info-value bold">$400.00</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">FINANCIAL NOTES</span>
-                            <span class="info-value">Testing</span>
-                        </div>
+                     <div class="info-row">
+                        <!-- 3. Supp Emoji -->
+                        <span class="info-label">Supplement Status</span>
+                        <span class="info-value emoji">✅</span>
+                    </div>
+                    <div class="info-row">
+                        <!-- 4. Supplement Notes -->
+                        <span class="info-label">Supplement Notes</span>
+                        <span class="info-value">Waiting on adjuster approval for the ridge vent upgrade.</span>
                     </div>
                 </div>
 
-                <footer class="card-footer">
-                    <span>No Bid Attached</span>
-                    <a href="#" class="files-link">📄 Files</a>
-                </footer>
             </div>
         </section>
 
