@@ -145,25 +145,44 @@
         }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .card-header .title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); cursor: pointer; font-size: 20px; }
+        .card-header .title { font-size: 20px; font-weight: 600; }
+        .card-header .actions { color: var(--dark-gray); cursor: pointer; font-size: 20px; }
         
-        .card-body {
-            padding-top: 16px;
+        .card-body > .semantic-group:not(:first-child) {
+            margin-top: 20px;
+            padding-top: 20px;
             border-top: 1px solid var(--medium-gray);
+        }
+
+        .semantic-group h3 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0;
+            margin-bottom: 16px;
         }
 
         .info-row { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 14px; }
         .info-row .info-label { color: var(--dark-gray); width: 150px; font-weight: 500; flex-shrink: 0; }
         .info-row .info-value { font-weight: 500; }
         .info-row .info-value.emoji { font-size: 18px; }
+        .info-row .info-value.status-badge {
+             background-color: #e7f5ff;
+             color: #005fbd;
+             padding: 3px 10px;
+             border-radius: 12px;
+             font-size: 13px;
+             font-weight: 600;
+        }
 
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- CABEÇALHO DA PÁGINA (FIEL AO ORIGINAL) -->
+        <!-- CABEÇALHO DA PÁGINA -->
         <header class="page-header">
             <a href="#" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -176,7 +195,7 @@
             </div>
         </header>
 
-        <!-- Corpo do Cabeçalho com Informações de Contato -->
+        <!-- Informações de Contato -->
         <div class="header-body">
             <main class="header-main-content">
                 <section class="contact-info">
@@ -194,9 +213,7 @@
                     </div>
                 </section>
                 <section class="job-details-header">
-                    <div class="detail-item">
-                        <span class="label">Last Contacted</span><span class="value">Never</span>
-                    </div>
+                    <div class="detail-item"><span class="label">Last Contacted</span><span class="value">Never</span></div>
                     <div class="detail-item">
                         <span class="label">Sales Rep</span>
                         <span class="value sales-rep">
@@ -204,17 +221,13 @@
                             Jeff Wray
                         </span>
                     </div>
-                    <div class="detail-item">
-                        <span class="label">Insurance Company</span><span class="value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Claim Number</span><span class="value">-</span>
-                    </div>
+                    <div class="detail-item"><span class="label">Insurance Company</span><span class="value">-</span></div>
+                    <div class="detail-item"><span class="label">Claim Number</span><span class="value">-</span></div>
                 </section>
             </main>
         </div>
 
-        <!-- Navegação em Abas -->
+        <!-- Abas de Navegação -->
         <div class="tabs-container">
             <nav class="tabs">
                 <a href="#" class="active">SNAPSHOTS</a>
@@ -223,35 +236,50 @@
             </nav>
         </div>
 
-        <!-- CONTEÚDO DA ABA SNAPSHOTS COM O CARD CORRIGIDO -->
+        <!-- CONTEÚDO DA ABA SNAPSHOTS COM GRUPOS SEMÂNTICOS -->
         <section class="snapshots-content">
             <div class="snapshot-card">
                 <header class="card-header">
-                    <!-- 1. Trade -->
                     <h2 class="title">Roofing</h2>
-                    <div class="actions">
-                        <span>⋮</span>
-                    </div>
+                    <div class="actions"><span>⋮</span></div>
                 </header>
                 
                 <div class="card-body">
-                    <div class="info-row">
-                        <!-- 2. Prod Emoji -->
-                        <span class="info-label">Production Status</span>
-                        <span class="info-value emoji">👍</span>
+                    <!-- Grupo: Production (derivado de FlowBasics) -->
+                    <div class="semantic-group">
+                        <h3>Production</h3>
+                        <div class="info-row">
+                            <span class="info-label">Production Status</span>
+                            <span class="info-value emoji">👍</span>
+                        </div>
                     </div>
-                     <div class="info-row">
-                        <!-- 3. Supp Emoji -->
-                        <span class="info-label">Supplement Status</span>
-                        <span class="info-value emoji">✅</span>
+                    
+                    <!-- Grupo: Supplements -->
+                    <div class="semantic-group">
+                        <h3>Supplements</h3>
+                        <div class="info-row">
+                            <span class="info-label">Supplement Status</span>
+                            <span class="info-value emoji">✅</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Supplement Notes</span>
+                            <span class="info-value">Waiting on adjuster approval for the ridge vent upgrade.</span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <!-- 4. Supplement Notes -->
-                        <span class="info-label">Supplement Notes</span>
-                        <span class="info-value">Waiting on adjuster approval for the ridge vent upgrade.</span>
+
+                    <!-- Grupo: Install Lifecycle -->
+                    <div class="semantic-group">
+                        <h3>Install Lifecycle</h3>
+                        <div class="info-row">
+                            <span class="info-label">Install Status</span>
+                            <span class="info-value status-badge">Ready for Install</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Scheduled Date</span>
+                            <span class="info-value">Jul 15, 2025</span>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
