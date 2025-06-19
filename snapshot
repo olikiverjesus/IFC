@@ -130,51 +130,63 @@
         }
         .tabs a.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
 
-        /* --- Conteúdo dos Snapshots (CARDS) --- */
+        /* --- Conteúdo dos Snapshots (LISTA TRUNCADA) --- */
         .snapshots-content {
             padding: 24px;
-            background-color: var(--light-gray);
-        }
-
-        .snapshot-card {
             background-color: var(--white-color);
-            border: 1px solid var(--medium-gray);
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            padding: 24px;
         }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .card-header .title { font-size: 20px; font-weight: 600; }
-        .card-header .actions { color: var(--dark-gray); cursor: pointer; font-size: 20px; }
         
-        .card-body > .semantic-group:not(:first-child) {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--medium-gray);
+        .snapshot-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .trade-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .trade-item:last-child {
+            border-bottom: none;
         }
 
-        .semantic-group h3 {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--dark-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 0;
-            margin-bottom: 16px;
+        .trade-item-emojis {
+            display: flex;
+            gap: 8px;
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
         }
 
-        .info-row { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 14px; }
-        .info-row .info-label { color: var(--dark-gray); width: 150px; font-weight: 500; flex-shrink: 0; }
-        .info-row .info-value { font-weight: 500; }
-        .info-row .info-value.emoji { font-size: 18px; }
-        .info-row .info-value.status-badge {
+        .trade-item-content .trade-name {
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        
+        .trade-item-content .status-badge {
              background-color: #e7f5ff;
              color: #005fbd;
-             padding: 3px 10px;
+             padding: 2px 8px;
              border-radius: 12px;
-             font-size: 13px;
+             font-size: 12px;
              font-weight: 600;
+             white-space: nowrap;
+        }
+        
+        .trade-item-content .date {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .trade-item-content .notes {
+            color: #555;
+            display: block; /* Makes the note appear on the next line if needed */
         }
 
     </style>
@@ -236,51 +248,44 @@
             </nav>
         </div>
 
-        <!-- CONTEÚDO DA ABA SNAPSHOTS COM GRUPOS SEMÂNTICOS -->
+        <!-- CONTEÚDO DA ABA SNAPSHOTS COM LAYOUT DE LISTA -->
         <section class="snapshots-content">
-            <div class="snapshot-card">
-                <header class="card-header">
-                    <h2 class="title">Roofing</h2>
-                    <div class="actions"><span>⋮</span></div>
-                </header>
-                
-                <div class="card-body">
-                    <!-- Grupo: Production (derivado de FlowBasics) -->
-                    <div class="semantic-group">
-                        <h3>Production</h3>
-                        <div class="info-row">
-                            <span class="info-label">Production Status</span>
-                            <span class="info-value emoji">👍</span>
-                        </div>
+            <ul class="snapshot-list">
+                <li class="trade-item">
+                    <div class="trade-item-emojis">
+                        <span>👍</span>
+                        <span>✅</span>
                     </div>
-                    
-                    <!-- Grupo: Supplements -->
-                    <div class="semantic-group">
-                        <h3>Supplements</h3>
-                        <div class="info-row">
-                            <span class="info-label">Supplement Status</span>
-                            <span class="info-value emoji">✅</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Supplement Notes</span>
-                            <span class="info-value">Waiting on adjuster approval for the ridge vent upgrade.</span>
-                        </div>
+                    <div class="trade-item-content">
+                        <span class="trade-name">ROOFING:</span>
+                        <span class="status-badge">Ready for Install</span>
+                        <span class="date">Jul 15, 2025.</span>
+                        <span class="notes">Note: Waiting on adjuster approval for ridge vent.</span>
                     </div>
-
-                    <!-- Grupo: Install Lifecycle -->
-                    <div class="semantic-group">
-                        <h3>Install Lifecycle</h3>
-                        <div class="info-row">
-                            <span class="info-label">Install Status</span>
-                            <span class="info-value status-badge">Ready for Install</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Scheduled Date</span>
-                            <span class="info-value">Jul 15, 2025</span>
-                        </div>
+                </li>
+                <li class="trade-item">
+                    <div class="trade-item-emojis">
+                        <span>👎</span>
+                        <span>👎</span>
                     </div>
-                </div>
-            </div>
+                    <div class="trade-item-content">
+                        <span class="trade-name">GUTTERS:</span>
+                        <span class="status-badge">Work Schedule Required.</span>
+                        <span class="notes">Note: Homeowner to confirm color by EOD.</span>
+                    </div>
+                </li>
+                <li class="trade-item">
+                     <div class="trade-item-emojis">
+                        <span>✅</span>
+                        <span>✅</span>
+                    </div>
+                     <div class="trade-item-content">
+                        <span class="trade-name">SCREENS:</span>
+                        <span class="status-badge">Work Completed.</span>
+                        <span class="notes">Note: All screens replaced.</span>
+                    </div>
+                </li>
+            </ul>
         </section>
 
     </div>
