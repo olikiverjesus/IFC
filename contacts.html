@@ -65,8 +65,35 @@
         .btn-secondary { background-color: #eee; border-color: #ddd; color: var(--text-color); }
         .btn-link { background: none; border: none; color: var(--primary-color); padding: 0; font-weight: 500;}
 
-        /* --- Tela da Lista de Contatos --- */
-        #contactsListView h1 { font-size: 28px; margin-bottom: 24px; }
+        /* --- Seletor de Visualização --- */
+        .view-selector {
+            display: flex;
+            gap: 8px;
+            background-color: var(--medium-gray);
+            padding: 4px;
+            border-radius: var(--border-radius);
+            margin-bottom: 24px;
+        }
+        .view-selector .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background-color: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+        .view-selector .toggle-btn.active {
+            background-color: var(--white-color);
+            color: var(--text-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+
+        /* --- Telas de Lista --- */
+        .list-header h1 { font-size: 28px; margin-bottom: 16px; margin-top: 0;}
         .search-container {
             position: relative;
             margin-bottom: 24px;
@@ -81,8 +108,8 @@
             box-sizing: border-box;
         }
         
-        .contact-list { display: flex; flex-direction: column; gap: 12px; }
-        .contact-item {
+        .item-list { display: flex; flex-direction: column; gap: 12px; }
+        .list-item {
             display: flex; align-items: center; gap: 16px;
             padding: 16px;
             background-color: var(--white-color);
@@ -91,12 +118,12 @@
             cursor: pointer;
             transition: box-shadow 0.2s, transform 0.2s;
         }
-        .contact-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-        .contact-item .contact-icon { font-size: 20px; }
-        .contact-item .contact-info { flex-grow: 1; }
-        .contact-item .contact-name { font-weight: 600; }
-        .contact-item .view-project-link { font-size: 13px; color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .contact-item .more-options { font-size: 20px; color: var(--dark-gray); padding: 4px; cursor: pointer; }
+        .list-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+        .list-item .item-icon { font-size: 20px; }
+        .list-item .item-info { flex-grow: 1; }
+        .list-item .item-name { font-weight: 600; }
+        .list-item .item-subtext { font-size: 13px; color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .list-item .more-options { font-size: 20px; color: var(--dark-gray); padding: 4px; cursor: pointer; }
 
         .fab {
             position: fixed;
@@ -107,9 +134,7 @@
             background-color: var(--primary-color);
             color: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 28px;
             box-shadow: var(--shadow-strong);
             cursor: pointer;
@@ -117,15 +142,16 @@
         }
         .fab:hover { transform: scale(1.1); }
 
-        /* --- Tela de Detalhes do Contato --- */
-        #contactDetailView .back-link { margin-bottom: 24px; display: inline-block; }
+        /* --- Tela de Detalhes --- */
+        .detail-view .back-link { margin-bottom: 24px; display: inline-block; }
         .detail-card {
             background-color: var(--white-color); border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius); padding: 24px;
         }
         .detail-header { margin-bottom: 24px; }
         .detail-header h2 { margin: 0 0 4px 0; }
-        .detail-header .company-link { color: var(--dark-gray); font-weight: 500; }
+        .detail-header .sub-header { color: var(--dark-gray); font-weight: 500; }
+        .detail-header .item-role { font-size: 16px; color: var(--primary-color); font-weight: 600; }
         
         .section-header {
             display: flex;
@@ -149,10 +175,7 @@
             display: none; align-items: center; justify-content: center;
         }
         .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: white; padding: 32px; border-radius: 12px;
-            width: 90%; max-width: 500px;
-        }
+        .modal-content { background: white; padding: 32px; border-radius: 12px; width: 90%; max-width: 500px; }
         .modal-content h2 { margin-top: 0; }
         .modal-content .form-group { margin-bottom: 16px; }
         .modal-content label { display: block; margin-bottom: 6px; font-weight: 500; }
@@ -167,78 +190,79 @@
         <img class="user-avatar" src="https://i.pravatar.cc/40?u=user1" alt="User Avatar">
     </header>
 
-    <!-- ===== VIEW 1: CONTACTS LIST (initial view) ===== -->
-    <div id="contactsListView" class="view active">
-        <main class="main-container">
-            <h1>Contacts</h1>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Search contacts">
+    <main class="main-container">
+    
+        <!-- ===== VIEW 1: CONTACTS / COMPANIES LISTS ===== -->
+        <div id="listView" class="view active">
+            <div class="view-selector">
+                <button class="toggle-btn active" data-view="contacts">View by Contacts</button>
+                <button class="toggle-btn" data-view="companies">View by Company</button>
             </div>
-            <div class="contact-list" id="contactListContainer">
-                <!-- JS populates this -->
+            
+            <div id="contactsViewContent" class="list-view-content active">
+                <div class="list-header">
+                     <h1>Contacts</h1>
+                     <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="contactSearchInput" placeholder="Search contacts">
+                    </div>
+                </div>
+                <div class="item-list" id="contactListContainer"></div>
+            </div>
+            
+            <div id="companiesViewContent" class="list-view-content" style="display: none;">
+                 <div class="list-header">
+                     <h1>Companies</h1>
+                      <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="companySearchInput" placeholder="Search companies">
+                    </div>
+                 </div>
+                 <div class="item-list" id="companyListContainer"></div>
             </div>
         </main>
-        <div class="fab" id="showAddContactModalBtn" title="Add New Contact">+</div>
+        <div class="fab" id="showAddModalBtn" title="Add New">+</div>
     </div>
     
-    <!-- ===== VIEW 2: CONTACT DETAIL ===== -->
-    <div id="contactDetailView" class="view">
+    <!-- ===== VIEW 2: DETAIL VIEWS ===== -->
+    <div id="detailView" class="view detail-view">
          <main class="main-container">
-            <a href="#" class="btn-link back-link" data-target="contactsListView">&larr; Back to All Contacts</a>
+            <a href="#" class="btn-link back-link" data-target="listView">&larr; Back to List</a>
             <div class="detail-card">
                 <div class="detail-header">
-                    <h2 id="contactName"></h2>
-                    <div class="company-link">Works at <strong id="contactCompanyName"></strong></div>
+                    <h2 id="detailName"></h2>
+                    <div id="detailSubHeader" class="sub-header"></div>
                 </div>
-                
                 <div class="section">
                     <div class="section-header">
                         <h3>Interaction History</h3>
                         <button class="btn btn-secondary" id="showAddInteractionBtn">Add Interaction</button>
                     </div>
-                    <div id="interactionHistory">
-                        <!-- JS populates this -->
-                    </div>
+                    <div id="interactionHistory"></div>
                 </div>
             </div>
          </main>
     </div>
 
-    <!-- ===== MODAL: ADD NEW CONTACT ===== -->
+    <!-- Modals remain the same -->
     <div id="addContactModal" class="modal-overlay">
         <div class="modal-content">
             <h2>Add New Contact</h2>
-            <div class="form-group">
-                <label for="newContactName">Contact Name</label>
-                <input type="text" id="newContactName" placeholder="e.g., Jay Temple">
-            </div>
-            <div class="form-group">
-                <label for="newContactCompany">Company</label>
-                <select id="newContactCompany"></select>
-            </div>
+            <div class="form-group"><label for="newContactName">Contact Name</label><input type="text" id="newContactName"></div>
+            <div class="form-group"><label for="newContactRole">Role / Title</label><input type="text" id="newContactRole" placeholder="e.g., Adjuster"></div>
+            <div class="form-group"><label for="newContactCompany">Company</label><select id="newContactCompany"></select></div>
             <div class="form-actions">
-                <button class="btn btn-secondary closeModalBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveContactBtn">Save Contact</button>
+                <button class="btn btn-secondary closeModalBtn">Cancel</button><button class="btn btn-primary" id="saveContactBtn">Save</button>
             </div>
         </div>
     </div>
-    
-    <!-- ===== MODAL: ADD INTERACTION ===== -->
-    <div id="addInteractionModal" class="modal-overlay">
+     <div id="addInteractionModal" class="modal-overlay">
         <div class="modal-content">
-            <h2>Add Interaction for <span id="interactionContactName"></span></h2>
-            <div class="form-group">
-                <label for="interactionJobName">Job Name / Address</label>
-                <input type="text" id="interactionJobName" placeholder="e.g., 123 Main St">
-            </div>
-            <div class="form-group">
-                <label for="experienceNotes">Experience Notes</label>
-                <textarea id="experienceNotes" placeholder="e.g., Great attitude, new to the company..."></textarea>
-            </div>
+            <h2>Add Interaction for <span id="interactionName"></span></h2>
+            <div class="form-group"><label for="interactionJobName">Job Name / Address</label><input type="text" id="interactionJobName"></div>
+            <div class="form-group"><label for="experienceNotes">Experience Notes</label><textarea id="experienceNotes"></textarea></div>
             <div class="form-actions">
-                <button class="btn btn-secondary closeModalBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveInteractionBtn">Save Interaction</button>
+                <button class="btn btn-secondary closeModalBtn">Cancel</button><button class="btn btn-primary" id="saveInteractionBtn">Save</button>
             </div>
         </div>
     </div>
@@ -246,84 +270,69 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-
-        // --- Mock Data ---
         let db = {
-            companies: {
-                '1': { name: 'Ladder Now' }, '2': { name: 'Allstate' }, '3': { name: 'State Farm' }
-            },
+            companies: { '1': { name: 'Ladder Now' }, '2': { name: 'Allstate' }, '3': { name: 'State Farm' } },
             contacts: [
-                { id: '1222', name: 'Ricky Cramer', companyId: '1' },
-                { id: '1646', name: 'Kathy Battershell', companyId: '2' },
-                { id: '1718', name: 'Miriam Lee', companyId: '1' },
-                { id: '1743', name: 'Barbara Woolsey', companyId: '2' },
-                { id: '1760', name: 'Christie Gotti', companyId: '3' },
-                { id: '1791', name: 'Michael Galassi', companyId: '1' },
-                { id: '2297', name: 'Bob Bare', companyId: '3' },
-                { id: '3030', name: 'Jay Temple', companyId: '1'}
+                { id: '1222', name: 'Ricky Cramer', companyId: '1', role: 'Field Inspector' },
+                { id: '1646', name: 'Kathy Battershell', companyId: '2', role: 'Claims Adjuster' },
+                { id: '3030', name: 'Jay Temple', companyId: '1', role: 'Adjuster'}
             ],
             jobInteractions: [
-                { id: 1, contactId: '1791', jobName: '456 Oak Ave', date: 'June 20, 2025', rep: 'Adam Ulrich', notes: 'He was just on a roof with me... freaking awesome, good to meet you, I\'m new in the company.' },
-                { id: 2, contactId: '1743', jobName: '789 Pine Ln', date: 'June 15, 2025', rep: 'Jessica Day', notes: 'Very helpful, got the roof paid for quickly.'},
-                { id: 3, contactId: '3030', jobName: '111 Birch Rd', date: 'May 28, 2025', rep: 'Olliver Barros', notes: 'Initial meeting went well. Seems knowledgeable.'}
+                { id: 1, contactId: '3030', jobName: '111 Birch Rd', date: 'June 25, 2025', rep: 'Olliver Barros', notes: 'Initial meeting went well. Seems knowledgeable.'},
+                { id: 2, contactId: '1646', jobName: '789 Pine Ln', date: 'June 15, 2025', rep: 'Jessica Day', notes: 'Very helpful, got the roof paid for quickly.'}
             ]
         };
 
-        let currentContactId = null;
+        let currentView = 'contacts'; // 'contacts' or 'companies'
+        let currentDetailId = null; // Can be contactId or companyId
 
-        // --- Render Functions ---
         const renderContactList = (filter = '') => {
             const container = document.getElementById('contactListContainer');
             container.innerHTML = '';
-            const filteredContacts = db.contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
-            
-            filteredContacts.forEach(contact => {
+            db.contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase())).forEach(contact => {
                 const hasProject = db.jobInteractions.some(i => i.contactId === contact.id);
-                const projectLinkHtml = hasProject ? `<a href="#" class="view-project-link" data-contact-id="${contact.id}">View project</a>` : '';
-                const itemHtml = `
-                    <div class="contact-item" data-contact-id="${contact.id}">
-                        <span class="contact-icon">👤</span>
-                        <div class="contact-info">
-                            <div class="contact-name">${contact.id}: ${contact.name}</div>
-                            ${projectLinkHtml}
-                        </div>
-                        <span class="more-options">⋮</span>
-                    </div>
-                `;
-                container.innerHTML += itemHtml;
+                const projectLink = hasProject ? `<a href="#" class="item-subtext">View project</a>` : '';
+                container.innerHTML += `<div class="list-item" data-id="${contact.id}" data-type="contact"><span class="item-icon">👤</span><div class="item-info"><div class="item-name">${contact.id}: ${contact.name}</div>${projectLink}</div><span class="more-options">⋮</span></div>`;
             });
         };
 
-        const renderContactDetail = (contactId) => {
-            currentContactId = contactId;
-            const contact = db.contacts.find(c => c.id === contactId);
-            if (!contact) return;
-            
-            const company = db.companies[contact.companyId];
-            
-            document.getElementById('contactName').textContent = `${contact.id}: ${contact.name}`;
-            document.getElementById('contactCompanyName').textContent = company.name;
-            
+        const renderCompanyList = (filter = '') => {
+            const container = document.getElementById('companyListContainer');
+            container.innerHTML = '';
+            Object.entries(db.companies).filter(([id, company]) => company.name.toLowerCase().includes(filter.toLowerCase())).forEach(([id, company]) => {
+                const interactions = db.jobInteractions.filter(i => db.contacts.find(c => c.id === i.contactId)?.companyId === id);
+                const lastInteraction = interactions.sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+                const subtext = lastInteraction ? `Last Interaction: ${new Date(lastInteraction.date).toLocaleDateString()}` : 'No interactions yet';
+                container.innerHTML += `<div class="list-item" data-id="${id}" data-type="company"><span class="item-icon">🏢</span><div class="item-info"><div class="item-name">${company.name}</div><div class="item-subtext">${subtext}</div></div><span class="more-options">⋮</span></div>`;
+            });
+        };
+
+        const renderDetailView = (id, type) => {
+            currentDetailId = id;
             const historyEl = document.getElementById('interactionHistory');
             historyEl.innerHTML = '';
-            const interactions = db.jobInteractions.filter(i => i.contactId === contactId).sort((a,b) => new Date(b.date) - new Date(a.date));
+            let interactions = [];
 
-            if (interactions.length > 0) {
-                 interactions.forEach(item => {
-                    historyEl.innerHTML += `
-                        <div class="history-item">
-                            <div class="job-info">Job: ${item.jobName}</div>
-                            <div class="experience-notes">"${item.notes}"</div>
-                            <div class="meta-info">
-                                with rep <strong>${item.rep}</strong> on ${item.date}
-                            </div>
-                        </div>`;
-                });
-            } else {
-                historyEl.innerHTML = '<p>No interaction history recorded for this contact.</p>';
+            if (type === 'contact') {
+                const contact = db.contacts.find(c => c.id === id);
+                const company = db.companies[contact.companyId];
+                document.getElementById('detailName').textContent = `${contact.id}: ${contact.name}`;
+                document.getElementById('detailSubHeader').innerHTML = `<div class="item-role">${contact.role}</div><div>Works at <strong>${company.name}</strong></div>`;
+                interactions = db.jobInteractions.filter(i => i.contactId === id);
+            } else { // company
+                const company = db.companies[id];
+                document.getElementById('detailName').textContent = company.name;
+                document.getElementById('detailSubHeader').innerHTML = ``;
+                interactions = db.jobInteractions.filter(i => db.contacts.find(c => c.id === i.contactId)?.companyId === id);
             }
+            
+            interactions.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(item => {
+                const contact = db.contacts.find(c => c.id === item.contactId);
+                historyEl.innerHTML += `<div class="history-item"><div class="job-info">Job: ${item.jobName}</div><div class="experience-notes">"${item.notes}"</div><div class="meta-info">Contact: <strong>${contact.name}</strong> with rep <strong>${item.rep}</strong> on ${item.date}</div></div>`;
+            });
+            if (interactions.length === 0) historyEl.innerHTML = '<p>No interaction history recorded.</p>';
         };
-        
+
         const populateCompanyDropdown = () => {
             const select = document.getElementById('newContactCompany');
             select.innerHTML = '';
@@ -332,76 +341,68 @@
             }
         };
 
-        // --- Navigation Logic ---
         const showView = (viewId) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId)?.classList.add('active');
         };
-        
-        document.body.addEventListener('click', (e) => {
-            const contactItem = e.target.closest('.contact-item');
-            if (contactItem && !e.target.matches('.more-options, .view-project-link')) {
-                e.preventDefault();
-                const contactId = contactItem.dataset.contactId;
-                renderContactDetail(contactId);
-                showView('contactDetailView');
-            }
 
-            const backLink = e.target.closest('.back-link');
-            if (backLink) {
+        document.body.addEventListener('click', (e) => {
+            const listItem = e.target.closest('.list-item');
+            if (listItem && !e.target.matches('.more-options, .item-subtext')) {
+                e.preventDefault();
+                renderDetailView(listItem.dataset.id, listItem.dataset.type);
+                showView('detailView');
+            }
+            if (e.target.closest('.back-link')) {
                  e.preventDefault();
-                 showView(backLink.dataset.target);
+                 showView('listView');
             }
         });
 
-        // --- Modal Logic ---
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentView = btn.dataset.view;
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.list-view-content').forEach(c => c.style.display = 'none');
+                document.getElementById(`${currentView}ViewContent`).style.display = 'block';
+            });
+        });
+
         const openModal = (modalId) => document.getElementById(modalId).classList.add('active');
         const closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
         
-        document.getElementById('showAddContactModalBtn').addEventListener('click', () => {
-             populateCompanyDropdown();
-             openModal('addContactModal');
+        document.getElementById('showAddModalBtn').addEventListener('click', () => {
+            populateCompanyDropdown();
+            openModal('addContactModal');
         });
         document.getElementById('showAddInteractionBtn').addEventListener('click', () => {
-            const contact = db.contacts.find(c => c.id === currentContactId);
-            document.getElementById('interactionContactName').textContent = contact.name;
-            openModal('addInteractionModal');
+             const name = document.getElementById('detailName').textContent;
+             document.getElementById('interactionName').textContent = name;
+             openModal('addInteractionModal');
         });
         document.querySelectorAll('.closeModalBtn').forEach(btn => btn.addEventListener('click', closeModal));
 
-        // --- Data Manipulation ---
         document.getElementById('saveContactBtn').addEventListener('click', () => {
             const name = document.getElementById('newContactName').value;
+            const role = document.getElementById('newContactRole').value;
             const companyId = document.getElementById('newContactCompany').value;
-            if (name && companyId) {
+            if (name && role && companyId) {
                 const newId = String(Math.floor(Math.random() * 9000) + 1000);
-                db.contacts.push({ id: newId, name, companyId });
+                db.contacts.push({ id: newId, name, role, companyId });
                 renderContactList();
                 closeModal();
                 document.getElementById('newContactName').value = '';
+                document.getElementById('newContactRole').value = '';
             }
         });
         
-        document.getElementById('saveInteractionBtn').addEventListener('click', () => {
-            const jobName = document.getElementById('interactionJobName').value;
-            const notes = document.getElementById('experienceNotes').value;
-            if (jobName && notes && currentContactId) {
-                const newId = db.jobInteractions.length + 1;
-                const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                db.jobInteractions.push({ id: newId, contactId: currentContactId, jobName, notes, rep: 'Olliver Barros', date });
-                renderContactDetail(currentContactId);
-                closeModal();
-                document.getElementById('interactionJobName').value = '';
-                document.getElementById('experienceNotes').value = '';
-            }
-        });
+        document.getElementById('contactSearchInput').addEventListener('input', (e) => renderContactList(e.target.value));
+        document.getElementById('companySearchInput').addEventListener('input', (e) => renderCompanyList(e.target.value));
         
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderContactList(e.target.value);
-        });
-        
-        // --- Initial Render ---
+        // Initial Render
         renderContactList();
+        renderCompanyList();
     });
     </script>
 </body>
