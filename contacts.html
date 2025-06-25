@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Management System</title>
+    <title>Contact Management System - Final</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -16,6 +16,7 @@
             --white-color: #ffffff;
             --border-radius: 12px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-strong: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
 
         body {
@@ -36,7 +37,7 @@
             border-bottom: 1px solid var(--medium-gray);
             gap: 20px;
         }
-        .top-header .icon { font-size: 20px; position: relative; }
+        .top-header .icon { font-size: 20px; position: relative; cursor: pointer; }
         .top-header .icon .badge {
             position: absolute; top: -5px; right: -8px;
             background-color: #dc3545; color: white;
@@ -88,14 +89,14 @@
             border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius);
             cursor: pointer;
-            transition: box-shadow 0.2s;
+            transition: box-shadow 0.2s, transform 0.2s;
         }
-        .contact-item:hover { box-shadow: var(--shadow); }
+        .contact-item:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
         .contact-item .contact-icon { font-size: 20px; }
         .contact-item .contact-info { flex-grow: 1; }
         .contact-item .contact-name { font-weight: 600; }
         .contact-item .view-project-link { font-size: 13px; color: var(--primary-color); text-decoration: none; font-weight: 500; }
-        .contact-item .more-options { font-size: 20px; color: var(--dark-gray); }
+        .contact-item .more-options { font-size: 20px; color: var(--dark-gray); padding: 4px; cursor: pointer; }
 
         .fab {
             position: fixed;
@@ -110,9 +111,11 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-strong);
             cursor: pointer;
+            transition: transform 0.2s;
         }
+        .fab:hover { transform: scale(1.1); }
 
         /* --- Tela de Detalhes do Contato --- */
         #contactDetailView .back-link { margin-bottom: 24px; display: inline-block; }
@@ -124,7 +127,16 @@
         .detail-header h2 { margin: 0 0 4px 0; }
         .detail-header .company-link { color: var(--dark-gray); font-weight: 500; }
         
-        .section-header h3 { font-size: 18px; border-bottom: 1px solid var(--medium-gray); padding-bottom: 8px; margin-bottom: 16px; }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        .section-header h3 { font-size: 18px; margin: 0;}
+
         .history-item { padding: 12px; border: 1px solid #f0f0f0; border-radius: var(--border-radius); margin-bottom: 12px; }
         .history-item .job-info { font-weight: 600; }
         .history-item .experience-notes { margin-top: 8px; padding-left: 12px; border-left: 3px solid #ccc; font-style: italic; color: #555;}
@@ -144,7 +156,7 @@
         .modal-content h2 { margin-top: 0; }
         .modal-content .form-group { margin-bottom: 16px; }
         .modal-content label { display: block; margin-bottom: 6px; font-weight: 500; }
-        .modal-content input, .modal-content select { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
         .modal-content .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
 
     </style>
@@ -152,7 +164,7 @@
 <body>
     <header class="top-header">
         <span class="icon">🔔<span class="badge">3</span></span>
-        <img class="user-avatar" src="https://i.pravatar.cc/40" alt="User Avatar">
+        <img class="user-avatar" src="https://i.pravatar.cc/40?u=user1" alt="User Avatar">
     </header>
 
     <!-- ===== VIEW 1: CONTACTS LIST (initial view) ===== -->
@@ -161,7 +173,7 @@
             <h1>Contacts</h1>
             <div class="search-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" placeholder="Search contacts">
+                <input type="text" id="searchInput" placeholder="Search contacts">
             </div>
             <div class="contact-list" id="contactListContainer">
                 <!-- JS populates this -->
@@ -183,6 +195,7 @@
                 <div class="section">
                     <div class="section-header">
                         <h3>Interaction History</h3>
+                        <button class="btn btn-secondary" id="showAddInteractionBtn">Add Interaction</button>
                     </div>
                     <div id="interactionHistory">
                         <!-- JS populates this -->
@@ -202,51 +215,71 @@
             </div>
             <div class="form-group">
                 <label for="newContactCompany">Company</label>
-                <select id="newContactCompany">
-                    <option value="1">Ladder Now</option>
-                    <option value="2">Allstate</option>
-                    <option value="3">State Farm</option>
-                </select>
+                <select id="newContactCompany"></select>
             </div>
             <div class="form-actions">
                 <button class="btn btn-secondary closeModalBtn">Cancel</button>
-                <button class="btn btn-primary">Save Contact</button>
+                <button class="btn btn-primary" id="saveContactBtn">Save Contact</button>
             </div>
         </div>
     </div>
+    
+    <!-- ===== MODAL: ADD INTERACTION ===== -->
+    <div id="addInteractionModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Add Interaction for <span id="interactionContactName"></span></h2>
+            <div class="form-group">
+                <label for="interactionJobName">Job Name / Address</label>
+                <input type="text" id="interactionJobName" placeholder="e.g., 123 Main St">
+            </div>
+            <div class="form-group">
+                <label for="experienceNotes">Experience Notes</label>
+                <textarea id="experienceNotes" placeholder="e.g., Great attitude, new to the company..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary closeModalBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveInteractionBtn">Save Interaction</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- Mock Data ---
-        const db = {
+        let db = {
             companies: {
-                '1': { name: 'Ladder Now' },
-                '2': { name: 'Allstate' },
-                '3': { name: 'State Farm' }
+                '1': { name: 'Ladder Now' }, '2': { name: 'Allstate' }, '3': { name: 'State Farm' }
             },
             contacts: [
-                { id: '1222', name: 'Ricky Cramer', companyId: '1', hasProject: false },
-                { id: '1646', name: 'Kathy Battershell', companyId: '2', hasProject: false },
-                { id: '1718', name: 'Miriam Lee', companyId: '1', hasProject: false },
-                { id: '1743', name: 'Barbara Woolsey', companyId: '2', hasProject: true },
-                { id: '1760', name: 'Christie Gotti', companyId: '3', hasProject: false },
-                { id: '1791', name: 'Michael Galassi', companyId: '1', hasProject: true, jobName: '456 Oak Ave'},
-                { id: '2297', name: 'Bob Bare', companyId: '3', hasProject: false }
+                { id: '1222', name: 'Ricky Cramer', companyId: '1' },
+                { id: '1646', name: 'Kathy Battershell', companyId: '2' },
+                { id: '1718', name: 'Miriam Lee', companyId: '1' },
+                { id: '1743', name: 'Barbara Woolsey', companyId: '2' },
+                { id: '1760', name: 'Christie Gotti', companyId: '3' },
+                { id: '1791', name: 'Michael Galassi', companyId: '1' },
+                { id: '2297', name: 'Bob Bare', companyId: '3' },
+                { id: '3030', name: 'Jay Temple', companyId: '1'}
             ],
             jobInteractions: [
-                { contactId: '1791', jobName: '456 Oak Ave', date: 'June 20, 2025', rep: 'Adam Ulrich', notes: 'He was just on a roof with me... freaking awesome, good to meet you, I\'m new in the company.' },
-                { contactId: '1743', jobName: '789 Pine Ln', date: 'June 15, 2025', rep: 'Jessica Day', notes: 'Very helpful, got the roof paid for quickly.'}
+                { id: 1, contactId: '1791', jobName: '456 Oak Ave', date: 'June 20, 2025', rep: 'Adam Ulrich', notes: 'He was just on a roof with me... freaking awesome, good to meet you, I\'m new in the company.' },
+                { id: 2, contactId: '1743', jobName: '789 Pine Ln', date: 'June 15, 2025', rep: 'Jessica Day', notes: 'Very helpful, got the roof paid for quickly.'},
+                { id: 3, contactId: '3030', jobName: '111 Birch Rd', date: 'May 28, 2025', rep: 'Olliver Barros', notes: 'Initial meeting went well. Seems knowledgeable.'}
             ]
         };
 
-        const contactListContainer = document.getElementById('contactListContainer');
+        let currentContactId = null;
 
-        // --- Render Main Contact List ---
-        const renderContactList = () => {
-            contactListContainer.innerHTML = '';
-            db.contacts.forEach(contact => {
-                const projectLinkHtml = contact.hasProject ? `<a href="#" class="view-project-link">View project</a>` : '';
+        // --- Render Functions ---
+        const renderContactList = (filter = '') => {
+            const container = document.getElementById('contactListContainer');
+            container.innerHTML = '';
+            const filteredContacts = db.contacts.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            filteredContacts.forEach(contact => {
+                const hasProject = db.jobInteractions.some(i => i.contactId === contact.id);
+                const projectLinkHtml = hasProject ? `<a href="#" class="view-project-link" data-contact-id="${contact.id}">View project</a>` : '';
                 const itemHtml = `
                     <div class="contact-item" data-contact-id="${contact.id}">
                         <span class="contact-icon">👤</span>
@@ -257,12 +290,12 @@
                         <span class="more-options">⋮</span>
                     </div>
                 `;
-                contactListContainer.innerHTML += itemHtml;
+                container.innerHTML += itemHtml;
             });
         };
 
-        // --- Render Contact Detail View ---
         const renderContactDetail = (contactId) => {
+            currentContactId = contactId;
             const contact = db.contacts.find(c => c.id === contactId);
             if (!contact) return;
             
@@ -271,13 +304,13 @@
             document.getElementById('contactName').textContent = `${contact.id}: ${contact.name}`;
             document.getElementById('contactCompanyName').textContent = company.name;
             
-            const historyListEl = document.getElementById('interactionHistory');
-            historyListEl.innerHTML = '';
-            const interactions = db.jobInteractions.filter(i => i.contactId === contactId);
+            const historyEl = document.getElementById('interactionHistory');
+            historyEl.innerHTML = '';
+            const interactions = db.jobInteractions.filter(i => i.contactId === contactId).sort((a,b) => new Date(b.date) - new Date(a.date));
 
             if (interactions.length > 0) {
                  interactions.forEach(item => {
-                    historyListEl.innerHTML += `
+                    historyEl.innerHTML += `
                         <div class="history-item">
                             <div class="job-info">Job: ${item.jobName}</div>
                             <div class="experience-notes">"${item.notes}"</div>
@@ -287,29 +320,31 @@
                         </div>`;
                 });
             } else {
-                historyListEl.innerHTML = '<p>No interaction history recorded for this contact.</p>';
+                historyEl.innerHTML = '<p>No interaction history recorded for this contact.</p>';
+            }
+        };
+        
+        const populateCompanyDropdown = () => {
+            const select = document.getElementById('newContactCompany');
+            select.innerHTML = '';
+            for (const id in db.companies) {
+                select.innerHTML += `<option value="${id}">${db.companies[id].name}</option>`;
             }
         };
 
-
         // --- Navigation Logic ---
-        const allViews = document.querySelectorAll('.view');
-        const showView = (viewId, contactId = null) => {
-            allViews.forEach(v => v.classList.remove('active'));
-            const targetView = document.getElementById(viewId);
-            if (targetView) {
-                targetView.classList.add('active');
-                if(viewId === 'contactDetailView' && contactId) {
-                    renderContactDetail(contactId);
-                }
-            }
+        const showView = (viewId) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId)?.classList.add('active');
         };
         
         document.body.addEventListener('click', (e) => {
             const contactItem = e.target.closest('.contact-item');
-            if (contactItem && !e.target.matches('.more-options')) {
+            if (contactItem && !e.target.matches('.more-options, .view-project-link')) {
                 e.preventDefault();
-                showView('contactDetailView', contactItem.dataset.contactId);
+                const contactId = contactItem.dataset.contactId;
+                renderContactDetail(contactId);
+                showView('contactDetailView');
             }
 
             const backLink = e.target.closest('.back-link');
@@ -320,16 +355,53 @@
         });
 
         // --- Modal Logic ---
-        const addContactModal = document.getElementById('addContactModal');
-        const showModal = (modalId) => document.getElementById(modalId).classList.add('active');
+        const openModal = (modalId) => document.getElementById(modalId).classList.add('active');
         const closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
         
-        document.getElementById('showAddContactModalBtn').addEventListener('click', () => showModal('addContactModal'));
+        document.getElementById('showAddContactModalBtn').addEventListener('click', () => {
+             populateCompanyDropdown();
+             openModal('addContactModal');
+        });
+        document.getElementById('showAddInteractionBtn').addEventListener('click', () => {
+            const contact = db.contacts.find(c => c.id === currentContactId);
+            document.getElementById('interactionContactName').textContent = contact.name;
+            openModal('addInteractionModal');
+        });
         document.querySelectorAll('.closeModalBtn').forEach(btn => btn.addEventListener('click', closeModal));
-        
-        // Initial Render
-        renderContactList();
 
+        // --- Data Manipulation ---
+        document.getElementById('saveContactBtn').addEventListener('click', () => {
+            const name = document.getElementById('newContactName').value;
+            const companyId = document.getElementById('newContactCompany').value;
+            if (name && companyId) {
+                const newId = String(Math.floor(Math.random() * 9000) + 1000);
+                db.contacts.push({ id: newId, name, companyId });
+                renderContactList();
+                closeModal();
+                document.getElementById('newContactName').value = '';
+            }
+        });
+        
+        document.getElementById('saveInteractionBtn').addEventListener('click', () => {
+            const jobName = document.getElementById('interactionJobName').value;
+            const notes = document.getElementById('experienceNotes').value;
+            if (jobName && notes && currentContactId) {
+                const newId = db.jobInteractions.length + 1;
+                const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                db.jobInteractions.push({ id: newId, contactId: currentContactId, jobName, notes, rep: 'Olliver Barros', date });
+                renderContactDetail(currentContactId);
+                closeModal();
+                document.getElementById('interactionJobName').value = '';
+                document.getElementById('experienceNotes').value = '';
+            }
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderContactList(e.target.value);
+        });
+        
+        // --- Initial Render ---
+        renderContactList();
     });
     </script>
 </body>
