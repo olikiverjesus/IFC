@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Card with Current Profit</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .flow-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .card-header .title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-header .title span { font-size: 16px; }
+        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); cursor: pointer; font-size: 20px; }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .card-body-header .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .card-body-header .created-date { 
+            font-size: 13px; 
+            color: var(--dark-gray); 
+            margin-bottom: 24px; 
+        }
+        
+        .card-section h3 {
+            font-size: 12px; font-weight: 700; color: var(--dark-gray); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 16px; border-bottom: 1px solid var(--medium-gray); padding-bottom: 8px;
+        }
+
+        .info-row { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
+        .info-row .info-label { color: var(--dark-gray); width: 150px; flex-shrink: 0; }
+        .info-row .info-value { font-weight: 500; }
+        .info-row .info-value.bold { font-weight: 700; }
+        .info-row .info-value .emoji { font-size: 18px; }
+        
+        .info-row .currency-input {
+            font-weight: 500;
+            border: 1px solid transparent;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+            background-color: transparent;
+        }
+        .info-row .currency-input:hover, .info-row .currency-input:focus {
+            border-color: var(--medium-gray);
+            background-color: var(--light-gray);
+        }
+        
+        .profit-row {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--medium-gray);
+        }
+        .profit-row .info-label {
+            font-weight: 700;
+        }
+        .profit-row .info-value {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 16px;
+        }
+        .profit-row .info-value.negative {
+            color: var(--danger-color);
+        }
+
+        .status-badge {
+            background-color: #e9f5ff; border: 1px solid #bde0ff; color: #0d6efd;
+            border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500;
+        }
+
+        .card-footer {
+            margin-top: 32px; padding: 16px 24px; border-top: 1px solid var(--medium-gray);
+            display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--dark-gray);
+            background-color: #fcfdff;
+        }
+        .card-footer .files-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .card-footer img { width: 24px; height: 24px; border-radius: 50%; }
+
+    </style>
+</head>
+<body>
+
+    <div class="flow-card">
+        <header class="card-header">
+            <h2 class="title">@ROOF <span class="emoji">👍</span><span class="emoji">👍</span></h2>
+            <div class="actions">
+                <span>⋮</span>
+            </div>
+        </header>
+        
+        <div class="card-body">
+            <div class="card-body-header">
+                <h2 class="title">@roof</h2>
+                <p class="created-date">Created: Fri, Jun 13, 2025, 2:02:43 PM</p>
+            </div>
+            
+            <div class="card-section">
+                <h3>PRODUCTION</h3>
+                <div class="info-row">
+                    <span class="info-label">Production Status:</span>
+                    <span class="info-value emoji">👍</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">NOTES</span>
+                    <span class="info-value">Test</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"></span><!-- Rótulo removido -->
+                    <span class="info-value">
+                        <span class="status-badge">Ready For Install</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-section" style="margin-top: 32px;">
+                <h3>SUPPLEMENT</h3>
+                <div class="info-row">
+                    <span class="info-label">Supp. Status:</span>
+                    <span class="info-value emoji">👍</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">How far off:</span>
+                    <span class="info-value" style="color: var(--success-color); font-weight: 700;">$0.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Why are we off?</span>
+                    <span class="info-value bold">Why test</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">INS RCV:</span>
+                    <input type="number" id="insRcv" class="info-value currency-input" value="10000">
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Our Supp:</span>
+                    <input type="number" id="cashBid" class="info-value currency-input" value="8400">
+                </div>
+                <!-- NOVO CAMPO DE LUCRO -->
+                <div class="info-row profit-row">
+                    <span class="info-label">Current Profit:</span>
+                    <span id="currentProfit" class="info-value"></span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="card-footer">
+            <span>No Bid Attached</span>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <a href="#" class="files-link">📄 Files</a>
+                <img src="https://i.pravatar.cc/32?u=user-avatar" alt="User Avatar">
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const insRcvInput = document.getElementById('insRcv');
+            const cashBidInput = document.getElementById('cashBid');
+            const currentProfitEl = document.getElementById('currentProfit');
+
+            function calculateProfit() {
+                const rcv = parseFloat(insRcvInput.value) || 0;
+                const bid = parseFloat(cashBidInput.value) || 0;
+
+                if (!insRcvInput.value || !cashBidInput.value) {
+                    currentProfitEl.textContent = '—';
+                    currentProfitEl.classList.remove('negative');
+                    return;
+                }
+
+                const profit = rcv - bid;
+
+                // Formata como moeda (USD)
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                });
+
+                currentProfitEl.textContent = formatter.format(profit);
+
+                if (profit < 0) {
+                    currentProfitEl.classList.add('negative');
+                } else {
+                    currentProfitEl.classList.remove('negative');
+                }
+            }
+
+            // Adiciona listeners para recalcular ao digitar
+            insRcvInput.addEventListener('input', calculateProfit);
+            cashBidInput.addEventListener('input', calculateProfit);
+
+            // Calcula o valor inicial ao carregar a página
+            calculateProfit();
+        });
+    </script>
+
+</body>
+</html>
