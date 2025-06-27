@@ -189,11 +189,21 @@
             overflow: hidden;
             cursor: pointer;
         }
-        .gallery-item img {
+        .gallery-item .image-container {
             width: 100%;
             height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-gray);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            display: block;
         }
         .gallery-item .name { font-weight: 500; font-size: 13px; padding: 8px;}
         .gallery-item .add-btn {
@@ -378,10 +388,14 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
 
         // --- Templates ---
+        const getBrainDumpTemplate = () => `<textarea placeholder="Type a note..."></textarea><div class="inline-actions"><button class="btn btn-primary">Save</button></div>`;
+        const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item="${item}">${item}</div>`).join('');
         const getVisualListTemplate = (title, items) => {
             let itemsHtml = items.map(item => `
                 <div class="gallery-item" data-name="${item.name}" data-img="${item.img}">
-                    <img src="${item.img}" alt="${item.name}">
+                     <div class="image-container">
+                        <img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML = '<div class=name>${item.name}</div>'">
+                    </div>
                     <div class="name">${item.name}</div>
                     <button class="btn btn-primary add-btn">+ ADD</button>
                 </div>`).join('');
@@ -394,7 +408,7 @@
         const getSelectedListItemTemplate = (name, img, notes = 'test yes', qty = 1) => `
             <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}" data-qty="${qty}">
                 <div class="item-main-row">
-                    <img src="${img}" alt="${name}">
+                    <img src="${img}" alt="${name}" onerror="this.style.display='none'; this.parentElement.innerHTML += name;">
                     <div class="info">
                         <div class="name">${name}</div>
                     </div>
@@ -440,6 +454,7 @@
             { name: "Turbines", img: "https://i.imgur.com/rM1A2cK.png" }, { name: "Power Vents", img: "https://i.imgur.com/rM1A2cK.png" },
         ];
         const constructionItems = [ { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" } ];
+        const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door"];
 
         // --- Lógica de Collapse e Modal ---
         document.querySelectorAll('.collapsible-header').forEach(header => {
@@ -451,7 +466,11 @@
                 section.classList.toggle('open');
                 
                 if (section.classList.contains('open') && !content.innerHTML) {
-                    if (type === 'visual-list') {
+                    if (type === 'brain-dump') {
+                        content.innerHTML = getBrainDumpTemplate();
+                    } else if (type === 'list') {
+                        content.innerHTML = getListTemplate(tradeItems);
+                    } else if (type === 'visual-list') {
                         const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
                         const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'ACCESSORIES' : 'WHAT ARE WE GOING BACK WITH?';
