@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Card with Backend Switch</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --success-color: #198754;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .flow-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .card-header .title { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-header .title .emoji { font-size: 20px; display: none; } /* Escondido por padrão */
+        .card-header .title .emoji.active { display: inline; }
+        
+        .card-header .actions { display: flex; gap: 16px; color: var(--dark-gray); cursor: pointer; font-size: 20px; align-items: center; }
+        
+        /* --- Estilo do Toggle Switch --- */
+        .switch-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+        
+        .card-body-header .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            color: var(--primary-color);
+        }
+
+        .card-body-header .created-date { 
+            font-size: 13px; 
+            color: var(--dark-gray); 
+            margin-bottom: 24px; 
+        }
+        
+        .card-section h3 {
+            font-size: 12px; font-weight: 700; color: var(--dark-gray); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 16px;
+        }
+
+        .info-row { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; }
+        .info-row .info-label { color: var(--dark-gray); width: 150px; flex-shrink: 0; }
+        .info-row .info-value { font-weight: 500; }
+        .info-row .info-value.bold { font-weight: 700; }
+        .info-row .info-value .emoji { font-size: 18px; }
+
+        .status-badge {
+            background-color: #e9f5ff; border: 1px solid #bde0ff; color: #0d6efd;
+            border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500;
+        }
+
+        .card-footer {
+            margin-top: 32px; padding: 16px 24px; border-top: 1px solid var(--medium-gray);
+            display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--dark-gray);
+            background-color: #fcfdff;
+        }
+        .card-footer .files-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+        .card-footer img { width: 24px; height: 24px; border-radius: 50%; }
+
+    </style>
+</head>
+<body>
+
+    <div class="flow-card">
+        <header class="card-header">
+            <div class="title">
+                <span class="emoji" id="backendEmoji">🔙</span>
+                <span>@ROOF</span>
+                <span class="emoji">👍</span>
+                <span class="emoji">👍</span>
+            </div>
+            <div class="actions">
+                <div class="switch-container" title="Toggle if project is Backend-managed">
+                    <label class="switch">
+                      <input type="checkbox" id="backendToggle">
+                      <span class="slider"></span>
+                    </label>
+                </div>
+                <span>⋮</span>
+            </div>
+        </header>
+        
+        <div class="card-body">
+            <div class="card-body-header">
+                <h2 class="title">@roof</h2>
+                <p class="created-date">Created: Fri, Jun 13, 2025, 2:02:43 PM</p>
+            </div>
+            
+            <div class="card-section">
+                <h3>PRODUCTION</h3>
+                <div class="info-row">
+                    <span class="info-label">Production Status:</span>
+                    <span class="info-value emoji">👍</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">NOTES</span>
+                    <span class="info-value">Test</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"></span>
+                    <span class="info-value">
+                        <span class="status-badge">Ready For Install</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-section" style="margin-top: 32px;">
+                <h3>SUPPLEMENT</h3>
+                <div class="info-row">
+                    <span class="info-label">Supp. Status:</span>
+                    <span class="info-value emoji">👏</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">How far off:</span>
+                    <span class="info-value" style="color: var(--success-color); font-weight: 700;">$0.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Why are we off?</span>
+                    <span class="info-value bold">Why test</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">INS RCV:</span>
+                    <span class="info-value">$1000.00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Our Supp:</span>
+                    <span class="info-value">$1000.00</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="card-footer">
+            <span>No Bid Attached</span>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <a href="#" class="files-link">📄 Files</a>
+                <img src="https://i.pravatar.cc/32?u=user-avatar" alt="User Avatar">
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backendToggle = document.getElementById('backendToggle');
+            const backendEmoji = document.getElementById('backendEmoji');
+
+            backendToggle.addEventListener('change', () => {
+                if (backendToggle.checked) {
+                    backendEmoji.classList.add('active');
+                } else {
+                    backendEmoji.classList.remove('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
