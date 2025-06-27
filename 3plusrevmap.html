@@ -147,7 +147,6 @@
             border-radius: var(--border-radius);
             width: 90%;
             max-width: 800px;
-            height: 85vh;
             display: flex;
             flex-direction: column;
             transform: scale(0.95);
@@ -167,7 +166,7 @@
             border-top-right-radius: var(--border-radius);
         }
         .modal-header .close-btn { font-size: 24px; cursor: pointer; color: var(--dark-gray); }
-        .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; }
+        .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; max-height: 80vh; }
         .modal-body h4 { margin-top: 0; margin-bottom: 12px; text-transform: uppercase; font-size: 14px; color: var(--dark-gray); }
         .modal-actions { margin-top: 16px; display: flex; gap: 12px; align-items: center;}
         .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
@@ -224,8 +223,28 @@
             font-weight: 500;
         }
         .structured-item:hover { background-color: #f0f3f7; }
+        
+        .create-new-item-btn {
+            border: 2px dashed var(--medium-gray);
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
 
-        /* --- Media Queries para Responsividade --- */
+        /* --- Create New Item Modal --- */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border-radius: 4px;
+            border: 1px solid #ccc; box-sizing: border-box;
+        }
+        .image-buttons { display: flex; gap: 12px; }
+        .image-buttons button { flex: 1; background-color: var(--white-color); border: 1px solid var(--medium-gray); padding: 12px; border-radius: 8px; cursor: pointer; }
+        .quantity-selector { display: flex; border: 1px solid #ccc; border-radius: 4px; align-items: center; }
+        .quantity-selector button { width: 40px; height: 40px; border: none; background: none; font-size: 20px; cursor: pointer; }
+        .quantity-selector input { text-align: center; border: none; width: 100%; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--medium-gray); background-color: var(--white-color); text-align: right; border-bottom-left-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
+
+        /* --- Media Queries --- */
         @media (max-width: 768px) {
             .page-wrapper { padding: 0; }
             .page-container { padding: 0; }
@@ -292,11 +311,11 @@
                         <div class="collapsible-header"><span class="title">@billhome</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
                     </div>
-                    <div class="collapsible-section" data-type="visual-list">
+                    <div class="collapsible-section" data-type="visual-list" data-title="SUPPLEMENT GAMEPLAN">
                         <div class="collapsible-header"><span class="title">Supplement GamePlan</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
                     </div>
-                    <div class="collapsible-section" data-type="visual-list">
+                    <div class="collapsible-section" data-type="visual-list" data-title="CONSTRUCTION GAMEPLAN">
                         <div class="collapsible-header"><span class="title">Construction GamePlan</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
                     </div>
@@ -332,7 +351,8 @@
         const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item="${item}">${item}</div>`).join('');
         const getVisualListTemplate = (title, items) => {
             let itemsHtml = items.map(item => `<div class="grid-item" data-item="${item.name}"><img src="${item.img}" alt="${item.name}"><div class="name">${item.name}</div></div>`).join('');
-            return `<h4>${title}</h4><div class="item-grid">${itemsHtml}</div>`;
+            let createNewButton = `<div class="grid-item create-new-item-btn" data-action="create-new"><div class="name">+ Create new item</div></div>`;
+            return `<h4>${title}</h4><div class="item-grid">${itemsHtml}${createNewButton}</div>`;
         };
         const getDetailModalTemplate = (itemName) => `
             <div class="form-group"><label for="itemType">Type</label><select id="itemType"><option>3-Tab Shingle</option><option>Architectural Shingle</option></select></div>
@@ -340,7 +360,14 @@
             <h4>Job-Specific Pictures</h4><div class="image-upload-area">Click to upload photos</div>
             <div class="convo-section"><h4>Convo</h4><div class="convo-item"><div class="convo-meta"><strong>Will M.</strong> - Yesterday</div><div>This is the existing material.</div></div><div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div></div>
         `;
+        const getCreateNewItemTemplate = () => `
+            <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
+            <div class="form-group"><label>Image</label><div class="image-buttons"><button>📷 Pick an image</button><button>📸 Take a picture</button></div></div>
+            <div class="form-group"><label>Quantity</label><div class="quantity-selector"><button class="quantity-minus">-</button><input type="text" value="1" readonly><button class="quantity-plus">+</button></div></div>
+            <div class="form-group"><label for="newItemNotes">Notes</label><textarea id="newItemNotes" placeholder="Type a note..."></textarea></div>
+        `;
 
+        // --- Mock Data ---
         const supplementItems = [
             { name: "Roof Material", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof" },
             { name: "Decking", img: "https://placehold.co/140x80/EFEFEF/333333?text=Deck" },
@@ -366,7 +393,7 @@
                     } else if (type === 'list') {
                         content.innerHTML = getListTemplate(tradeItems);
                     } else if (type === 'visual-list') {
-                        const title = section.querySelector('.title').textContent;
+                        const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
                         const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'WHAT DO THEY HAVE NOW?' : 'WHAT ARE WE GOING BACK WITH?';
                         content.innerHTML = getVisualListTemplate(subTitle, items);
@@ -375,18 +402,36 @@
             });
         });
 
-        const openDetailModal = (itemName) => {
-             modalTitle.textContent = itemName;
-             modalBody.innerHTML = getDetailModalTemplate(itemName);
-             itemModal.classList.add('active');
-        }
+        const openModal = (title, content) => {
+            modalTitle.textContent = title;
+            modalBody.innerHTML = content;
+            // Limpa o footer anterior se houver
+            if (itemModal.querySelector('.modal-footer')) {
+                itemModal.querySelector('.modal-footer').remove();
+            }
+            itemModal.classList.add('active');
+        };
+
+        const openDetailModal = (itemName) => openModal(itemName, getDetailModalTemplate(itemName));
+        const openCreateNewItemModal = () => {
+             const footer = document.createElement('div');
+             footer.className = 'modal-footer';
+             footer.innerHTML = '<button class="btn btn-primary">ADD</button>';
+             const content = getCreateNewItemTemplate();
+             openModal('Create new item', content);
+             itemModal.querySelector('.modal-content').appendChild(footer);
+        };
         const closeModal = () => itemModal.classList.remove('active');
 
         document.getElementById('gamePlanSections').addEventListener('click', (e) => {
             const gridItem = e.target.closest('.grid-item');
             const listItem = e.target.closest('.structured-item');
             if(gridItem) {
-                openDetailModal(gridItem.dataset.item);
+                if(gridItem.dataset.action === 'create-new'){
+                    openCreateNewItemModal();
+                } else {
+                    openDetailModal(gridItem.dataset.item);
+                }
             }
             if(listItem) {
                 openDetailModal(listItem.dataset.item);
