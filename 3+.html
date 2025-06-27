@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3+ GamePlan Flow - Final UI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--white-color); /* Changed to white */
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* --- Componentes Gerais --- */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header .back-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-header-container {
+            padding-bottom: 24px;
+        }
+        .project-header { display: grid; grid-template-columns: auto 1fr; gap: 24px; }
+        .project-header .profile-pic { width: 100px; height: 100px; border-radius: var(--border-radius); object-fit: cover; }
+        .header-content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .contact-info h1 { margin: 0 0 4px 0; font-size: 24px; }
+        .contact-info p { margin: 2px 0; font-size: 14px; color: var(--dark-gray); line-height: 1.5; }
+        .project-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item .label { font-size: 12px; font-weight: 600; color: var(--dark-gray); text-transform: uppercase; margin-bottom: 4px; }
+        .detail-item .value { font-size: 14px; font-weight: 500; }
+        .detail-item .value.sales-rep { display: flex; align-items: center; gap: 8px; }
+        .detail-item .value.sales-rep .rep-initials {
+            width: 24px; height: 24px; border-radius: 50%; background-color: var(--dark-gray); color: white;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+        }
+        .project-actions { display: flex; gap: 8px; align-items: center; padding-top: 16px; }
+        .project-actions .icon-btn {
+            background: #e7f1ff; border: 1px solid #cce0ff; border-radius: var(--border-radius);
+            width: 40px; height: 40px; font-size: 20px; cursor: pointer; color: var(--primary-color);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tabs { display: flex; gap: 24px; overflow-x: auto; border-bottom: 1px solid var(--medium-gray); margin-top: 24px;}
+        .tabs a { padding: 12px 4px; text-decoration: none; color: var(--dark-gray); font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; }
+        .tabs a.active { color: var(--text-color); border-bottom-color: var(--text-color); }
+
+        /* --- Seções Retráteis (Fiel ao Design) --- */
+        .collapsible-section {
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .collapsible-section:hover { border-color: #adb5bd; }
+        .collapsible-header {
+            padding: 16px;
+            font-weight: 500;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .collapsible-header::after {
+            content: '⌄'; /* Chevron down */
+            font-size: 20px;
+            color: var(--dark-gray);
+            transition: transform 0.2s;
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-header {
+            padding: 16px 24px;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white-color);
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+        .modal-header .close-btn { font-size: 24px; cursor: pointer; color: var(--dark-gray); }
+        .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; }
+        .modal-body h4 { margin-top: 0; margin-bottom: 12px; text-transform: uppercase; font-size: 14px; color: var(--dark-gray); }
+        .modal-body textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        .modal-actions { margin-top: 16px; display: flex; gap: 12px; align-items: center;}
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); }
+        
+        .comments-section { margin-top: 24px; }
+        .comment {
+            background-color: var(--white-color);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--medium-gray);
+        }
+        .comment-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; }
+        
+        .structured-item {
+            padding: 12px;
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+        .structured-item:hover { background-color: #f0f3f7; }
+        
+        .accessories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .accessory-item {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            background-color: var(--white-color);
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+        }
+        .accessory-item:hover { background-color: #f0f3f7; }
+        .accessory-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 8px;
+        }
+        .accessory-item .name { font-weight: 500; font-size: 13px; }
+
+        /* --- Notificações e Status --- */
+        .saving-indicator {
+            font-size: 12px;
+            color: var(--dark-gray);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .saving-indicator.visible { opacity: 1; }
+        
+        .toast-notification {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 102;
+            transition: bottom 0.5s ease-in-out;
+        }
+        .toast-notification.visible { bottom: 40px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <header class="page-header">
+             <a href="#" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                Back
+            </a>
+        </header>
+
+        <div class="project-header-container">
+            <div class="project-header">
+                <img src="https://placehold.co/100x100/EFEFEF/333333?text=House" alt="Foto da casa" class="profile-pic">
+                <div class="header-content">
+                    <div class="contact-info">
+                        <h1>Julian Ortiz</h1>
+                        <p>- For 0 days</p>
+                        <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                        <p>or.julian.s@gmail.com | (689) 267-4350</p>
+                    </div>
+                    <div class="project-details">
+                        <div class="detail-item"><span class="label">LAST CONTACTED</span><span class="value">Never</span></div>
+                        <div class="detail-item"><span class="label">SALES REP</span><span class="value sales-rep"><span class="rep-initials">S</span> Syna</span></div>
+                        <div class="detail-item"><span class="label">INSURANCE COMPANY</span><span class="value"></span></div>
+                        <div class="detail-item"><span class="label">CLAIM NUMBER</span><span class="value"></span></div>
+                    </div>
+                </div>
+            </div>
+             <div class="project-actions">
+                <button class="icon-btn" title="Ação 1">📸</button>
+                <button class="icon-btn" title="Ação 2">📄</button>
+                <button class="icon-btn" title="Ação 3">➕</button>
+            </div>
+        </div>
+
+        <nav class="tabs">
+            <a href="#">SNAPSHOTS</a><a href="#" class="active">3+</a><a href="#">CONVO</a><a href="#">FLOW</a>
+            <a href="#">STATUS</a><a href="#">TASKS</a><a href="#">TICKETS</a><a href="#">DETAIL</a>
+        </nav>
+        
+        <h2 style="font-size: 18px; font-weight: 600; margin-top: 32px;">3+ GamePlan</h2>
+        <div id="gamePlanSections">
+            <div class="collapsible-section" data-title="What Are We Going After" data-modal-type="brain-dump">
+                <div class="collapsible-header">What Are We Going After</div>
+            </div>
+            <div class="collapsible-section" data-title="@billhome" data-modal-type="brain-dump">
+                <div class="collapsible-header">@billhome</div>
+            </div>
+            <div class="collapsible-section" data-title="SUPPLEMENT GAMEPLAN" data-modal-type="structured">
+                <div class="collapsible-header">Supplement GamePlan</div>
+            </div>
+            <div class="collapsible-section" data-title="CONSTRUCTION GAMEPLAN" data-modal-type="brain-dump">
+                <div class="collapsible-header">Construction GamePlan</div>
+            </div>
+            <div class="collapsible-section" data-title="TRADES" data-modal-type="trades-list">
+                <div class="collapsible-header">Trades</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="mainModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modalTitle"></span>
+                <span class="close-btn" id="closeModalBtn">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo do modal será injetado aqui -->
+            </div>
+        </div>
+    </div>
+    
+    <div id="notificationToast" class="toast-notification"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalOverlay = document.getElementById('mainModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const notificationToast = document.getElementById('notificationToast');
+        let savingTimeout;
+
+        // --- Templates do Modal ---
+        const getBrainDumpTemplate = (title) => `
+            <h4>Notes for ${title}</h4>
+            <textarea placeholder="Type whatever you want here... your notes will be saved automatically.">${localStorage.getItem(title) || ''}</textarea>
+            <div class="modal-actions">
+                <button class="btn btn-secondary">Add Photo</button>
+                <button class="btn btn-primary" id="addNoteBtn">Add Note</button>
+                <span class="saving-indicator" id="savingIndicator">Saving...</span>
+            </div>
+            <div class="comments-section">
+                <h4>Activity Feed</h4>
+                <div id="commentsContainer">
+                    <div class="comment"><div class="comment-meta"><strong>Adam Ulrich</strong> - 2 days ago</div>Added initial notes.</div>
+                </div>
+            </div>
+        `;
+
+        const getStructuredTemplate = () => `
+            <h4>WHAT DO THEY HAVE NOW?</h4>
+            <div class="structured-item" data-title="Roof Material" data-modal-type="brain-dump">Roof Material</div>
+            <div class="structured-item" data-title="Decking" data-modal-type="brain-dump">Decking</div>
+            <div class="structured-item" data-title="Drip Edge" data-modal-type="brain-dump">Drip Edge</div>
+            
+            <h4 style="margin-top: 24px;">ACCESSORIES</h4>
+            <div class="accessories-grid">
+                <div class="accessory-item" data-title="Pipe Jacks" data-modal-type="brain-dump"><img src="https://i.imgur.com/gY8GvOD.png" alt="Pipe Jack"><div class="name">Pipe Jacks</div></div>
+                <div class="accessory-item" data-title="HVAC Caps" data-modal-type="brain-dump"><img src="https://i.imgur.com/sA7x4h4.png" alt="HVAC Cap"><div class="name">HVAC Caps</div></div>
+                <div class="accessory-item" data-title="Turtles/750" data-modal-type="brain-dump"><img src="https://i.imgur.com/J1y9xG1.png" alt="Turtle Vent"><div class="name">Turtles/750</div></div>
+            </div>
+
+            <h4 style="margin-top: 24px;">SUPPLEMENT STRATEGY</h4>
+             <textarea placeholder="Brain dump your supplement strategy here..."></textarea>
+             <div class="modal-actions">
+                <button class="btn btn-primary">Add to Supplement Team Notes</button>
+             </div>
+        `;
+
+        const getTradesListTemplate = () => `
+            <div class="structured-item" data-title="@Gutters" data-modal-type="brain-dump">@Gutters</div>
+            <div class="structured-item" data-title="@Windows & Screens" data-modal-type="brain-dump">@Windows & Screens</div>
+            <div class="structured-item" data-title="@Garage Door" data-modal-type="brain-dump">@Garage Door</div>
+            <div class="structured-item" data-title="@Skylight" data-modal-type="brain-dump">@Skylight</div>
+            <div class="structured-item" data-title="@Fences Stain/Paint" data-modal-type="brain-dump">@Fences Stain/Paint</div>
+            <div class="structured-item" data-title="@Interior" data-modal-type="brain-dump">@Interior</div>
+        `;
+
+        // --- Funções do Modal ---
+        const openModal = (title, type) => {
+            modalTitle.textContent = title.toUpperCase(); // Titles in ALL CAPS
+            if (type === 'brain-dump') {
+                modalBody.innerHTML = getBrainDumpTemplate(title);
+                const textarea = modalBody.querySelector('textarea');
+                const savingIndicator = document.getElementById('savingIndicator');
+                
+                textarea.addEventListener('input', () => {
+                    clearTimeout(savingTimeout);
+                    savingIndicator.classList.add('visible');
+                    savingTimeout = setTimeout(() => {
+                        localStorage.setItem(title, textarea.value);
+                        savingIndicator.classList.remove('visible');
+                    }, 1000);
+                });
+
+                document.getElementById('addNoteBtn').addEventListener('click', () => {
+                    const commentsContainer = document.getElementById('commentsContainer');
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.innerHTML = `<div class="comment-meta"><strong>Ollie</strong> - just now</div>Added a new note.`;
+                    commentsContainer.prepend(newComment);
+                    showNotification('Note added & team notified!');
+                });
+
+            } else if (type === 'structured') {
+                modalBody.innerHTML = getStructuredTemplate();
+            } else if (type === 'trades-list') {
+                modalBody.innerHTML = getTradesListTemplate();
+            }
+            modalOverlay.classList.add('active');
+        };
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('active');
+        };
+
+        const showNotification = (message) => {
+            notificationToast.textContent = message;
+            notificationToast.classList.add('visible');
+            setTimeout(() => {
+                notificationToast.classList.remove('visible');
+            }, 3000);
+        };
+
+        // --- Event Listeners ---
+        document.querySelectorAll('.collapsible-section').forEach(section => {
+            section.addEventListener('click', () => {
+                const title = section.dataset.title;
+                const type = section.dataset.modalType;
+                openModal(title, type);
+            });
+        });
+
+        modalBody.addEventListener('click', (e) => {
+            const item = e.target.closest('.structured-item') || e.target.closest('.accessory-item');
+            if (item) {
+                const title = item.dataset.title;
+                const type = item.dataset.modalType;
+                closeModal();
+                setTimeout(() => openModal(title, type), 300);
+            }
+        });
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
