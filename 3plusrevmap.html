@@ -187,7 +187,6 @@
             flex-shrink: 0;
             width: 140px;
             overflow: hidden;
-            cursor: pointer;
         }
         .gallery-item .image-container {
             width: 100%;
@@ -219,6 +218,14 @@
         }
         .gallery-item .add-btn.added {
             background-color: var(--success-color);
+        }
+        .gallery-item.create-new-item-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
         }
         
         /* --- Lista de Itens Selecionados --- */
@@ -400,8 +407,8 @@
                     <div class="name">${item.name}</div>
                     <button class="btn btn-primary add-btn">+ ADD</button>
                 </div>`).join('');
-            let createNewButton = `<div class="gallery-item create-new-item-btn" data-action="create-new"><div class="name" style="height: 88px; display: flex; align-items: center; justify-content: center;">+ Create new item</div></div>`;
-            return `<h4>${title}</h4><div class="item-gallery">${itemsHtml}</div>
+            let createNewButton = `<div class="gallery-item create-new-item-btn" data-action="create-new"><span>+</span><div class="name">Create new item</div></div>`;
+            return `<h4>${title}</h4><div class="item-gallery">${itemsHtml}${createNewButton}</div>
                     <div class="selected-items-header"><h4>Items selected</h4><div class="view-toggle"><button data-view="list" class="active">☰</button><button data-view="gallery">🖼️</button></div></div>
                     <div class="selected-items-container list-view"></div>
                     <div class="section-save-action"><button class="btn btn-primary">SAVE</button></div>`;
@@ -449,7 +456,7 @@
         `;
         const getDetailModalTemplate = (itemName) => `
              <h4>Job-Specific Pictures</h4><div class="job-photo-gallery"><div class="add-photo-btn" title="Add job-specific photo">+</div></div>
-             <h4>Notes</h4><textarea placeholder="Add a note..."></textarea>
+             <div class="convo-section"><h4>Convo</h4><div class="convo-list"><div class="convo-item"><div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions"><span class="edit-convo">✏️</span><span class="delete-convo">🗑️</span></span></div><div>This is the existing material. Confirmed with homeowner.</div></div></div><div class="form-group" style="margin-top: 12px;"><textarea placeholder="Add a note..."></textarea><button class="btn btn-secondary" style="margin-top: 8px;">Add to Convo</button></div></div>
         `;
 
         // --- Mock Data ---
@@ -480,7 +487,7 @@
                     } else if (type === 'visual-list') {
                         const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
-                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'WHAT DO THEY HAVE NOW?' : 'WHAT ARE WE GOING BACK WITH?';
+                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'ACCESSORIES' : 'WHAT ARE WE GOING BACK WITH?';
                         content.innerHTML = getVisualListTemplate(subTitle, items);
                     }
                 }
