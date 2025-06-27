@@ -122,6 +122,12 @@
         .info-row .value {
             font-weight: 600;
         }
+        .link-buttons-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
         .link-button {
             display: inline-block;
             background-color: #eef0f2;
@@ -132,8 +138,6 @@
             font-weight: 600;
             font-size: 14px;
             transition: background-color 0.2s;
-            margin-top: 8px;
-            margin-right: 8px;
         }
         .link-button:hover {
             background-color: #dfe4e8;
@@ -231,10 +235,10 @@
                         <span class="label">Total Final Bill:</span>
                         <span class="value">$0.00 <span style="color: var(--dark-gray); font-weight: 400;">(RCV: $0.00, O&P: $0.00)</span></span>
                     </div>
-                    <div>
-                        <a href="https://docs.google.com/spreadsheets/d/example" target="_blank" class="link-button">📊 F9 Spreadsheet</a>
-                        <a href="#" target="_blank" class="link-button">📄 Latest Supplement</a>
-                        <a href="#" target="_blank" class="link-button">🛡️ Latest Insurance Report</a>
+                    <div class="link-buttons-container">
+                        <a href="https://docs.google.com/spreadsheets/d/example" target="_blank" class="link-button">F9 Spreadsheet</a>
+                        <a href="#" target="_blank" class="link-button">Latest Supplement</a>
+                        <a href="#" target="_blank" class="link-button">Latest Insurance Report</a>
                     </div>
                 </div>
                 <footer class="card-footer">
