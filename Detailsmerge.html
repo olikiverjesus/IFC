@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details & Contact Merge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --dark-blue: #2c3e50;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .page-wrapper {
+            padding: 24px;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* --- Componentes Gerais --- */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header .back-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-header-container {
+            padding-bottom: 24px;
+            background-color: var(--white-color);
+            padding: 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+        .project-header { display: grid; grid-template-columns: auto 1fr; gap: 24px; }
+        .project-header .profile-pic { width: 100px; height: 100px; border-radius: var(--border-radius); object-fit: cover; }
+        .header-content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .contact-info h1 { margin: 0 0 4px 0; font-size: 24px; }
+        .contact-info p { margin: 2px 0; font-size: 14px; color: var(--dark-gray); line-height: 1.5; }
+        .project-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item .label { font-size: 12px; font-weight: 600; color: var(--dark-gray); text-transform: uppercase; margin-bottom: 4px; }
+        .detail-item .value { font-size: 14px; font-weight: 500; }
+        .detail-item .value.sales-rep { display: flex; align-items: center; gap: 8px; }
+        .detail-item .value.sales-rep .rep-initials {
+            width: 24px; height: 24px; border-radius: 50%; background-color: var(--dark-gray); color: white;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+        }
+        .project-actions { display: flex; gap: 8px; align-items: center; padding-top: 16px; }
+        .project-actions .icon-btn {
+            background: #e7f1ff; border: 1px solid #cce0ff; border-radius: var(--border-radius);
+            width: 40px; height: 40px; font-size: 20px; cursor: pointer; color: var(--primary-color);
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .main-content-card {
+             background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+        
+        .tabs { display: flex; gap: 24px; overflow-x: auto; border-bottom: 1px solid var(--medium-gray); margin-bottom: 24px;}
+        .tabs a { padding: 12px 4px; text-decoration: none; color: var(--dark-gray); font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; cursor: pointer; }
+        .tabs a.active { color: var(--text-color); border-bottom-color: var(--text-color); }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tabs { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--medium-gray);
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .btn { padding: 12px 18px; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; border: 1px solid transparent; text-decoration: none; display: inline-block; width: 100%; text-align: center; }
+        .btn-primary { background-color: var(--dark-blue); color: white; }
+        .btn-secondary { background-color: #eee; border-color: #ddd; color: var(--text-color); }
+        
+        .section-divider {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--medium-gray);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .section-header .add-btn {
+            background: #e7f1ff; border: 1px solid #cce0ff; border-radius: var(--border-radius);
+            padding: 8px 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* --- Contact Card --- */
+        .contact-card {
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 16px;
+        }
+        .contact-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .contact-card-header .contact-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .contact-card-header .contact-icon {
+            font-size: 20px;
+        }
+        .contact-card-header .more-options {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--dark-gray);
+        }
+        .contact-card-details .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+         .contact-card-details .detail-row:last-child {
+            margin-bottom: 0;
+         }
+
+    </style>
+</head>
+<body>
+    
+    <div class="page-wrapper">
+        <div class="page-container">
+            <header class="page-header">
+                 <a href="#" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    Back
+                </a>
+            </header>
+
+            <div class="project-header-container">
+                <div class="project-header">
+                    <img src="https://placehold.co/100x100/EFEFEF/333333?text=House" alt="Foto da casa" class="profile-pic">
+                    <div class="header-content">
+                        <div class="contact-info">
+                            <h1>Julian Ortiz</h1>
+                            <p>- For 0 days</p>
+                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                            <p>or.julian.s@gmail.com | (689) 267-4350</p>
+                        </div>
+                        <div class="project-details">
+                            <div class="detail-item"><span class="label">LAST CONTACTED</span><span class="value">Never</span></div>
+                            <div class="detail-item"><span class="label">SALES REP</span><span class="value sales-rep"><span class="rep-initials">S</span> Syna</span></div>
+                            <div class="detail-item"><span class="label">INSURANCE COMPANY</span><span class="value"></span></div>
+                            <div class="detail-item"><span class="label">CLAIM NUMBER</span><span class="value"></span></div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="project-actions">
+                    <button class="icon-btn" title="Ação 1">📸</button>
+                    <button class="icon-btn" title="Ação 2">📄</button>
+                    <button class="icon-btn" title="Ação 3">➕</button>
+                </div>
+            </div>
+            
+            <nav class="tabs" id="mainTabs">
+                <a href="#">SNAPSHOTS</a>
+                <a href="#">3+</a>
+                <a href="#">CONVO</a>
+                <a href="#">FLOW</a>
+                <a href="#">STATUS</a>
+                <a href="#">TASKS</a>
+                <a href="#">TICKETS</a>
+                <a href="#" class="active">DETAILS</a>
+            </nav>
+
+            <div class="main-content-card">
+                <!-- Seção Details -->
+                <div class="form-group">
+                    <select>
+                        <option>Insurance Company</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <input type="text" placeholder="Claim Number">
+                </div>
+                <button class="btn btn-primary">SAVE</button>
+                
+                <div class="section-divider">
+                    <div class="section-header">
+                        <h3>Adjusters</h3>
+                        <button class="add-btn">+ ADD</button>
+                    </div>
+                    <!-- Lista de ajustadores iria aqui -->
+                </div>
+                
+                <!-- Seção Contact -->
+                <div class="section-divider">
+                    <div class="section-header">
+                        <h3>CONTACT</h3>
+                    </div>
+                     <div class="contact-card">
+                        <div class="contact-card-header">
+                            <div class="contact-name">
+                                <span class="contact-icon">👤</span>
+                                Julián Ortiz
+                            </div>
+                            <div class="more-options">⋮</div>
+                        </div>
+                        <div class="contact-card-details">
+                            <div class="detail-row">
+                                <span>✉️</span>
+                                <span>or.julian.s@gmail.com</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>📞</span>
+                                <span>(689) 267-4350</span>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
