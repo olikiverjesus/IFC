@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit IFC Flow Item</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --dark-blue: #2c3e50;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 8px;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #a9a9a9; /* Fundo cinza para simular o overlay */
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .modal-content {
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 16px 24px;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white-color);
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+        }
+        .modal-header .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+            border: none;
+            background: none;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .form-section {
+            margin-bottom: 24px;
+        }
+        .form-section h3 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+        .form-group .info-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .form-group .sub-text {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+        
+        .payment-summary {
+            background-color: var(--white-color);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--medium-gray);
+            margin-bottom: 16px;
+        }
+        .payment-summary .value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary { background-color: var(--dark-blue); color: white; }
+        .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); color: var(--text-color); }
+        
+        .upload-area {
+            border: 2px dashed var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            background-color: var(--white-color);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--medium-gray);
+            background-color: var(--white-color);
+            text-align: right;
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="modal-content">
+        <header class="modal-header">
+            <span>Edit Flow Item</span>
+            <button class="close-btn">&times;</button>
+        </header>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="itemType">Item Type</label>
+                <select id="itemType">
+                    <option>IFC</option>
+                </select>
+            </div>
+
+            <div class="form-section">
+                <h3>@IFC DETAILS</h3>
+                <div class="form-group">
+                    <label>FINANCIALS:</label>
+                    <p class="info-text">How far are we off: <span style="color: #198754;">$100.00</span></p>
+                </div>
+                <div class="form-group">
+                    <label>PAYMENTS:</label>
+                    <div class="payment-summary">
+                        <div class="sub-text">CALCULATED TOTAL PAYMENTS</div>
+                        <div class="value">$0.00</div>
+                    </div>
+                    <button class="btn btn-secondary">+ ADD PAYMENT LOG ENTRY</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>JOB INFORMATION:</h3>
+                <div class="form-group">
+                    <label for="f9Link">F9 Spreadsheet Link (URL)</label>
+                    <input type="url" id="f9Link" placeholder="https://docs.google.com/spreadsheets/d/...">
+                </div>
+                <!-- NOVOS CAMPOS ADICIONADOS -->
+                <div class="form-group">
+                    <label for="supplementLink">Latest Supplement Link (URL)</label>
+                    <input type="url" id="supplementLink" placeholder="Enter supplement document link">
+                </div>
+                <div class="form-group">
+                    <label for="insuranceReportLink">Latest Insurance Report Link (URL)</label>
+                    <input type="url" id="insuranceReportLink" placeholder="Enter insurance report link">
+                </div>
+                <!-- FIM DOS NOVOS CAMPOS -->
+                <div class="form-group">
+                    <label for="pendingItems">Pending Line Items</label>
+                    <input type="number" id="pendingItems" value="0">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>CONTRACT ATTACHMENT</h3>
+                <div class="upload-area">
+                    📎 Upload Contract File
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>GENERAL NOTES</h3>
+                <textarea rows="4"></textarea>
+            </div>
+        </div>
+        <footer class="modal-footer">
+            <button class="btn btn-primary">UPDATE ITEM</button>
+        </footer>
+    </div>
+
+</body>
+</html>
