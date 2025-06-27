@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapshot View with F9 Button</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .page-wrapper {
+            padding: 24px;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* --- Componentes Gerais --- */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header .back-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-header-container {
+            padding-bottom: 24px;
+        }
+        .project-header { display: grid; grid-template-columns: auto 1fr; gap: 24px; }
+        .project-header .profile-pic { width: 100px; height: 100px; border-radius: var(--border-radius); object-fit: cover; }
+        .header-content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .contact-info h1 { margin: 0 0 4px 0; font-size: 24px; }
+        .contact-info p { margin: 2px 0; font-size: 14px; color: var(--dark-gray); line-height: 1.5; }
+        .project-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item .label { font-size: 12px; font-weight: 600; color: var(--dark-gray); text-transform: uppercase; margin-bottom: 4px; }
+        .detail-item .value { font-size: 14px; font-weight: 500; }
+        .detail-item .value.sales-rep { display: flex; align-items: center; gap: 8px; }
+        .detail-item .value.sales-rep .rep-initials {
+            width: 24px; height: 24px; border-radius: 50%; background-color: var(--dark-gray); color: white;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+        }
+        .project-actions { display: flex; gap: 8px; align-items: center; padding-top: 16px; }
+        .project-actions .icon-btn {
+            background: #e7f1ff; border: 1px solid #cce0ff; border-radius: var(--border-radius);
+            width: 40px; height: 40px; font-size: 20px; cursor: pointer; color: var(--primary-color);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tabs { display: flex; gap: 24px; overflow-x: auto; border-bottom: 1px solid var(--medium-gray); margin-top: 24px;}
+        .tabs a { padding: 12px 4px; text-decoration: none; color: var(--dark-gray); font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; }
+        .tabs a.active { color: var(--text-color); border-bottom-color: var(--text-color); }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tabs { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- Snapshot List --- */
+        .snapshot-list-card {
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 24px;
+            padding: 24px;
+        }
+        .snapshot-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .snapshot-item:last-child {
+            border-bottom: none;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .item-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .item-status-badge {
+            background-color: #e9f5ff;
+            border: 1px solid #bde0ff;
+            color: #0d6efd;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .item-details {
+            font-size: 14px;
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+        
+        .f9-button {
+            display: inline-block;
+            background-color: #eef0f2;
+            color: #34495e;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+        .f9-button:hover {
+            background-color: #dfe4e8;
+        }
+        
+        .snapshot-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+        }
+        .footer-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px; /* Espaço entre Tasks e Tickets */
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .stat-item svg {
+            width: 20px;
+            height: 20px;
+            color: var(--dark-gray);
+        }
+        .snapshot-footer .actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            color: var(--dark-gray);
+        }
+        .snapshot-footer .actions .dropdown-placeholder {
+            border: 1px solid var(--medium-gray);
+            border-radius: 50px;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="page-wrapper">
+        <div class="page-container">
+            <header class="page-header">
+                 <a href="#" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    Back
+                </a>
+            </header>
+
+            <div class="project-header-container">
+                <div class="project-header">
+                    <img src="https://placehold.co/100x100/EFEFEF/333333?text=House" alt="Foto da casa" class="profile-pic">
+                    <div class="header-content">
+                        <div class="contact-info">
+                            <h1>Julian Ortiz</h1>
+                            <p>- For 0 days</p>
+                            <p>56 Bates Rd, Brockton, Massachusetts 02302</p>
+                            <p>or.julian.s@gmail.com | (689) 267-4350</p>
+                        </div>
+                        <div class="project-details">
+                            <div class="detail-item"><span class="label">LAST CONTACTED</span><span class="value">Never</span></div>
+                            <div class="detail-item"><span class="label">SALES REP</span><span class="value sales-rep"><span class="rep-initials">S</span> Syna</span></div>
+                            <div class="detail-item"><span class="label">INSURANCE COMPANY</span><span class="value"></span></div>
+                            <div class="detail-item"><span class="label">CLAIM NUMBER</span><span class="value"></span></div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="project-actions">
+                    <button class="icon-btn" title="Ação 1">📸</button>
+                    <button class="icon-btn" title="Ação 2">📄</button>
+                    <button class="icon-btn" title="Ação 3">➕</button>
+                </div>
+            </div>
+
+            <nav class="tabs">
+                <a href="#" class="active">SNAPSHOTS</a>
+                <a href="#">3+</a>
+                <a href="#">CONVO</a>
+                <a href="#">FLOW</a>
+                <a href="#">STATUS</a>
+                <a href="#">TASKS</a>
+                <a href="#">TICKETS</a>
+                <a href="#">DETAIL</a>
+            </nav>
+            
+            <div class="snapshot-list-card">
+                <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title"><span>💡</span>PRICELIST</div>
+                    </div>
+                    <div class="item-details">Pricelist</div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title"><span>🔴</span>O&P</div>
+                    </div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title"><span>👍</span>👍 FLOORING</div>
+                        <div class="item-status-badge">Work scheduled</div>
+                    </div>
+                    <div class="item-details">
+                        Scheduled: Fri, Jun 27<br>
+                        Supp. notes: Why test<br>
+                        Prod. notes: Production Notes
+                    </div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title"><span>👎</span>👍 AWNING</div>
+                        <div class="item-status-badge">Bid negotiated/approved</div>
+                    </div>
+                     <div class="item-details">
+                        Supp. notes: It's missing this<br>
+                        Prod. notes: Waiting for the HO
+                    </div>
+                </div>
+                 <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title"><span>👎</span>🚩 GUTTER</div>
+                        <div class="item-status-badge">Ready for install</div>
+                    </div>
+                     <div class="item-details">
+                        Supp. notes: Supp test<br>
+                        Prod. notes: Production test
+                    </div>
+                </div>
+                 <div class="snapshot-item">
+                    <div class="item-header">
+                        <div class="item-title">GAMEPLAN | [CLAIM NUMBER] [LINK TO SOURCE OF TRUTH THAT GETS GENERATED]</div>
+                    </div>
+                     <a href="https://docs.google.com/spreadsheets/d/example" target="_blank" class="f9-button">📊 F9 Spreadsheet</a>
+                </div>
+
+                <div class="snapshot-footer">
+                    <div class="footer-stats">
+                        <div class="stat-item">
+                            <!-- Ícone de Tasks (Checkmark no círculo) -->
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <span>0</span>
+                        </div>
+                        <div class="stat-item">
+                             <!-- Ícone de Tickets -->
+                             <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M22,10V6A2,2 0 0,0 20,4H4A2,2 0 0,0 2,6V10C3.11,10 4,10.9 4,12A2,2 0 0,1 2,14V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V14A2,2 0 0,1 20,12C20,10.9 20.9,10 22,10M11,15H13V17H11V15M11,11H13V13H11V11M11,7H13V9H11V7Z" />
+                            </svg>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <div class="dropdown-placeholder">⌄</div>
+                        <span>⋮</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
