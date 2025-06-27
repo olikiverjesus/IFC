@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EagleView Measurement Flow</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #0d6efd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #212529;
+            --white-color: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: auto;
+        }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* --- Componentes Gerais --- */
+        .page-header { margin-bottom: 24px; }
+        .page-header .back-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+        .btn-secondary { background-color: var(--white-color); border: 1px solid var(--medium-gray); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 500;}
+        
+        /* --- Card do Projeto --- */
+        .project-card {
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+        .project-header { display: grid; grid-template-columns: auto 1fr; gap: 24px; }
+        .project-header .profile-pic { width: 120px; height: 120px; border-radius: var(--border-radius); object-fit: cover; }
+        .header-content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .contact-info h1 { margin: 0 0 4px 0; font-size: 24px; }
+        .contact-info .status { font-size: 14px; font-weight: 500; color: var(--dark-gray); margin-bottom: 8px; }
+        .contact-info p { margin: 2px 0; font-size: 14px; color: var(--dark-gray); line-height: 1.5; }
+        .project-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item .label { font-size: 12px; font-weight: 600; color: var(--dark-gray); text-transform: uppercase; margin-bottom: 4px; }
+        .detail-item .value { font-size: 14px; font-weight: 500; }
+        .detail-item .value.sales-rep { display: flex; align-items: center; gap: 8px; }
+        .detail-item .value.sales-rep .rep-initials {
+            width: 24px; height: 24px; border-radius: 50%; background-color: var(--dark-gray); color: white;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;
+        }
+        .project-actions {
+            display: flex; gap: 8px; align-items: center; padding: 24px 0;
+            border-bottom: 1px solid var(--medium-gray); margin-bottom: 24px; position: relative;
+        }
+        .project-actions .icon-btn, .project-actions .text-btn {
+            background: #e7f1ff; border: 1px solid #cce0ff; border-radius: var(--border-radius);
+            cursor: pointer; color: var(--primary-color); transition: background-color 0.2s; font-weight: 600;
+        }
+        .project-actions .icon-btn {
+            width: 40px; height: 40px; font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .project-actions .text-btn { padding: 10px 16px; font-size: 14px; }
+        .project-actions .icon-btn:hover, .project-actions .text-btn:hover { background-color: #d0e3ff; }
+        .plus-actions-menu {
+            position: absolute; top: 100%; right: 0; background-color: var(--white-color);
+            border-radius: var(--border-radius); box-shadow: var(--shadow); z-index: 10;
+            width: 200px; padding: 8px 0; display: none;
+        }
+        .plus-actions-menu.active { display: block; }
+        .plus-actions-menu a { display: block; padding: 10px 16px; color: var(--text-color); text-decoration: none; }
+        .plus-actions-menu a:hover { background-color: var(--light-gray); }
+        .tabs { display: flex; gap: 24px; overflow-x: auto; border-bottom: 1px solid var(--medium-gray); margin-bottom: 24px;}
+        .tabs a { padding: 12px 4px; text-decoration: none; color: var(--dark-gray); font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; }
+        .tabs a.active { color: var(--text-color); border-bottom-color: var(--text-color); }
+        .snapshot-item { padding: 16px; border: 1px solid var(--medium-gray); border-radius: var(--border-radius); }
+        .snapshot-item .gameplan { font-weight: 600; margin-bottom: 4px; }
+        .snapshot-item a { color: var(--primary-color); text-decoration: none; font-size: 14px; word-break: break-all; }
+
+        /* --- Modal Genérico --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white; padding: 32px; border-radius: 12px;
+            width: 90%; max-width: 500px; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        .modal-content h2 { margin-top: 0; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;
+            box-sizing: border-box; font-family: 'Inter', sans-serif; font-size: 14px;
+        }
+        .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+
+        /* --- Tela de Measurements --- */
+        .measurements-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .measurements-header h1 { font-size: 24px; margin: 0; }
+        .order-options { display: flex; gap: 16px; margin-bottom: 32px; }
+        .order-card {
+            background-color: #f7f9fc; border: 1px solid var(--medium-gray); border-radius: var(--border-radius);
+            padding: 16px; display: flex; align-items: center; gap: 16px;
+        }
+        .order-card .logo { width: 40px; height: 40px; background-color: #d0e3ff; border-radius: 8px; }
+        .order-card .info a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        .order-card .more-options { margin-left: auto; cursor: pointer; }
+        .reports-available h3 { font-size: 16px; margin-bottom: 16px; }
+        .report-card {
+            background-color: var(--white-color); border: 1px solid var(--primary-color); border-radius: var(--border-radius);
+            padding: 16px; position: relative;
+        }
+        .report-card .check-icon { position: absolute; top: 12px; right: 12px; color: var(--primary-color); font-size: 20px; }
+        .report-card .logo { font-size: 24px; font-weight: bold; color: #00b493; }
+        .report-card p { margin: 4px 0; font-size: 14px; color: var(--dark-gray); }
+        .report-card .report-actions { margin-top: 16px; display: flex; gap: 8px; }
+        .accordion { margin-top: 32px; }
+        .accordion-item { border: 1px solid var(--medium-gray); border-radius: var(--border-radius); overflow: hidden; }
+        .accordion-item + .accordion-item { margin-top: 12px; }
+        .accordion-header { padding: 16px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; }
+        .accordion-header::after { content: '⌄'; }
+        .accordion-item.active .accordion-header::after { content: '⌃'; }
+        .accordion-content { padding: 0 16px 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-item.active .accordion-content { max-height: 200px; }
+
+        /* --- Tela de Order EagleView --- */
+        .order-eagleview-container { display: grid; grid-template-columns: 240px 1fr; gap: 32px; }
+        .order-stepper { display: flex; flex-direction: column; gap: 16px; }
+        .step { padding: 12px 16px; border-radius: 8px; font-weight: 600; color: var(--dark-gray); border-left: 4px solid transparent; }
+        .step.active { background-color: #e7f1ff; color: var(--primary-color); border-left-color: var(--primary-color); }
+        .address-form h2, .order-details-form h2 { font-size: 18px; margin-bottom: 8px; }
+        .address-form p { font-size: 14px; color: var(--dark-gray); margin-top: 0; margin-bottom: 24px; }
+        .address-input-group { position: relative; margin-bottom: 16px; }
+        .address-input-group .icon { position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: var(--dark-gray); }
+        .address-input-group input { width: 100%; padding: 12px 12px 12px 40px; border: 1px solid var(--medium-gray); border-radius: 8px; box-sizing: border-box; }
+        .map-placeholder {
+            width: 100%; height: 300px; background-color: var(--medium-gray); border-radius: var(--border-radius);
+            margin-bottom: 32px; background-image: url('https://i.imgur.com/YqBCA1p.png'); background-size: cover; background-position: center;
+        }
+        .order-details-form .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .order-details-form .form-group { margin-bottom: 16px; }
+        .order-details-form .full-width { grid-column: 1 / -1; }
+        .checkbox-group, .radio-group { display: flex; align-items: center; gap: 8px; }
+        .order-details-form .form-actions { border-top: 1px solid var(--medium-gray); padding-top: 24px; margin-top: 24px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        
+        <!-- ===== VIEW 1: PROJECT DETAIL ===== -->
+        <div id="projectDetailView" class="view active">
+            <header class="page-header"><a href="#" class="back-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back</a></header>
+            <div class="project-card">
+                <div class="project-header">
+                    <img src="https://placehold.co/120x120/EFEFEF/333333?text=House" alt="Foto da casa do projeto" class="profile-pic">
+                    <div class="header-content">
+                        <div class="contact-info">
+                            <h1>Vince Slapa</h1><p class="status">SUPP SENT - For 59 days</p><p>1808 Stratton Green, Colleyville, TX 76034</p><p>vinceapril@att.net</p><p>(972) 689-7652</p>
+                        </div>
+                        <div class="project-details">
+                            <div class="detail-item"><span class="label">LAST CONTACTED</span><span class="value">Dec. 3 (206 days ago)</span></div>
+                            <div class="detail-item"><span class="label">SALES REP</span><span class="value sales-rep"><span class="rep-initials">W</span> Will</span></div>
+                            <div class="detail-item"><span class="label">INSURANCE COMPANY</span><span class="value">Farmers</span></div>
+                            <div class="detail-item"><span class="label">CLAIM NUMBER</span><span class="value">#5031824916-1-1</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button class="icon-btn" title="Ação 1">📸</button><button class="icon-btn" title="Ação 2">📄</button>
+                    <button class="text-btn" id="schAdjBtn" title="Schedule Adjuster Meeting">Sch Adj</button>
+                    <div style="position: relative;">
+                        <button class="icon-btn" id="addBtn" title="More Actions">➕</button>
+                        <div class="plus-actions-menu" id="plusActionsMenu"><a href="#" id="measurementActionBtn">Measurement</a><a href="#">Another Action</a></div>
+                    </div>
+                </div>
+                <nav class="tabs"><a href="#" class="active">SNAPSHOTS</a><a href="#">3+</a><a href="#">CONVO</a><a href="#">FLOW</a><a href="#">STATUS</a><a href="#">TASKS</a><a href="#">TICKETS</a><a href="#">DETAIL</a></nav>
+                <div class="snapshot-item"><div class="gameplan">GAMEPLAN 5031824916-1-1</div><a href="#">https://docs.google.com/spreadsheets/d/1Vm8...</a></div>
+            </div>
+        </div>
+        
+        <!-- ===== VIEW 2: PROPERTY MEASUREMENTS ===== -->
+        <div id="measurementsView" class="view">
+             <header class="page-header"><a href="#" class="back-link" data-target="projectDetailView"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Property Measurements</a></header>
+            <div class="measurements-header"><h1></h1><button class="btn-primary">Upload a file</button></div>
+            <div class="order-options">
+                <div class="order-card">
+                    <div class="logo"></div>
+                    <div>
+                        <div><strong>EagleView</strong></div>
+                        <a href="#" id="searchOrderLink">Search</a> &bull; <a href="#" class="order-link" data-target="orderEagleView">Order</a>
+                    </div>
+                    <div class="more-options">⋮</div>
+                </div>
+            </div>
+            <div class="reports-available">
+                <h3>Reports Available (1)</h3>
+                <div class="report-card">
+                    <span class="check-icon">✔</span><div class="logo">eagreview</div>
+                    <p>Type: EC2D - Residential</p><p>Status: Completed</p><p>Placed: 01 Oct 2024</p>
+                    <div class="report-actions"><button class="btn-secondary">View</button><button class="btn-primary">Apply</button></div>
+                </div>
+            </div>
+            <div class="accordion">
+                <div class="accordion-item"><div class="accordion-header">Roof Measurement Tokens</div><div class="accordion-content"><p>Content for roof tokens.</p></div></div>
+                <div class="accordion-item"><div class="accordion-header">Wall Measurement Tokens</div><div class="accordion-content"><p>Content for wall tokens.</p></div></div>
+            </div>
+        </div>
+        
+        <!-- ===== VIEW 3: ORDER EAGLEVIEW ===== -->
+        <div id="orderEagleView" class="view">
+            <header class="page-header"><a href="#" class="back-link" data-target="measurementsView"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Order EagleView</a></header>
+            <div class="order-eagleview-container">
+                <aside class="order-stepper">
+                    <div class="step active">Confirm address</div><div class="step">Order information</div>
+                </aside>
+                <main>
+                    <div class="address-form">
+                        <h2>Confirm address</h2><p>This is the address associated with this job:</p>
+                        <div class="address-input-group"><span class="icon">🔍</span><input type="text" value="1704 Glade Rd, Colleyville, TX, 76034"></div>
+                        <button class="btn-secondary">Search address</button><div class="map-placeholder"></div>
+                    </div>
+                    <div class="order-details-form">
+                        <h2>Order Details</h2><p>Review and complete the information below to the best of your knowledge:</p>
+                        <div class="form-group full-width"><label for="propertyType">Property type</label><select id="propertyType"><option>Residential</option></select></div>
+                        <div class="form-group full-width"><div class="checkbox-group"><input type="checkbox" id="propertyChanged"><label for="propertyChanged">Property has changed in the last 4 years</label></div></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label for="product">Product</label><input type="text" id="product"></div>
+                            <div class="form-group"><label for="purchaseOrder">Purchase order</label><input type="text" id="purchaseOrder"></div>
+                        </div>
+                        <div class="form-group full-width"><label for="referenceId">Reference ID</label><input type="text" id="referenceId"></div>
+                        <div class="form-group full-width"><label for="comments">Comments</label><textarea id="comments"></textarea></div>
+                        <div class="form-group full-width"><label>Is this an insurance job?</label><div class="radio-group"><input type="radio" id="insYes" name="insuranceJob" value="yes"><label for="insYes">Yes</label><input type="radio" id="insNo" name="insuranceJob" value="no" checked><label for="insNo">No</label></div></div>
+                        <div class="form-group full-width"><label for="sendCopy">Send a copy to</label><input type="text" id="sendCopy"></div>
+                        <div class="form-group full-width"><label for="promoCode">Promo code</label><input type="text" id="promoCode"></div>
+                        <div class="form-actions"><button class="btn-primary">Place Order</button></div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAIS -->
+    <div id="meetingModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Schedule Adjuster Meeting</h2>
+            <div class="form-group"><label for="meetingDate">Date</label><input type="date" id="meetingDate"></div>
+            <div class="form-group"><label for="meetingTime">Time</label><input type="time" id="meetingTime"></div>
+            <div class="form-group"><label for="meetingNotes">Description / Notes</label><textarea id="meetingNotes" placeholder="e.g., Meeting with John from Allstate..."></textarea></div>
+            <div class="form-actions"><button class="btn btn-secondary closeModalBtn">Cancel</button><button class="btn btn-primary submitModalBtn">Create Event</button></div>
+        </div>
+    </div>
+    
+    <div id="searchReportModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Search for an EagleView report</h2>
+            <div class="form-group">
+                <input type="text" value="1704 Glade Rd">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary closeModalBtn">Cancel</button>
+                <button class="btn-primary">Download This EagleView Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- View Switching ---
+            const showView = (viewId) => {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById(viewId)?.classList.add('active');
+            };
+
+            document.body.addEventListener('click', e => {
+                if (e.target.matches('.back-link') || e.target.closest('.back-link')) {
+                    e.preventDefault();
+                    showView(e.target.closest('.back-link').dataset.target);
+                }
+                if (e.target.matches('.order-link')) {
+                    e.preventDefault();
+                    showView(e.target.dataset.target);
+                }
+                if (e.target.matches('#measurementActionBtn')) {
+                    e.preventDefault();
+                    showView('measurementsView');
+                    document.getElementById('plusActionsMenu').classList.remove('active');
+                }
+            });
+
+            // --- Modal Logic ---
+            const openModal = (modalId) => document.getElementById(modalId).classList.add('active');
+            const closeModal = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+
+            document.getElementById('schAdjBtn').addEventListener('click', () => openModal('meetingModal'));
+            document.getElementById('searchOrderLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal('searchReportModal');
+            });
+
+            document.querySelectorAll('.closeModalBtn').forEach(btn => btn.addEventListener('click', closeModal));
+            document.querySelectorAll('.submitModalBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('✅ Action completed successfully!');
+                    closeModal();
+                });
+            });
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            });
+
+            // --- Plus Button Menu ---
+            const addBtn = document.getElementById('addBtn');
+            const plusActionsMenu = document.getElementById('plusActionsMenu');
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                plusActionsMenu.classList.toggle('active');
+            });
+            window.addEventListener('click', (e) => {
+                if (!addBtn.contains(e.target) && !plusActionsMenu.contains(e.target)) {
+                    plusActionsMenu.classList.remove('active');
+                }
+            });
+            
+            // --- Accordion Logic ---
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => header.parentElement.classList.toggle('active'));
+            });
+
+            // --- Default form values ---
+            const today = new Date();
+            const year = today.getFullYear();
+            let mm = today.getMonth() + 1;
+            let dd = today.getDate();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            document.getElementById('meetingDate').value = `${year}-${mm}-${dd}`;
+            document.getElementById('meetingTime').value = '09:00';
+        });
+    </script>
+
+</body>
+</html>
