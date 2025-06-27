@@ -207,7 +207,7 @@
             background-color: var(--light-gray);
         }
         .grid-item .name { font-weight: 600; font-size: 13px; margin-bottom: 8px;}
-        .grid-item .add-btn { width: 100%; padding: 6px; font-size: 12px; }
+        .grid-item .add-btn { width: 100%; padding: 6px; font-size: 12px; cursor: pointer; }
         
         .structured-list { padding-top: 16px; }
         .structured-item {
@@ -372,7 +372,7 @@
             return `<h4>${title}</h4><div class="item-grid">${itemsHtml}</div><h4>Items selected</h4><div class="selected-items-container"></div>`;
         };
         const getSelectedListItemTemplate = (name, img, notes = 'test yes', qty = 1) => `
-            <div class="selected-item" data-name="${name}">
+            <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}">
                 <img src="${img}" alt="${name}">
                 <div class="info">
                     <div class="name">${name}</div>
@@ -388,6 +388,13 @@
                     <span class="delete-btn">🗑️</span>
                 </div>
             </div>
+        `;
+        const getDetailModalTemplate = (itemName) => `
+            <div class="form-group"><label for="itemType">Type</label><select id="itemType"><option>3-Tab Shingle</option><option>Architectural Shingle</option></select></div>
+            <div class="form-group"><label for="itemColor">Color</label><select id="itemColor"><option>Weathered Wood</option><option>Black</option></select></div>
+            <div class="form-group"><div class="quantity-input"><input type="number" placeholder="Quantity"><select><option>SQ</option><option>LF</option></select></div></div>
+            <h4>Job-Specific Pictures</h4><div class="image-upload-area">Click to upload photos</div>
+            <div class="convo-section"><h4>Convo</h4><div class="convo-item"><div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions">✏️ 🗑️</span></div><div>This is the existing material.</div></div><div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div></div>
         `;
         const getCreateNewItemTemplate = () => `
             <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
@@ -440,6 +447,7 @@
             itemModal.classList.add('active');
         };
 
+        const openDetailModal = (itemName) => openModal(itemName, getDetailModalTemplate(itemName));
         const openCreateNewItemModal = (sectionContent) => {
              const footer = document.createElement('div');
              footer.className = 'modal-footer';
@@ -464,8 +472,16 @@
                 const gridItem = e.target.closest('.grid-item');
                 const name = gridItem.dataset.name;
                 const img = gridItem.dataset.img;
+                
+                // Adiciona ao supplement
                 const newItemSelected = getSelectedListItemTemplate(name, img);
                 sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+                
+                // Adiciona ao construction
+                const constructionContent = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"] .collapsible-content');
+                if (constructionContent && constructionContent.innerHTML) {
+                     constructionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+                }
             }
             
             if (e.target.closest('.create-new-item-btn')) {
@@ -473,7 +489,13 @@
             }
 
             if (e.target.matches('.delete-btn')) {
-                e.target.closest('.selected-item').remove();
+                const itemToDelete = e.target.closest('.selected-item');
+                const itemName = itemToDelete.dataset.name;
+                itemToDelete.remove();
+
+                // Remove do construction também
+                const constructionItem = document.querySelector(`.selected-item[data-name="${itemName}"]`);
+                if(constructionItem) constructionItem.remove();
             }
             
             if (e.target.matches('.quantity-btn')) {
@@ -483,6 +505,11 @@
                 if (action === 'plus') value++;
                 if (action === 'minus' && value > 1) value--;
                 input.value = value;
+            }
+
+            if (e.target.matches('.edit-btn')) {
+                const selectedItem = e.target.closest('.selected-item');
+                openDetailModal(selectedItem.dataset.name);
             }
         });
 
