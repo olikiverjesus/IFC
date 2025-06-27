@@ -113,10 +113,11 @@
             padding: 0 16px;
         }
         .collapsible-section.open .collapsible-content {
-            max-height: 1500px; /* Large enough for content */
+            max-height: 2500px; /* Large enough for content */
             padding: 0 16px 16px 16px;
             border-top: 1px solid var(--medium-gray);
         }
+        .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; text-transform: uppercase; font-size: 14px; color: var(--dark-gray); }
         .collapsible-content textarea {
             width: 100%;
             box-sizing: border-box;
@@ -167,8 +168,7 @@
         }
         .modal-header .close-btn { font-size: 24px; cursor: pointer; color: var(--dark-gray); }
         .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; max-height: 80vh; }
-        .modal-body h4 { margin-top: 0; margin-bottom: 12px; text-transform: uppercase; font-size: 14px; color: var(--dark-gray); }
-        .modal-actions { margin-top: 16px; display: flex; gap: 12px; align-items: center;}
+        
         .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); }
@@ -186,7 +186,7 @@
         
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 16px;
             padding-top: 16px;
         }
@@ -196,19 +196,18 @@
             background-color: var(--white-color);
             text-align: center;
             padding: 12px;
-            cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .grid-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
         .grid-item img {
             width: 100%;
-            height: 80px;
-            object-fit: cover;
+            height: 60px;
+            object-fit: contain;
             border-radius: 8px;
             margin-bottom: 8px;
             background-color: var(--light-gray);
         }
-        .grid-item .name { font-weight: 600; font-size: 14px; }
+        .grid-item .name { font-weight: 600; font-size: 13px; margin-bottom: 8px;}
+        .grid-item .add-btn { width: 100%; padding: 6px; font-size: 12px; }
         
         .structured-list { padding-top: 16px; }
         .structured-item {
@@ -225,11 +224,26 @@
         }
         .structured-item:hover { background-color: #f0f3f7; }
         
-        .create-new-item-btn {
-            border: 2px dashed var(--medium-gray);
-            color: var(--dark-gray);
-            font-weight: 600;
+        /* --- Lista de Itens Selecionados --- */
+        .selected-items-container { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+        .selected-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
         }
+        .selected-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .selected-item .info { flex-grow: 1; }
+        .selected-item .info .name { font-weight: 600; }
+        .selected-item .info .notes { font-size: 13px; color: var(--dark-gray); }
+        .selected-item .quantity-selector { display: flex; align-items: center; }
+        .selected-item .quantity-selector button { width: 30px; height: 30px; border: 1px solid var(--medium-gray); background: none; cursor: pointer; }
+        .selected-item .quantity-selector input { width: 40px; text-align: center; border: 1px solid var(--medium-gray); border-left: none; border-right: none; height: 30px; box-sizing: border-box; }
+        .selected-item .actions { display: flex; gap: 8px; font-size: 18px; color: var(--dark-gray); }
+        .selected-item .actions span { cursor: pointer; }
 
         /* --- Create New Item Modal --- */
         .form-group { margin-bottom: 16px; }
@@ -240,9 +254,6 @@
         }
         .image-buttons { display: flex; gap: 12px; }
         .image-buttons button { flex: 1; background-color: var(--white-color); border: 1px solid var(--medium-gray); padding: 12px; border-radius: 8px; cursor: pointer; }
-        .quantity-selector { display: flex; border: 1px solid #ccc; border-radius: 4px; align-items: center; }
-        .quantity-selector button { width: 40px; height: 40px; border: none; background: none; font-size: 20px; cursor: pointer; }
-        .quantity-selector input { text-align: center; border: none; width: 100%; }
         .modal-footer { padding: 16px 24px; border-top: 1px solid var(--medium-gray); background-color: var(--white-color); text-align: right; border-bottom-left-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
 
         /* --- Media Queries --- */
@@ -351,42 +362,46 @@
         const getBrainDumpTemplate = () => `<textarea placeholder="Type a note..."></textarea><div class="inline-actions"><button class="btn btn-primary">Save</button></div>`;
         const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item="${item}">${item}</div>`).join('');
         const getVisualListTemplate = (title, items) => {
-            let itemsHtml = items.map(item => `<div class="grid-item" data-item="${item.name}"><img src="${item.img}" alt="${item.name}"><div class="name">${item.name}</div></div>`).join('');
-            let createNewButton = `<div class="grid-item create-new-item-btn" data-action="create-new"><div class="name">+ Create new item</div></div>`;
-            return `<h4>${title}</h4><div class="item-grid">${itemsHtml}${createNewButton}</div>`;
+            let itemsHtml = items.map(item => `
+                <div class="grid-item" data-name="${item.name}" data-img="${item.img}">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="name">${item.name}</div>
+                    <button class="btn btn-primary add-btn">+ ADD</button>
+                </div>`).join('');
+            let createNewButton = `<div class="grid-item create-new-item-btn" data-action="create-new"><div class="name" style="height: 88px; display: flex; align-items: center; justify-content: center;">+ Create new item</div></div>`;
+            return `<h4>${title}</h4><div class="item-grid">${itemsHtml}</div><h4>Items selected</h4><div class="selected-items-container"></div>`;
         };
-        const getDetailModalTemplate = (itemName) => `
-            <div class="form-group"><label for="itemType">Type</label><select id="itemType"><option>3-Tab Shingle</option><option>Architectural Shingle</option></select></div>
-            <div class="form-group"><label for="itemColor">Color</label><select id="itemColor"><option>Weathered Wood</option><option>Black</option></select></div>
-            <div class="form-group"><div class="quantity-input"><input type="number" placeholder="Quantity"><select><option>SQ</option><option>LF</option></select></div></div>
-            <div class="form-group"><input type="checkbox" id="classFourCheck"><label for="classFourCheck">Class Four</label></div>
-            <h4>Job-Specific Pictures</h4><div class="image-upload-area">Click to upload photos</div>
-            <div class="convo-section">
-                <h4>Convo</h4>
-                <div class="convo-item">
-                    <div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions">✏️ 🗑️</span></div>
-                    <div>This is the existing material. Confirmed with homeowner.</div>
+        const getSelectedListItemTemplate = (name, img, notes = 'test yes', qty = 1) => `
+            <div class="selected-item" data-name="${name}">
+                <img src="${img}" alt="${name}">
+                <div class="info">
+                    <div class="name">${name}</div>
+                    <div class="notes">${notes}</div>
                 </div>
-                <div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div>
+                <div class="quantity-selector">
+                    <button class="quantity-btn" data-action="minus">-</button>
+                    <input type="text" value="${qty}" readonly>
+                    <button class="quantity-btn" data-action="plus">+</button>
+                </div>
+                <div class="actions">
+                    <span class="edit-btn">📝</span>
+                    <span class="delete-btn">🗑️</span>
+                </div>
             </div>
         `;
         const getCreateNewItemTemplate = () => `
             <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
             <div class="form-group"><label>Image</label><div class="image-buttons"><button>📷 Pick an image</button><button>📸 Take a picture</button></div></div>
-            <div class="form-group"><label>Quantity</label><div class="quantity-selector"><button class="quantity-minus">-</button><input type="text" value="1" readonly><button class="quantity-plus">+</button></div></div>
             <div class="form-group"><label for="newItemNotes">Notes</label><textarea id="newItemNotes" placeholder="Type a note..."></textarea></div>
         `;
 
         // --- Mock Data ---
         const supplementItems = [
-            { name: "Roof Material", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof" },
-            { name: "Decking", img: "https://placehold.co/140x80/EFEFEF/333333?text=Deck" },
+            { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" },
+            { name: "Ridge Vents", img: "https://i.imgur.com/J1y9xG1.png" },
+            { name: "Power Vents", img: "https://i.imgur.com/rM1A2cK.png" },
         ];
-        const constructionItems = [
-            { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" },
-            { name: "Roofer Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roofer" },
-            { name: "Gate Code", img: "https://placehold.co/140x80/EFEFEF/333333?text=Gate" },
-        ];
+        const constructionItems = [ { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" } ];
         const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door"];
 
         // --- Lógica de Collapse e Modal ---
@@ -406,45 +421,68 @@
                     } else if (type === 'visual-list') {
                         const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
-                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'WHAT DO THEY HAVE NOW?' : 'WHAT ARE WE GOING BACK WITH?';
+                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'ACCESSORIES' : 'WHAT ARE WE GOING BACK WITH?';
                         content.innerHTML = getVisualListTemplate(subTitle, items);
                     }
                 }
             });
         });
 
-        const openModal = (title, content) => {
+        const openModal = (title, content, footer = null) => {
             modalTitle.textContent = title;
             modalBody.innerHTML = content;
             if (itemModal.querySelector('.modal-footer')) {
                 itemModal.querySelector('.modal-footer').remove();
             }
+            if(footer){
+                 itemModal.querySelector('.modal-content').appendChild(footer);
+            }
             itemModal.classList.add('active');
         };
 
-        const openDetailModal = (itemName) => openModal(itemName, getDetailModalTemplate(itemName));
-        const openCreateNewItemModal = () => {
+        const openCreateNewItemModal = (sectionContent) => {
              const footer = document.createElement('div');
              footer.className = 'modal-footer';
-             footer.innerHTML = '<button class="btn btn-primary">ADD</button>';
-             const content = getCreateNewItemTemplate();
-             openModal('Create new item', content);
-             itemModal.querySelector('.modal-content').appendChild(footer);
+             footer.innerHTML = '<button class="btn btn-primary" id="addNewItemBtn">ADD</button>';
+             openModal('Create new item', getCreateNewItemTemplate(), footer);
+
+             document.getElementById('addNewItemBtn').onclick = () => {
+                 const name = document.getElementById('newItemName').value || "New Custom Item";
+                 const notes = document.getElementById('newItemNotes').value || "User notes";
+                 const newItemSelected = getSelectedListItemTemplate(name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes);
+                 sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+                 closeModal();
+             };
         };
         const closeModal = () => itemModal.classList.remove('active');
 
         document.getElementById('gamePlanSections').addEventListener('click', (e) => {
-            const gridItem = e.target.closest('.grid-item');
-            const listItem = e.target.closest('.structured-item');
-            if(gridItem) {
-                if(gridItem.dataset.action === 'create-new'){
-                    openCreateNewItemModal();
-                } else {
-                    openDetailModal(gridItem.dataset.item);
-                }
+            const sectionContent = e.target.closest('.collapsible-content');
+            if (!sectionContent) return;
+
+            if (e.target.matches('.add-btn')) {
+                const gridItem = e.target.closest('.grid-item');
+                const name = gridItem.dataset.name;
+                const img = gridItem.dataset.img;
+                const newItemSelected = getSelectedListItemTemplate(name, img);
+                sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
             }
-            if(listItem) {
-                openDetailModal(listItem.dataset.item);
+            
+            if (e.target.closest('.create-new-item-btn')) {
+                openCreateNewItemModal(sectionContent);
+            }
+
+            if (e.target.matches('.delete-btn')) {
+                e.target.closest('.selected-item').remove();
+            }
+            
+            if (e.target.matches('.quantity-btn')) {
+                const action = e.target.dataset.action;
+                const input = e.target.parentElement.querySelector('input');
+                let value = parseInt(input.value);
+                if (action === 'plus') value++;
+                if (action === 'minus' && value > 1) value--;
+                input.value = value;
             }
         });
 
@@ -453,7 +491,6 @@
             if (e.target === itemModal) closeModal();
         });
         
-        // --- Inicializar todas as seções como fechadas ---
         document.querySelectorAll('.collapsible-section').forEach(section => {
             section.classList.remove('open');
         });
