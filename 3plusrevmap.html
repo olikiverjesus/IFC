@@ -9,11 +9,14 @@
 
         :root {
             --primary-color: #0d6efd;
+            --dark-blue: #2c3e50;
             --light-gray: #f8f9fa;
             --medium-gray: #e9ecef;
             --dark-gray: #6c757d;
             --text-color: #212529;
             --white-color: #ffffff;
+            --success-color: #198754;
+            --danger-color: #dc3545;
             --border-radius: 8px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
@@ -117,7 +120,7 @@
             padding: 0 16px 16px 16px;
             border-top: 1px solid var(--medium-gray);
         }
-        .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; text-transform: uppercase; font-size: 14px; color: var(--dark-gray); }
+        .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; font-size: 14px; color: var(--dark-gray); }
         .collapsible-content textarea {
             width: 100%;
             box-sizing: border-box;
@@ -128,13 +131,7 @@
             font-size: 16px;
             margin-top: 16px;
         }
-        .collapsible-content .inline-actions {
-            margin-top: 12px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-
+        
         /* --- Modal --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -147,7 +144,7 @@
             background: var(--light-gray);
             border-radius: var(--border-radius);
             width: 90%;
-            max-width: 800px;
+            max-width: 500px;
             display: flex;
             flex-direction: column;
             transform: scale(0.95);
@@ -170,80 +167,102 @@
         .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; max-height: 80vh; }
         
         .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary { background-color: var(--dark-blue); color: white; }
         .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); }
         
-        .convo-section { margin-top: 24px; }
-        .convo-item {
-            background-color: var(--white-color);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border: 1px solid var(--medium-gray);
-        }
-        .convo-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .convo-meta .actions span { cursor: pointer; margin-left: 8px; }
-        
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        .item-gallery {
+            display: flex;
             gap: 16px;
-            padding-top: 16px;
+            padding: 16px 0;
+            overflow-x: auto;
         }
-        .grid-item {
+        .item-gallery::-webkit-scrollbar { height: 8px; }
+        .item-gallery::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        .gallery-item {
             border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius);
             background-color: var(--white-color);
             text-align: center;
-            padding: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .grid-item img {
-            width: 100%;
-            height: 60px;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background-color: var(--light-gray);
-        }
-        .grid-item .name { font-weight: 600; font-size: 13px; margin-bottom: 8px;}
-        .grid-item .add-btn { width: 100%; padding: 6px; font-size: 12px; cursor: pointer; }
-        
-        .structured-list { padding-top: 16px; }
-        .structured-item {
-            padding: 12px;
-            background-color: var(--white-color);
-            border: 1px solid var(--medium-gray);
-            border-radius: 8px;
-            margin-bottom: 8px;
+            flex-shrink: 0;
+            width: 140px;
+            overflow: hidden;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 500;
         }
-        .structured-item:hover { background-color: #f0f3f7; }
+        .gallery-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item .name { font-weight: 500; font-size: 13px; padding: 8px;}
+        .gallery-item .add-btn {
+            width: 100%;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-top: 1px solid var(--medium-gray);
+        }
+        .gallery-item .add-btn.added {
+            background-color: var(--success-color);
+        }
         
         /* --- Lista de Itens Selecionados --- */
-        .selected-items-container { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+        .selected-items-header { display: flex; justify-content: space-between; align-items: center; }
+        .view-toggle button { background: none; border: 1px solid var(--medium-gray); padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        .view-toggle button.active { background-color: var(--medium-gray); }
+        .selected-items-container { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+        .selected-items-container.gallery-view { flex-direction: row; flex-wrap: wrap; }
+        
         .selected-item {
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 12px;
-            background-color: var(--white-color);
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .selected-items-container.gallery-view .selected-item {
+            flex-direction: column;
+            width: 140px;
+            padding: 8px;
             border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius);
         }
-        .selected-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+
+        .selected-item:last-child { border-bottom: none; }
+        .selected-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
+        .selected-items-container.gallery-view .selected-item img { width: 100%; height: 80px; }
         .selected-item .info { flex-grow: 1; }
         .selected-item .info .name { font-weight: 600; }
         .selected-item .info .notes { font-size: 13px; color: var(--dark-gray); }
-        .selected-item .quantity-selector { display: flex; align-items: center; }
-        .selected-item .quantity-selector button { width: 30px; height: 30px; border: 1px solid var(--medium-gray); background: none; cursor: pointer; }
-        .selected-item .quantity-selector input { width: 40px; text-align: center; border: 1px solid var(--medium-gray); border-left: none; border-right: none; height: 30px; box-sizing: border-box; }
-        .selected-item .actions { display: flex; gap: 8px; font-size: 18px; color: var(--dark-gray); }
-        .selected-item .actions span { cursor: pointer; }
+        .selected-item .actions { display: flex; gap: 16px; align-items: center; }
+        .selected-item .quantity-selector { display: flex; align-items: center; border: 1px solid var(--medium-gray); border-radius: 20px; }
+        .selected-item .quantity-selector button { width: 30px; height: 30px; border: none; background: none; cursor: pointer; font-size: 16px; }
+        .selected-item .quantity-selector input { width: 30px; text-align: center; border: none; height: 30px; box-sizing: border-box; background: none; }
+        .selected-item .action-icons { display: flex; gap: 8px; }
+        .selected-item .action-icons svg { cursor: pointer; width: 18px; height: 18px; color: var(--dark-gray); }
+        
+        .job-photo-gallery { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .job-photo-gallery .photo-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+        .job-photo-gallery .add-photo-btn {
+            width: 60px; height: 60px; border-radius: 4px; border: 2px dashed var(--medium-gray);
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+            color: var(--dark-gray); cursor: pointer;
+        }
+        
+        .section-save-action {
+            padding-top: 24px;
+            margin-top: 24px;
+            border-top: 1px solid var(--medium-gray);
+            text-align: right;
+        }
+        .section-save-action .btn {
+            width: 100%;
+        }
 
         /* --- Create New Item Modal --- */
         .form-group { margin-bottom: 16px; }
@@ -359,57 +378,68 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
 
         // --- Templates ---
-        const getBrainDumpTemplate = () => `<textarea placeholder="Type a note..."></textarea><div class="inline-actions"><button class="btn btn-primary">Save</button></div>`;
-        const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item="${item}">${item}</div>`).join('');
         const getVisualListTemplate = (title, items) => {
             let itemsHtml = items.map(item => `
-                <div class="grid-item" data-name="${item.name}" data-img="${item.img}">
+                <div class="gallery-item" data-name="${item.name}" data-img="${item.img}">
                     <img src="${item.img}" alt="${item.name}">
                     <div class="name">${item.name}</div>
                     <button class="btn btn-primary add-btn">+ ADD</button>
                 </div>`).join('');
-            let createNewButton = `<div class="grid-item create-new-item-btn" data-action="create-new"><div class="name" style="height: 88px; display: flex; align-items: center; justify-content: center;">+ Create new item</div></div>`;
-            return `<h4>${title}</h4><div class="item-grid">${itemsHtml}</div><h4>Items selected</h4><div class="selected-items-container"></div>`;
+            let createNewButton = `<div class="gallery-item create-new-item-btn" data-action="create-new"><div class="name" style="height: 88px; display: flex; align-items: center; justify-content: center;">+ Create new item</div></div>`;
+            return `<h4>${title}</h4><div class="item-gallery">${itemsHtml}</div>
+                    <div class="selected-items-header"><h4>Items selected</h4><div class="view-toggle"><button data-view="list" class="active">☰</button><button data-view="gallery">🖼️</button></div></div>
+                    <div class="selected-items-container list-view"></div>
+                    <div class="section-save-action"><button class="btn btn-primary">SAVE</button></div>`;
         };
         const getSelectedListItemTemplate = (name, img, notes = 'test yes', qty = 1) => `
-            <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}">
-                <img src="${img}" alt="${name}">
-                <div class="info">
-                    <div class="name">${name}</div>
-                    <div class="notes">${notes}</div>
+            <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}" data-qty="${qty}">
+                <div class="item-main-row">
+                    <img src="${img}" alt="${name}">
+                    <div class="info">
+                        <div class="name">${name}</div>
+                    </div>
+                    <div class="actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" data-action="minus">-</button>
+                            <input type="text" value="${qty}" readonly>
+                            <button class="quantity-btn" data-action="plus">+</button>
+                        </div>
+                        <div class="action-icons">
+                            <span class="edit-btn" title="Edit">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.13,5.12L18.88,8.87M3,17.25V21H6.75L17.81,9.94L14.06,6.19L3,17.25Z" /></svg>
+                            </span>
+                            <span class="delete-btn" title="Delete">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="quantity-selector">
-                    <button class="quantity-btn" data-action="minus">-</button>
-                    <input type="text" value="${qty}" readonly>
-                    <button class="quantity-btn" data-action="plus">+</button>
-                </div>
-                <div class="actions">
-                    <span class="edit-btn">📝</span>
-                    <span class="delete-btn">🗑️</span>
+                <div class="job-photo-gallery">
+                    <div class="add-photo-btn" title="Add job-specific photo">+</div>
                 </div>
             </div>
-        `;
-        const getDetailModalTemplate = (itemName) => `
-            <div class="form-group"><label for="itemType">Type</label><select id="itemType"><option>3-Tab Shingle</option><option>Architectural Shingle</option></select></div>
-            <div class="form-group"><label for="itemColor">Color</label><select id="itemColor"><option>Weathered Wood</option><option>Black</option></select></div>
-            <div class="form-group"><div class="quantity-input"><input type="number" placeholder="Quantity"><select><option>SQ</option><option>LF</option></select></div></div>
-            <h4>Job-Specific Pictures</h4><div class="image-upload-area">Click to upload photos</div>
-            <div class="convo-section"><h4>Convo</h4><div class="convo-item"><div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions">✏️ 🗑️</span></div><div>This is the existing material.</div></div><div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div></div>
         `;
         const getCreateNewItemTemplate = () => `
             <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
             <div class="form-group"><label>Image</label><div class="image-buttons"><button>📷 Pick an image</button><button>📸 Take a picture</button></div></div>
+            <div class="form-group"><label>Quantity</label><div class="quantity-selector"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>
             <div class="form-group"><label for="newItemNotes">Notes</label><textarea id="newItemNotes" placeholder="Type a note..."></textarea></div>
+        `;
+        const getConfigItemTemplate = (itemName) => `
+            <div class="form-group"><label>Quantity</label><div class="quantity-selector"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>
+            <div class="form-group"><label for="itemType">Options</label><select id="itemType"><option>Type</option></select></div>
+            <div class="form-group"><select id="itemSize"><option>Size</option></select></div>
+            <div class="form-group"><input type="checkbox" id="paintedCheck"><label for="paintedCheck">Painted</label></div>
+            <div class="form-group"><label for="itemNotes">Notes</label><textarea id="itemNotes" placeholder="Type a note..."></textarea></div>
         `;
 
         // --- Mock Data ---
         const supplementItems = [
-            { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" },
-            { name: "Ridge Vents", img: "https://i.imgur.com/J1y9xG1.png" },
-            { name: "Power Vents", img: "https://i.imgur.com/rM1A2cK.png" },
+            { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" }, { name: "HVAC Caps", img: "https://i.imgur.com/sA7x4h4.png" },
+            { name: "Turtles/750", img: "https://i.imgur.com/J1y9xG1.png" }, { name: "Exhaust w/ Cap", img: "https://i.imgur.com/2s3fJ7w.png" },
+            { name: "Turbines", img: "https://i.imgur.com/rM1A2cK.png" }, { name: "Power Vents", img: "https://i.imgur.com/rM1A2cK.png" },
         ];
         const constructionItems = [ { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" } ];
-        const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door"];
 
         // --- Lógica de Collapse e Modal ---
         document.querySelectorAll('.collapsible-header').forEach(header => {
@@ -421,11 +451,7 @@
                 section.classList.toggle('open');
                 
                 if (section.classList.contains('open') && !content.innerHTML) {
-                    if (type === 'brain-dump') {
-                        content.innerHTML = getBrainDumpTemplate();
-                    } else if (type === 'list') {
-                        content.innerHTML = getListTemplate(tradeItems);
-                    } else if (type === 'visual-list') {
+                    if (type === 'visual-list') {
                         const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
                         const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'ACCESSORIES' : 'WHAT ARE WE GOING BACK WITH?';
@@ -438,16 +464,37 @@
         const openModal = (title, content, footer = null) => {
             modalTitle.textContent = title;
             modalBody.innerHTML = content;
-            if (itemModal.querySelector('.modal-footer')) {
-                itemModal.querySelector('.modal-footer').remove();
-            }
+            const existingFooter = itemModal.querySelector('.modal-footer');
+            if (existingFooter) existingFooter.remove();
             if(footer){
                  itemModal.querySelector('.modal-content').appendChild(footer);
             }
             itemModal.classList.add('active');
         };
 
-        const openDetailModal = (itemName) => openModal(itemName, getDetailModalTemplate(itemName));
+        const openConfigModal = (galleryItem, sectionContent) => {
+             const name = galleryItem.dataset.name;
+             const footer = document.createElement('div');
+             footer.className = 'modal-footer';
+             footer.innerHTML = '<button class="btn btn-primary" id="addItemToListBtn">ADD</button>';
+             openModal(name, getConfigItemTemplate(name), footer);
+
+             document.getElementById('addItemToListBtn').onclick = () => {
+                 const notes = document.getElementById('itemNotes').value || "Details added";
+                 const qty = itemModal.querySelector('.quantity-selector input').value;
+                 addItemToSection(sectionContent, name, galleryItem.dataset.img, notes, qty);
+                 
+                 const constructionContent = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"] .collapsible-content');
+                 if (sectionContent.parentElement.dataset.title === 'SUPPLEMENT GAMEPLAN' && constructionContent && constructionContent.innerHTML) {
+                      addItemToSection(constructionContent, name, galleryItem.dataset.img, notes, qty);
+                 }
+                 
+                 galleryItem.querySelector('.add-btn').classList.add('added');
+                 galleryItem.querySelector('.add-btn').textContent = '✓ ADDED';
+                 closeModal();
+             };
+        };
+        
         const openCreateNewItemModal = (sectionContent) => {
              const footer = document.createElement('div');
              footer.className = 'modal-footer';
@@ -457,11 +504,17 @@
              document.getElementById('addNewItemBtn').onclick = () => {
                  const name = document.getElementById('newItemName').value || "New Custom Item";
                  const notes = document.getElementById('newItemNotes').value || "User notes";
-                 const newItemSelected = getSelectedListItemTemplate(name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes);
-                 sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+                 const qty = itemModal.querySelector('.quantity-selector input').value;
+                 addItemToSection(sectionContent, name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes, qty);
                  closeModal();
              };
         };
+
+        const addItemToSection = (sectionContent, name, img, notes, qty) => {
+            const newItemSelected = getSelectedListItemTemplate(name, img, notes, qty);
+            sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+        };
+        
         const closeModal = () => itemModal.classList.remove('active');
 
         document.getElementById('gamePlanSections').addEventListener('click', (e) => {
@@ -469,33 +522,26 @@
             if (!sectionContent) return;
 
             if (e.target.matches('.add-btn')) {
-                const gridItem = e.target.closest('.grid-item');
-                const name = gridItem.dataset.name;
-                const img = gridItem.dataset.img;
-                
-                // Adiciona ao supplement
-                const newItemSelected = getSelectedListItemTemplate(name, img);
-                sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
-                
-                // Adiciona ao construction
-                const constructionContent = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"] .collapsible-content');
-                if (constructionContent && constructionContent.innerHTML) {
-                     constructionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
-                }
+                openConfigModal(e.target.closest('.gallery-item'), sectionContent);
             }
             
             if (e.target.closest('.create-new-item-btn')) {
                 openCreateNewItemModal(sectionContent);
             }
 
-            if (e.target.matches('.delete-btn')) {
+            if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
                 const itemToDelete = e.target.closest('.selected-item');
                 const itemName = itemToDelete.dataset.name;
                 itemToDelete.remove();
 
-                // Remove do construction também
                 const constructionItem = document.querySelector(`.selected-item[data-name="${itemName}"]`);
                 if(constructionItem) constructionItem.remove();
+
+                const galleryItemBtn = document.querySelector(`.gallery-item[data-name="${itemName}"] .add-btn`);
+                if(galleryItemBtn) {
+                    galleryItemBtn.classList.remove('added');
+                    galleryItemBtn.textContent = '+ ADD';
+                }
             }
             
             if (e.target.matches('.quantity-btn')) {
@@ -507,9 +553,21 @@
                 input.value = value;
             }
 
-            if (e.target.matches('.edit-btn')) {
-                const selectedItem = e.target.closest('.selected-item');
-                openDetailModal(selectedItem.dataset.name);
+            if (e.target.matches('.add-photo-btn')) {
+                const gallery = e.target.parentElement;
+                const newPhoto = document.createElement('img');
+                newPhoto.className = 'photo-thumb';
+                newPhoto.src = `https://placehold.co/60x60/3498db/ffffff?text=Job`;
+                newPhoto.alt = "Job Photo";
+                gallery.insertBefore(newPhoto, e.target);
+            }
+            
+            if (e.target.matches('.view-toggle button')) {
+                const view = e.target.dataset.view;
+                const container = sectionContent.querySelector('.selected-items-container');
+                sectionContent.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                container.className = `selected-items-container ${view}-view`;
             }
         });
 
