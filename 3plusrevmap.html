@@ -181,7 +181,8 @@
             margin-bottom: 8px;
             border: 1px solid var(--medium-gray);
         }
-        .convo-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; }
+        .convo-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .convo-meta .actions span { cursor: pointer; margin-left: 8px; }
         
         .item-grid {
             display: grid;
@@ -356,9 +357,18 @@
         };
         const getDetailModalTemplate = (itemName) => `
             <div class="form-group"><label for="itemType">Type</label><select id="itemType"><option>3-Tab Shingle</option><option>Architectural Shingle</option></select></div>
+            <div class="form-group"><label for="itemColor">Color</label><select id="itemColor"><option>Weathered Wood</option><option>Black</option></select></div>
             <div class="form-group"><div class="quantity-input"><input type="number" placeholder="Quantity"><select><option>SQ</option><option>LF</option></select></div></div>
+            <div class="form-group"><input type="checkbox" id="classFourCheck"><label for="classFourCheck">Class Four</label></div>
             <h4>Job-Specific Pictures</h4><div class="image-upload-area">Click to upload photos</div>
-            <div class="convo-section"><h4>Convo</h4><div class="convo-item"><div class="convo-meta"><strong>Will M.</strong> - Yesterday</div><div>This is the existing material.</div></div><div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div></div>
+            <div class="convo-section">
+                <h4>Convo</h4>
+                <div class="convo-item">
+                    <div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions">✏️ 🗑️</span></div>
+                    <div>This is the existing material. Confirmed with homeowner.</div>
+                </div>
+                <div class="form-group" style="margin-top: 12px;"><input type="text" placeholder="Add a note..."></div>
+            </div>
         `;
         const getCreateNewItemTemplate = () => `
             <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
@@ -375,6 +385,7 @@
         const constructionItems = [
             { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" },
             { name: "Roofer Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roofer" },
+            { name: "Gate Code", img: "https://placehold.co/140x80/EFEFEF/333333?text=Gate" },
         ];
         const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door"];
 
@@ -405,7 +416,6 @@
         const openModal = (title, content) => {
             modalTitle.textContent = title;
             modalBody.innerHTML = content;
-            // Limpa o footer anterior se houver
             if (itemModal.querySelector('.modal-footer')) {
                 itemModal.querySelector('.modal-footer').remove();
             }
@@ -441,6 +451,11 @@
         closeModalBtn.addEventListener('click', closeModal);
         itemModal.addEventListener('click', (e) => {
             if (e.target === itemModal) closeModal();
+        });
+        
+        // --- Inicializar todas as seções como fechadas ---
+        document.querySelectorAll('.collapsible-section').forEach(section => {
+            section.classList.remove('open');
         });
     });
     </script>
