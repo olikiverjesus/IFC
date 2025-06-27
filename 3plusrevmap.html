@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3+ Revamp - Final UI</title>
+    <title>3+ Revamp - Final Combined UI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -255,6 +255,7 @@
         .selected-item .quantity-selector input { width: 30px; text-align: center; border: none; height: 30px; box-sizing: border-box; background: none; }
         .selected-item .action-icons { display: flex; gap: 8px; }
         .selected-item .action-icons svg { cursor: pointer; width: 18px; height: 18px; color: var(--dark-gray); }
+        .selected-item .action-icons svg.disabled { color: var(--medium-gray); cursor: not-allowed; }
         
         .job-photo-gallery { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
         .job-photo-gallery .photo-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
@@ -389,7 +390,7 @@
 
         // --- Templates ---
         const getBrainDumpTemplate = () => `<textarea placeholder="Type a note..."></textarea><div class="inline-actions"><button class="btn btn-primary">Save</button></div>`;
-        const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item="${item}">${item}</div>`).join('');
+        const getListTemplate = (items) => items.map(item => `<div class="structured-item" data-item-name="${item}">${item}</div>`).join('');
         const getVisualListTemplate = (title, items) => {
             let itemsHtml = items.map(item => `
                 <div class="gallery-item" data-name="${item.name}" data-img="${item.img}">
@@ -405,7 +406,7 @@
                     <div class="selected-items-container list-view"></div>
                     <div class="section-save-action"><button class="btn btn-primary">SAVE</button></div>`;
         };
-        const getSelectedListItemTemplate = (name, img, notes = 'test yes', qty = 1) => `
+        const getSelectedListItemTemplate = (name, img, notes = '', qty = 1, isDeletable = true) => `
             <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}" data-qty="${qty}">
                 <div class="item-main-row">
                     <img src="${img}" alt="${name}" onerror="this.style.display='none'; this.parentElement.innerHTML += name;">
@@ -423,7 +424,7 @@
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.13,5.12L18.88,8.87M3,17.25V21H6.75L17.81,9.94L14.06,6.19L3,17.25Z" /></svg>
                             </span>
                             <span class="delete-btn" title="Delete">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>
+                                <svg class="${isDeletable ? '' : 'disabled'}" viewBox="0 0 24 24" fill="currentColor"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>
                             </span>
                         </div>
                     </div>
@@ -446,14 +447,20 @@
             <div class="form-group"><input type="checkbox" id="paintedCheck"><label for="paintedCheck">Painted</label></div>
             <div class="form-group"><label for="itemNotes">Notes</label><textarea id="itemNotes" placeholder="Type a note..."></textarea></div>
         `;
+        const getDetailModalTemplate = (itemName) => `
+             <h4>Job-Specific Pictures</h4><div class="job-photo-gallery"><div class="add-photo-btn" title="Add job-specific photo">+</div></div>
+             <div class="convo-section"><h4>Convo</h4><div class="convo-list"><div class="convo-item"><div class="convo-meta"><span><strong>Will M.</strong> - Yesterday</span><span class="actions"><span class="edit-convo">✏️</span><span class="delete-convo">🗑️</span></span></div><div>This is the existing material. Confirmed with homeowner.</div></div></div><div class="form-group" style="margin-top: 12px;"><textarea placeholder="Add a note..."></textarea><button class="btn btn-secondary" style="margin-top: 8px;">Add to Convo</button></div></div>
+        `;
 
         // --- Mock Data ---
         const supplementItems = [
             { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" }, { name: "HVAC Caps", img: "https://i.imgur.com/sA7x4h4.png" },
             { name: "Turtles/750", img: "https://i.imgur.com/J1y9xG1.png" }, { name: "Exhaust w/ Cap", img: "https://i.imgur.com/2s3fJ7w.png" },
-            { name: "Turbines", img: "https://i.imgur.com/rM1A2cK.png" }, { name: "Power Vents", img: "https://i.imgur.com/rM1A2cK.png" },
         ];
-        const constructionItems = [ { name: "Roof Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roof+Details" } ];
+        const constructionItems = [ 
+            { name: "Roofer Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roofer" },
+            { name: "Gate Code", img: "https://placehold.co/140x80/EFEFEF/333333?text=Gate" },
+        ];
         const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door"];
 
         // --- Lógica de Collapse e Modal ---
@@ -473,7 +480,7 @@
                     } else if (type === 'visual-list') {
                         const title = section.dataset.title;
                         const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
-                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'ACCESSORIES' : 'WHAT ARE WE GOING BACK WITH?';
+                        const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'WHAT DO THEY HAVE NOW?' : 'WHAT ARE WE GOING BACK WITH?';
                         content.innerHTML = getVisualListTemplate(subTitle, items);
                     }
                 }
@@ -499,13 +506,13 @@
              openModal(name, getConfigItemTemplate(name), footer);
 
              document.getElementById('addItemToListBtn').onclick = () => {
-                 const notes = document.getElementById('itemNotes').value || "Details added";
+                 const notes = document.getElementById('itemNotes').value || "";
                  const qty = itemModal.querySelector('.quantity-selector input').value;
-                 addItemToSection(sectionContent, name, galleryItem.dataset.img, notes, qty);
+                 addItemToSection(sectionContent, name, galleryItem.dataset.img, notes, qty, true);
                  
                  const constructionContent = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"] .collapsible-content');
                  if (sectionContent.parentElement.dataset.title === 'SUPPLEMENT GAMEPLAN' && constructionContent && constructionContent.innerHTML) {
-                      addItemToSection(constructionContent, name, galleryItem.dataset.img, notes, qty);
+                      addItemToSection(constructionContent, name, galleryItem.dataset.img, notes, qty, false); // Not deletable in construction
                  }
                  
                  galleryItem.querySelector('.add-btn').classList.add('added');
@@ -522,15 +529,20 @@
 
              document.getElementById('addNewItemBtn').onclick = () => {
                  const name = document.getElementById('newItemName').value || "New Custom Item";
-                 const notes = document.getElementById('newItemNotes').value || "User notes";
+                 const notes = document.getElementById('newItemNotes').value || "";
                  const qty = itemModal.querySelector('.quantity-selector input').value;
-                 addItemToSection(sectionContent, name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes, qty);
+                 addItemToSection(sectionContent, name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes, qty, true);
+                 
+                 const constructionContent = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"] .collapsible-content');
+                 if (sectionContent.parentElement.dataset.title === 'SUPPLEMENT GAMEPLAN' && constructionContent && constructionContent.innerHTML) {
+                      addItemToSection(constructionContent, name, 'https://placehold.co/60x60/EFEFEF/333333?text=Custom', notes, qty, false);
+                 }
                  closeModal();
              };
         };
 
-        const addItemToSection = (sectionContent, name, img, notes, qty) => {
-            const newItemSelected = getSelectedListItemTemplate(name, img, notes, qty);
+        const addItemToSection = (sectionContent, name, img, notes, qty, isDeletable) => {
+            const newItemSelected = getSelectedListItemTemplate(name, img, notes, qty, isDeletable);
             sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
         };
         
@@ -549,12 +561,12 @@
             }
 
             if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
+                const deleteIcon = e.target.closest('svg');
+                if(deleteIcon.classList.contains('disabled')) return;
+
                 const itemToDelete = e.target.closest('.selected-item');
                 const itemName = itemToDelete.dataset.name;
                 itemToDelete.remove();
-
-                const constructionItem = document.querySelector(`.selected-item[data-name="${itemName}"]`);
-                if(constructionItem) constructionItem.remove();
 
                 const galleryItemBtn = document.querySelector(`.gallery-item[data-name="${itemName}"] .add-btn`);
                 if(galleryItemBtn) {
@@ -587,6 +599,11 @@
                 sectionContent.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 container.className = `selected-items-container ${view}-view`;
+            }
+            
+            if (e.target.matches('.edit-btn') || e.target.closest('.edit-btn')) {
+                const selectedItem = e.target.closest('.selected-item');
+                openModal(`Edit ${selectedItem.dataset.name}`, getDetailModalTemplate(selectedItem.dataset.name));
             }
         });
 
