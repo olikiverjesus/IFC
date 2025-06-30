@@ -148,7 +148,7 @@
             padding: 0 16px 16px 16px;
             border-top: 1px solid var(--medium-gray);
         }
-        .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; font-size: 14px; color: var(--dark-gray); }
+        .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; font-size: 14px; font-weight:700; color: var(--dark-gray); text-transform: uppercase;}
         
         /* --- Modal --- */
         .modal-overlay {
@@ -242,19 +242,9 @@
         }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item .name { font-weight: 500; font-size: 13px; padding: 8px; flex-grow: 1; display: flex; align-items: center; justify-content: center;}
-        .gallery-item .add-btn {
-            width: 100%; padding: 8px; font-size: 13px; font-weight: 600;
-            cursor: pointer; background-color: var(--dark-blue); color: white;
-            border: none; border-top: 1px solid var(--medium-gray);
-        }
-        .gallery-item .add-btn.added { background-color: var(--success-color); }
-        .gallery-item.create-new-item-btn {
-            display: flex; align-items: center; justify-content: center;
-            font-size: 36px; color: var(--dark-gray); background-color: var(--light-gray);
-        }
         
         /* --- Lista de Itens Selecionados (In-Page) --- */
-        .selected-items-header { display: flex; justify-content: space-between; align-items: center; }
+        .selected-items-header { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--medium-gray);}
         .view-toggle button { background: none; border: 1px solid var(--medium-gray); padding: 4px 8px; border-radius: 4px; cursor: pointer; }
         .view-toggle button.active { background-color: var(--medium-gray); }
         .selected-items-container { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
@@ -269,7 +259,7 @@
         .selected-items-container.gallery-view .selected-item img { width: 100%; height: 80px; }
         .selected-item .item-content { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
         .selected-item .info .name { font-weight: 600; }
-        .selected-item .info .notes { font-size: 13px; color: var(--dark-gray); margin-top: 4px; }
+        .selected-item .info .notes { font-size: 13px; color: var(--dark-gray); margin-top: 4px; white-space: pre-wrap; }
         .selected-item .actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
         .selected-item .quantity-selector { display: flex; align-items: center; border: 1px solid var(--medium-gray); border-radius: 20px; }
         .selected-item .quantity-selector button { width: 30px; height: 30px; border: none; background: none; cursor: pointer; font-size: 16px; }
@@ -278,7 +268,7 @@
         .selected-item .action-icons svg { cursor: pointer; width: 18px; height: 18px; color: var(--dark-gray); }
         .selected-item .action-icons svg.disabled { color: var(--medium-gray); cursor: not-allowed; }
         .job-photo-gallery { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-        .job-photo-gallery .photo-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+        .job-photo-gallery .photo-thumb { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; cursor: pointer; }
         .job-photo-gallery .add-photo-btn {
             width: 60px; height: 60px; border-radius: 4px; border: 2px dashed var(--medium-gray);
             display: flex; align-items: center; justify-content: center; font-size: 24px;
@@ -290,13 +280,12 @@
         .section-save-action .btn { width: 100%; }
 
         /* --- Componentes do Modal --- */
-        .modal-body .convo-section { margin-top: 24px; }
-        .modal-body .convo-item {
-            background-color: var(--white-color); padding: 12px; border-radius: 8px;
-            margin-bottom: 8px; border: 1px solid var(--medium-gray);
-        }
-        .modal-body .convo-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .modal-body .convo-meta .actions span { cursor: pointer; margin-left: 8px; }
+        .logged-notes-container { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .logged-note { background-color: var(--white-color); padding: 12px; border-radius: 8px; border: 1px solid var(--medium-gray); }
+        .logged-note-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .logged-note-meta .author { font-weight: 600; }
+        .logged-note-meta .actions span { cursor: pointer; margin-left: 8px; font-weight: 500; }
+        .logged-note-content { font-size: 14px; white-space: pre-wrap; }
         .modal-body .structured-item-modal {
              padding: 12px; background-color: var(--white-color); border: 1px solid var(--medium-gray);
              border-radius: 8px; margin-bottom: 8px; cursor: pointer; display: flex;
@@ -402,11 +391,12 @@
                         <div class="collapsible-header"><span class="title">Construction GamePlan</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
                     </div>
-
-                    <!-- Seção que abre MODAL -->
+                    
+                    <!-- Seção de Trades adicionada -->
                     <div class="collapsible-section" data-type="modal-list" data-title="Trades">
                         <div class="collapsible-header"><span class="title">Trades</span><span class="chevron">›</span></div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -437,35 +427,67 @@
         const notificationToast = document.getElementById('notificationToast');
 
         // --- Mock Data ---
-        const supplementItems = [
+        const roofItems = [
+            { name: "Roof Material", img: "https://placehold.co/140x80/c0392b/ffffff?text=Material" },
+            { name: "Decking", img: "https://placehold.co/140x80/e67e22/ffffff?text=Decking" },
+            { name: "Drip Edge", img: "https://placehold.co/140x80/f1c40f/ffffff?text=Drip+Edge" },
             { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" }, { name: "HVAC Caps", img: "https://i.imgur.com/sA7x4h4.png" },
             { name: "Turtles/750", img: "https://i.imgur.com/J1y9xG1.png" }, { name: "Exhaust w/ Cap", img: "https://i.imgur.com/2s3fJ7w.png" },
         ];
-        const constructionItems = [ 
-            { name: "Roofer Details", img: "https://placehold.co/140x80/EFEFEF/333333?text=Roofer" },
-            { name: "Gate Code", img: "https://placehold.co/140x80/EFEFEF/333333?text=Gate" },
+         const tradeItemsData = [ 
+            { name: "Gutters", img: "https://placehold.co/140x80/3498db/ffffff?text=Gutters" },
+            { name: "Windows", img: "https://placehold.co/140x80/9b59b6/ffffff?text=Windows" },
+            { name: "Siding", img: "https://placehold.co/140x80/34495e/ffffff?text=Siding" },
+            { name: "Fence", img: "https://placehold.co/140x80/2ecc71/ffffff?text=Fence" },
         ];
-        const tradeItems = ["@Gutters", "@Windows & Screens", "@Garage Door", "@Skylight", "@Fences Stain/Paint", "@Interior"];
+        const projectDetailItems = [
+            { name: "Project Details", img: "https://placehold.co/140x80/7f8c8d/ffffff?text=Details" }
+        ];
 
         // --- Templates HTML ---
         const templates = {
-            inPageVisualList: (title, items) => {
-                let itemsHtml = items.map(item => `
-                    <div class="gallery-item" data-name="${item.name}" data-img="${item.img}">
-                         <div class="image-container">
-                            <img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML = '<span>${item.name}</span>';">
-                        </div>
-                        <div class="name">${item.name}</div>
-                        <button class="add-btn">+ ADD</button>
-                    </div>`).join('');
-                let createNewButton = `<div class="gallery-item create-new-item-btn" data-action="create-new"><div class="name" style="height: 110px; display: flex; align-items: center; justify-content: center; font-size: 36px;">+</div></div>`;
-                const subTitle = title === 'SUPPLEMENT GAMEPLAN' ? 'WHAT DO THEY HAVE NOW?' : 'WHAT ARE WE GOING BACK WITH?';
+            inPageVisualList: (title) => {
+                const isConstruction = title === 'CONSTRUCTION GAMEPLAN';
+                let content = `
+                    <h4>Project Details</h4>
+                    <div class="item-gallery" data-gallery-type="project-details">
+                        ${projectDetailItems.map(item => templates.galleryItem(item)).join('')}
+                    </div>
+                    <div class="selected-items-container list-view" data-container-type="project-details"></div>
+
+                    <h4>Roof</h4>
+                    <div class="item-gallery" data-gallery-type="roof">
+                        ${roofItems.map(item => templates.galleryItem(item)).join('')}
+                    </div>
+                    <div class="selected-items-header" data-header-type="roof" style="display: none;">
+                        <h4>Roof Items Selected</h4>
+                        <div class="view-toggle"><button data-view="list" class="active">☰</button><button data-view="gallery">🖼️</button></div>
+                    </div>
+                    <div class="selected-items-container list-view" data-container-type="roof"></div>
+
+                    <h4>Trades</h4>
+                    <div class="item-gallery" data-gallery-type="trades">
+                        ${tradeItemsData.map(item => templates.galleryItem(item)).join('')}
+                    </div>
+                    <div class="selected-items-header" data-header-type="trades" style="display: none;">
+                        <h4>Trades Selected</h4>
+                        <div class="view-toggle"><button data-view="list" class="active">☰</button><button data-view="gallery">🖼️</button></div>
+                    </div>
+                    <div class="selected-items-container list-view" data-container-type="trades"></div>
+                `;
                 
-                return `<h4>${subTitle}</h4><div class="item-gallery">${itemsHtml}${createNewButton}</div>
-                        <div class="selected-items-header"><h4>Items selected</h4><div class="view-toggle"><button data-view="list" class="active">☰</button><button data-view="gallery">🖼️</button></div></div>
-                        <div class="selected-items-container list-view"></div>
-                        <div class="section-save-action"><button class="btn btn-primary btn-save-section">SAVE</button></div>`;
+                if (!isConstruction) {
+                    content += `<div class="section-save-action"><button class="btn btn-primary btn-save-section">SAVE & SYNC TO CONSTRUCTION</button></div>`;
+                }
+                return content;
             },
+            galleryItem: (item) => `
+                <div class="gallery-item" data-name="${item.name}" data-img="${item.img}">
+                     <div class="image-container">
+                        <img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML = '<span>${item.name}</span>';">
+                    </div>
+                    <div class="name">${item.name}</div>
+                </div>`,
             selectedListItem: (name, img, notes = '', qty = 1, isDeletable = true) => `
                 <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}" data-qty="${qty}">
                     <img src="${img}" alt="${name}" onerror="this.style.display='none';">
@@ -492,36 +514,62 @@
                         <div class="job-photo-gallery">
                             <div class="add-photo-btn" title="Add job-specific photo">+</div>
                         </div>
+                        <div class="extra-fields"></div>
                     </div>
                 </div>`,
             modalBrainDump: (title) => `
                 <div class="form-group">
-                    <label for="brainDumpText">Notes for ${title}</label>
-                    <textarea id="brainDumpText" placeholder="Type whatever you want here...">${localStorage.getItem(title) || ''}</textarea>
+                    <label for="brainDumpText">New Log Entry for ${title}</label>
+                    <textarea id="brainDumpText" placeholder="Type whatever you want here..."></textarea>
                 </div>
-                <div class="convo-section">
-                    <h4>Activity Feed</h4>
-                    <div id="commentsContainer">
-                        <div class="convo-item"><div class="convo-meta"><strong>Adam Ulrich</strong> - 2 days ago</div><div>Added initial notes.</div></div>
-                    </div>
+                <div class="modal-footer" style="padding: 0; border: none; background: none; margin-top: 12px;">
+                    <button class="btn btn-primary" id="saveLogBtn">Save</button>
+                </div>
+                <hr style="margin: 24px 0;">
+                <h4>Log</h4>
+                <div class="logged-notes-container">
+                    <!-- Logged notes will appear here -->
                 </div>`,
-            modalBrainDumpFooter: `<button class="btn btn-secondary" id="addPhotoModalBtn">Add Photo</button><button class="btn btn-primary" id="addNoteModalBtn">Add Note</button>`,
-            modalList: (items) => items.map(item => `<div class="structured-item-modal" data-item-name="${item}">${item}</div>`).join(''),
-            modalConfigItem: (qty = 1) => `
-                <div class="form-group"><label>Quantity</label><div class="quantity-selector" style="border:none"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="${qty}" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>
-                <div class="form-group"><label for="itemNotes">Notes</label><textarea id="itemNotes" placeholder="Type a note..."></textarea></div>`,
-            modalConfigFooter: `<button class="btn btn-primary" id="addItemToListBtn">ADD</button>`,
-            modalCreateNewItem: () => `
-                <div class="form-group"><label for="newItemName">Item</label><input type="text" id="newItemName" placeholder="Item name"></div>
-                <div class="form-group"><label>Image</label><p style="font-size:12px; color: var(--dark-gray); margin-top:0;">Custom items use a placeholder image.</p></div>
-                <div class="form-group"><label>Quantity</label><div class="quantity-selector" style="border:none"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>
-                <div class="form-group"><label for="newItemNotes">Notes</label><textarea id="newItemNotes" placeholder="Type a note..."></textarea></div>`,
-            modalCreateFooter: `<button class="btn btn-primary" id="addNewItemBtn">ADD</button>`,
-            modalEditItem: (notes, photos) => `
-                <div class="form-group"><label for="editItemNotes">Notes</label><textarea id="editItemNotes">${notes}</textarea></div>
-                <h4>Job-Specific Pictures</h4>
-                <div class="job-photo-gallery">${photos}<div class="add-photo-btn" title="Add job-specific photo">+</div></div>`,
-            modalEditFooter: `<button class="btn btn-primary" id="saveEditBtn">Save Changes</button>`
+            loggedNoteItem: (text, author, time) => `
+                <div class="logged-note">
+                    <div class="logged-note-meta">
+                        <span class="author">${author} - ${time}</span>
+                        <div class="actions">
+                            <span class="edit-log">Edit</span>
+                            <span class="delete-log">Delete</span>
+                        </div>
+                    </div>
+                    <div class="logged-note-content">${text}</div>
+                </div>`,
+            modalList: (items) => items.map(item => `<div class="structured-item-modal" data-item-name="${item.name}">${item.name}</div>`).join(''),
+            modalConfigItem: (name, isConstruction) => {
+                let fields = `
+                    <div class="form-group"><label>Quantity</label><div class="quantity-selector" style="border:none"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>`;
+                
+                if (name === 'Drip Edge') {
+                    fields += `
+                        <div class="form-group"><label>Type</label><select id="dripEdgeType"><option>D-Style</option><option>L-Style</option></select></div>
+                        <div class="form-group"><label>Size</label><select id="dripEdgeSize"><option>1.5 inch</option><option>2 inch</option><option>4 inch</option></select></div>
+                        <div class="form-group"><input type="checkbox" id="isPainted" name="isPainted"><label for="isPainted" style="display:inline; margin-left: 8px;">Painted</label></div>`;
+                }
+
+                if (name === 'Project Details') {
+                     fields += `
+                        <div class="form-group"><label for="gateCode">Gate Code</label><input type="text" id="gateCode"></div>
+                        <div class="form-group"><label for="hoaHours">HOA Hours</label><input type="text" id="hoaHours"></div>`;
+                }
+
+                if (isConstruction) {
+                    fields += `<hr><div class="form-group"><label for="rooferDate">Roofer Date</label><input type="date" id="rooferDate"></div>`;
+                }
+
+                fields += `<div class="form-group"><label for="itemNotes">Notes</label><textarea id="itemNotes" placeholder="Type a note..."></textarea></div>
+                           <h4>Job-Specific Pictures</h4>
+                           <div class="job-photo-gallery"><div class="add-photo-btn" title="Add job-specific photo">+</div></div>`;
+
+                return fields;
+            },
+            modalConfigFooter: `<button class="btn btn-primary" id="addItemToListBtn">ADD</button>`
         };
 
         // --- Funções Auxiliares ---
@@ -541,8 +589,14 @@
         };
 
         const addItemToSection = (sectionContent, name, img, notes, qty, isDeletable) => {
-            const newItemSelected = templates.selectedListItem(name, img, notes, qty, isDeletable);
-            sectionContent.querySelector('.selected-items-container').insertAdjacentHTML('beforeend', newItemSelected);
+            const containerType = sectionContent.querySelector(`.gallery-item[data-name="${name}"]`)?.closest('.item-gallery').dataset.galleryType || 'trades';
+            const container = sectionContent.querySelector(`.selected-items-container[data-container-type="${containerType}"]`);
+            const header = sectionContent.querySelector(`.selected-items-header[data-header-type="${containerType}"]`);
+            if (container) {
+                 const newItemSelected = templates.selectedListItem(name, img, notes, qty, isDeletable);
+                 container.insertAdjacentHTML('beforeend', newItemSelected);
+                 header.style.display = 'flex';
+            }
         };
         
         // --- Lógica Principal de Eventos ---
@@ -553,26 +607,26 @@
                 const type = section.dataset.type;
                 const title = section.dataset.title;
 
-                if (type.startsWith('modal-')) {
-                    if (type === 'modal-brain-dump') {
-                        openModal(title, templates.modalBrainDump(title), templates.modalBrainDumpFooter);
-                        // Lógica do modal de brain dump
+                if (type === 'modal-brain-dump') {
+                    openModal(title, templates.modalBrainDump(title), '');
+                    
+                    document.getElementById('saveLogBtn').onclick = () => {
                         const textarea = document.getElementById('brainDumpText');
-                        textarea.addEventListener('input', () => localStorage.setItem(title, textarea.value));
-                        document.getElementById('addNoteModalBtn').onclick = () => {
-                            showNotification(`Note for ${title} saved!`);
-                            closeModal();
-                        };
-                    } else if (type === 'modal-list') {
-                        openModal(title, templates.modalList(tradeItems));
-                    }
+                        const text = textarea.value.trim();
+                        if (text) {
+                            const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
+                            document.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
+                            textarea.value = '';
+                        }
+                    };
+                } else if (type === 'modal-list') {
+                     openModal(title, templates.modalList(tradeItemsData));
                 } else if (type === 'in-page-visual-list') {
                     const content = section.querySelector('.collapsible-content');
                     section.classList.toggle('open');
                     
                     if (section.classList.contains('open') && !content.innerHTML) {
-                        const items = title === 'SUPPLEMENT GAMEPLAN' ? supplementItems : constructionItems;
-                        content.innerHTML = templates.inPageVisualList(title, items);
+                        content.innerHTML = templates.inPageVisualList(title, []);
                     }
                 }
             }
@@ -580,79 +634,55 @@
             // --- Lógica para conteúdo DENTRO das seções expandidas ---
             const sectionContent = e.target.closest('.collapsible-content');
             if (!sectionContent) return;
+            
+            const isConstructionPlan = sectionContent.parentElement.dataset.title === 'CONSTRUCTION GAMEPLAN';
 
-            // Adicionar item da galeria
-            if (e.target.matches('.add-btn')) {
-                const galleryItem = e.target.closest('.gallery-item');
-                openModal(`Configure ${galleryItem.dataset.name}`, templates.modalConfigItem(), templates.modalConfigFooter);
+            // Adicionar item da galeria (clicando no card todo)
+            const galleryItem = e.target.closest('.gallery-item');
+            if (galleryItem) {
+                const itemName = galleryItem.dataset.name;
+                openModal(`Configure ${itemName}`, templates.modalConfigItem(itemName, isConstructionPlan), templates.modalConfigFooter);
                 
                 document.getElementById('addItemToListBtn').onclick = () => {
-                    const notes = document.getElementById('itemNotes').value || "";
-                    const qty = itemModal.querySelector('input').value;
-                    addItemToSection(sectionContent, galleryItem.dataset.name, galleryItem.dataset.img, notes, qty, true);
+                    const notes = document.getElementById('itemNotes')?.value || "";
+                    const qty = itemModal.querySelector('.quantity-selector input').value;
+                    addItemToSection(sectionContent, itemName, galleryItem.dataset.img, notes, qty, true);
                     
-                    e.target.classList.add('added');
-                    e.target.textContent = '✓ ADDED';
-                    showNotification(`${galleryItem.dataset.name} added!`);
-                    closeModal();
-                };
-            }
-            
-            // Criar novo item
-            if (e.target.closest('.create-new-item-btn')) {
-                openModal('Create New Item', templates.modalCreateNewItem(), templates.modalCreateFooter);
-                
-                document.getElementById('addNewItemBtn').onclick = () => {
-                    const name = document.getElementById('newItemName').value || "New Custom Item";
-                    const notes = document.getElementById('newItemNotes').value || "";
-                    const qty = itemModal.querySelector('input').value;
-                    const img = 'https://placehold.co/60x60/EFEFEF/333333?text=Custom';
-                    addItemToSection(sectionContent, name, img, notes, qty, true);
-                    showNotification(`${name} created and added!`);
+                    showNotification(`${itemName} added!`);
                     closeModal();
                 };
             }
 
             // Deletar item selecionado
             if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
-                const deleteIcon = e.target.closest('svg');
-                if (deleteIcon && deleteIcon.classList.contains('disabled')) return;
-
                 const itemToDelete = e.target.closest('.selected-item');
-                const itemName = itemToDelete.dataset.name;
+                showNotification(`${itemToDelete.dataset.name} removed.`);
                 itemToDelete.remove();
-
-                const galleryItemBtn = sectionContent.querySelector(`.gallery-item[data-name="${itemName}"] .add-btn`);
-                if (galleryItemBtn) {
-                    galleryItemBtn.classList.remove('added');
-                    galleryItemBtn.textContent = '+ ADD';
-                }
-                showNotification(`${itemName} removed.`);
             }
 
             // Editar item selecionado
             if (e.target.matches('.edit-btn') || e.target.closest('.edit-btn')) {
-                const item = e.target.closest('.selected-item');
-                const name = item.dataset.name;
-                const notes = item.querySelector('.info .notes')?.textContent || '';
-                const photosHTML = Array.from(item.querySelectorAll('.job-photo-gallery .photo-thumb')).map(p => p.outerHTML).join('');
-                
-                openModal(`Edit ${name}`, templates.modalEditItem(notes, photosHTML), templates.modalEditFooter);
-                
-                document.getElementById('saveEditBtn').onclick = () => {
-                    const newNotes = document.getElementById('editItemNotes').value;
-                    let notesEl = item.querySelector('.info .notes');
-                    if (!notesEl) {
-                        notesEl = document.createElement('div');
-                        notesEl.className = 'notes';
-                        item.querySelector('.info').appendChild(notesEl);
-                    }
-                    notesEl.textContent = newNotes;
-                    if (!newNotes) notesEl.remove();
-                    
-                    showNotification(`${name} updated.`);
-                    closeModal();
-                };
+                 const item = e.target.closest('.selected-item');
+                 openModal(`Edit ${item.dataset.name}`, templates.modalConfigItem(item.dataset.name, isConstructionPlan), `<button class="btn btn-primary" id="saveEditBtn">Save Changes</button>`);
+                 // Pre-fill modal with existing data
+                 document.getElementById('itemNotes').value = item.dataset.notes;
+                 itemModal.querySelector('.quantity-selector input').value = item.dataset.qty;
+                 
+                 document.getElementById('saveEditBtn').onclick = () => {
+                     item.dataset.notes = document.getElementById('itemNotes').value;
+                     item.dataset.qty = itemModal.querySelector('.quantity-selector input').value;
+                     
+                     let notesEl = item.querySelector('.info .notes');
+                     if (!notesEl && item.dataset.notes) {
+                         notesEl = document.createElement('div');
+                         notesEl.className = 'notes';
+                         item.querySelector('.info').appendChild(notesEl);
+                     }
+                     if(notesEl) notesEl.textContent = item.dataset.notes;
+
+                     showNotification(`${item.dataset.name} updated.`);
+                     closeModal();
+                 };
             }
 
             // Mudar quantidade
@@ -678,41 +708,63 @@
             // Mudar visualização (lista/galeria)
             if (e.target.matches('.view-toggle button')) {
                 const view = e.target.dataset.view;
-                const container = sectionContent.querySelector('.selected-items-container');
-                sectionContent.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+                const container = e.target.closest('.selected-items-header').nextElementSibling;
+                e.target.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 container.className = `selected-items-container ${view}-view`;
             }
             
-            // Salvar seção
+            // Salvar e Sincronizar
             if (e.target.matches('.btn-save-section')) {
-                showNotification(`${sectionContent.parentElement.dataset.title} saved!`);
+                const supplementSection = document.querySelector('[data-title="SUPPLEMENT GAMEPLAN"]');
+                const constructionSection = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"]');
+                const constructionContent = constructionSection.querySelector('.collapsible-content');
+                
+                if (!constructionSection.classList.contains('open')) {
+                    constructionSection.querySelector('.collapsible-header').click();
+                }
+
+                // Limpa o plano de construção antes de sincronizar
+                constructionContent.querySelectorAll('.selected-item').forEach(item => item.remove());
+                constructionContent.querySelectorAll('.selected-items-header').forEach(h => h.style.display = 'none');
+
+                const itemsToSync = supplementSection.querySelectorAll('.selected-item');
+                itemsToSync.forEach(item => {
+                    const clonedItem = item.cloneNode(true);
+                    const containerType = item.closest('.selected-items-container').dataset.containerType;
+                    const targetContainer = constructionContent.querySelector(`.selected-items-container[data-container-type="${containerType}"]`);
+                    const targetHeader = constructionContent.querySelector(`.selected-items-header[data-header-type="${containerType}"]`);
+                    if (targetContainer) {
+                        targetContainer.appendChild(clonedItem);
+                        targetHeader.style.display = 'flex';
+                    }
+                });
+                showNotification(`Supplement plan saved and synced to Construction!`);
             }
         });
 
         // --- Lógica para cliques DENTRO do modal ---
         itemModal.addEventListener('click', (e) => {
-            // Fechar modal ao clicar fora
             if (e.target === itemModal) closeModal();
-
-            // Clicar em um item da lista de Trades
-            const tradeItem = e.target.closest('.structured-item-modal');
-            if (tradeItem) {
-                const title = tradeItem.dataset.itemName;
+            
+            const tradeListItem = e.target.closest('.structured-item-modal');
+            if (tradeListItem) {
+                const tradeTitle = tradeListItem.dataset.itemName;
                 closeModal();
-                // Abrir um novo modal de brain-dump para o trade selecionado
                 setTimeout(() => {
-                   openModal(title, templates.modalBrainDump(title), templates.modalBrainDumpFooter);
-                   const textarea = document.getElementById('brainDumpText');
-                   textarea.addEventListener('input', () => localStorage.setItem(title, textarea.value));
-                   document.getElementById('addNoteModalBtn').onclick = () => {
-                       showNotification(`Note for ${title} saved!`);
-                       closeModal();
-                   };
-                }, 300); // Pequeno delay para a transição
+                    openModal(tradeTitle, templates.modalBrainDump(tradeTitle), '');
+                    document.getElementById('saveLogBtn').onclick = () => {
+                        const textarea = document.getElementById('brainDumpText');
+                        const text = textarea.value.trim();
+                        if (text) {
+                            const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
+                            document.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
+                            textarea.value = '';
+                        }
+                    };
+                }, 300);
             }
 
-            // Mudar quantidade dentro do modal
             if (e.target.matches('.quantity-btn')) {
                 const action = e.target.dataset.action;
                 const input = e.target.parentElement.querySelector('input');
@@ -722,7 +774,6 @@
                 input.value = value;
             }
             
-            // Adicionar foto dentro do modal de edição
             if (e.target.matches('.add-photo-btn')) {
                 const gallery = e.target.parentElement;
                 const newPhoto = document.createElement('img');
