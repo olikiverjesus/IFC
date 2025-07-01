@@ -269,6 +269,11 @@
             border: 1px solid #ccc; box-sizing: border-box; font-size: 14px;
         }
         .form-group textarea { min-height: 100px; resize: vertical; }
+        .image-buttons { display: flex; gap: 12px; }
+        .image-buttons button { flex: 1; background-color: var(--white-color); border: 1px solid var(--medium-gray); padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .modal-quantity-selector { display: flex; align-items: center; border: 1px solid var(--medium-gray); border-radius: 8px; background-color: var(--white-color); padding: 5px; }
+        .modal-quantity-selector button { width: 30px; height: 30px; border: none; background: none; cursor: pointer; font-size: 20px; }
+        .modal-quantity-selector input { width: 50px; text-align: center; border: none; height: 30px; box-sizing: border-box; background: none; font-weight: 600; }
 
         /* --- Item Gallery (In-Page) --- */
         .item-gallery {
@@ -304,6 +309,10 @@
         }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item .name { font-weight: 500; font-size: 13px; padding: 8px; flex-grow: 1; display: flex; align-items: center; justify-content: center;}
+        .create-new-item-btn .image-container {
+            font-size: 36px;
+            color: var(--dark-blue);
+        }
         
         /* --- Selected Items List (In-Page) --- */
         .selected-items-header { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--medium-gray);}
@@ -499,7 +508,7 @@
             { name: "@Fences Stain/Paint", emojis: "👎🛑", img: "https://placehold.co/140x80/d35400/ffffff?text=Fence" },
             { name: "@Interior", emojis: "👍", img: "https://placehold.co/140x80/8e44ad/ffffff?text=Interior" },
             { name: "@Chimney Cap", emojis: "👍🛑", img: "https://placehold.co/140x80/c0392b/ffffff?text=Chimney" },
-            { name: "@Siding/Painting", emojis: "👍💰", img: "https://placehold.co/140x80/2980b9/ffffff?text=Siding" },
+            { name: "@Siding/Painting", emojis: "👍�", img: "https://placehold.co/140x80/2980b9/ffffff?text=Siding" },
             { name: "@Electrical", emojis: "👍🛑", img: "https://placehold.co/140x80/2c3e50/ffffff?text=Electrical" },
         ];
         const projectDetailItems = [
@@ -514,12 +523,14 @@
                     <h4>Project Details</h4>
                     <div class="item-gallery" data-gallery-type="project-details">
                         ${projectDetailItems.map(item => templates.galleryItem(item)).join('')}
+                        ${templates.createNewItemButton()}
                     </div>
                     <div class="selected-items-container list-view" data-container-type="project-details"></div>
 
                     <h4>Roof</h4>
                     <div class="item-gallery" data-gallery-type="roof">
                         ${roofItems.map(item => templates.galleryItem(item)).join('')}
+                        ${templates.createNewItemButton()}
                     </div>
                     <div class="selected-items-header" data-header-type="roof" style="display: none;">
                         <h4>Roof Items Selected</h4>
@@ -530,6 +541,7 @@
                     <h4>Trades</h4>
                     <div class="item-gallery" data-gallery-type="trades">
                         ${tradeItemsData.map(item => templates.galleryItem(item)).join('')}
+                        ${templates.createNewItemButton()}
                     </div>
                     <div class="selected-items-header" data-header-type="trades" style="display: none;">
                         <h4>Trades Selected</h4>
@@ -549,6 +561,11 @@
                         <img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML = '<span>${item.name}</span>';">
                     </div>
                     <div class="name">${item.name}</div>
+                </div>`,
+            createNewItemButton: () => `
+                <div class="gallery-item create-new-item-btn" data-action="create-new">
+                    <div class="image-container">+</div>
+                    <div class="name">Create new item</div>
                 </div>`,
             selectedListItem: (name, img, notes = '', qty = 1, isDeletable = true) => `
                 <div class="selected-item" data-name="${name}" data-img="${img}" data-notes="${notes}" data-qty="${qty}">
@@ -587,11 +604,10 @@
             `,
             logFormContent: (title) => `
                 <div class="form-group">
-                    <label for="logFormText">New Log Entry for ${title}</label>
-                    <textarea id="logFormText" placeholder="Type whatever you want here..."></textarea>
+                    <textarea class="log-form-textarea" placeholder="Type a note..."></textarea>
                 </div>
                 <div style="text-align: right;">
-                    <button class="btn btn-primary" id="saveLogBtn">Save</button>
+                    <button class="btn btn-primary save-log-btn">Save</button>
                 </div>
                 <hr style="margin: 24px 0;">
                 <h4>Log</h4>
@@ -636,6 +652,37 @@
                         <button class="btn btn-secondary" disabled>APPROVE</button>
                     </div>
                 </div>`,
+            modalCreateNewItem: () => `
+                <div class="form-group">
+                    <label for="newItemName">Item</label>
+                    <input type="text" id="newItemName" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <div class="image-buttons">
+                        <button>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            Pick an image
+                        </button>
+                        <button>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            Take a picture
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <div class="modal-quantity-selector">
+                        <button data-action="minus">-</button>
+                        <input type="text" value="1" readonly>
+                        <button data-action="plus">+</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newItemNotes">Notes</label>
+                    <textarea id="newItemNotes" placeholder="Type a note..."></textarea>
+                </div>`,
+            modalCreateFooter: `<button class="btn btn-primary" id="addNewItemBtn">ADD</button>`,
             modalConfigItem: (name, isConstruction) => {
                 let fields = `
                     <div class="form-group"><label>Quantity</label><div class="quantity-selector" style="border:none"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>`;
@@ -681,17 +728,6 @@
             modalFooter.innerHTML = footerContent;
             itemModal.classList.add('active');
         };
-
-        const addItemToSection = (sectionContent, name, img, notes, qty, isDeletable) => {
-            const containerType = sectionContent.querySelector(`.gallery-item[data-name="${name}"]`)?.closest('.item-gallery').dataset.galleryType || 'trades';
-            const container = sectionContent.querySelector(`.selected-items-container[data-container-type="${containerType}"]`);
-            const header = sectionContent.querySelector(`.selected-items-header[data-header-type="${containerType}"]`);
-            if (container) {
-                 const newItemSelected = templates.selectedListItem(name, img, notes, qty, isDeletable);
-                 container.insertAdjacentHTML('beforeend', newItemSelected);
-                 header.style.display = 'flex';
-            }
-        };
         
         // --- Main Event Logic ---
         document.getElementById('gamePlanSections').addEventListener('click', (e) => {
@@ -701,9 +737,7 @@
                 const type = section.dataset.type;
                 const title = section.dataset.title;
 
-                if (type === 'modal-brain-dump') { // This type is no longer used by main sections but kept for flexibility
-                    openModal(title, templates.logFormContent(title), '');
-                } else if (type === 'in-page-accordion' || type === 'in-page-simple-form' || type === 'in-page-log-form' || type === 'in-page-visual-list') {
+                if (type === 'in-page-accordion' || type === 'in-page-simple-form' || type === 'in-page-log-form' || type === 'in-page-visual-list') {
                     const content = section.querySelector('.collapsible-content');
                     section.classList.toggle('open');
                     if (section.classList.contains('open') && !content.innerHTML) {
@@ -715,15 +749,6 @@
                             content.innerHTML = templates.simpleFormContent();
                         } else if (type === 'in-page-log-form') {
                             content.innerHTML = templates.logFormContent(title);
-                            content.querySelector('#saveLogBtn').onclick = () => {
-                                const textarea = content.querySelector('#logFormText');
-                                const text = textarea.value.trim();
-                                if (text) {
-                                    const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
-                                    content.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
-                                    textarea.value = '';
-                                }
-                            };
                         }
                     }
                 }
@@ -748,11 +773,23 @@
                     }
                 }
             }
+
+            // Logic for the @billhome log form
+            const saveLogBtn = e.target.closest('.save-log-btn');
+            if (saveLogBtn) {
+                const textarea = sectionContent.querySelector('.log-form-textarea');
+                const text = textarea.value.trim();
+                if (text) {
+                    const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
+                    sectionContent.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
+                    textarea.value = '';
+                }
+            }
             
             const isConstructionPlan = sectionContent.parentElement.dataset.title === 'CONSTRUCTION GAMEPLAN';
 
             // Add item from gallery (by clicking the whole card)
-            const galleryItem = e.target.closest('.gallery-item');
+            const galleryItem = e.target.closest('.gallery-item:not(.create-new-item-btn)');
             if (galleryItem) {
                 const itemName = galleryItem.dataset.name;
                 openModal(`Configure ${itemName}`, templates.modalConfigItem(itemName, isConstructionPlan), templates.modalConfigFooter);
@@ -760,9 +797,42 @@
                 document.getElementById('addItemToListBtn').onclick = () => {
                     const notes = document.getElementById('itemNotes')?.value || "";
                     const qty = itemModal.querySelector('.quantity-selector input').value;
-                    addItemToSection(sectionContent, itemName, galleryItem.dataset.img, notes, qty, true);
+                    const containerType = galleryItem.closest('.item-gallery').dataset.galleryType;
+                    const container = sectionContent.querySelector(`.selected-items-container[data-container-type="${containerType}"]`);
+                    const header = sectionContent.querySelector(`.selected-items-header[data-header-type="${containerType}"]`);
+                    
+                    if (container) {
+                        const newItemSelected = templates.selectedListItem(itemName, galleryItem.dataset.img, notes, qty, true);
+                        container.insertAdjacentHTML('beforeend', newItemSelected);
+                        header.style.display = 'flex';
+                    }
                     
                     showNotification(`${itemName} added!`);
+                    closeModal();
+                };
+            }
+
+            // Create new item
+            const createNewBtn = e.target.closest('.create-new-item-btn');
+            if (createNewBtn) {
+                const galleryType = createNewBtn.closest('.item-gallery').dataset.galleryType;
+                openModal('Create new item', templates.modalCreateNewItem(), templates.modalCreateFooter);
+
+                document.getElementById('addNewItemBtn').onclick = () => {
+                    const name = document.getElementById('newItemName').value || "New Custom Item";
+                    const notes = document.getElementById('newItemNotes').value || "";
+                    const qty = itemModal.querySelector('.modal-quantity-selector input').value;
+                    const img = 'https://placehold.co/60x60/EFEFEF/333333?text=Custom';
+
+                    const container = sectionContent.querySelector(`.selected-items-container[data-container-type="${galleryType}"]`);
+                    const header = sectionContent.querySelector(`.selected-items-header[data-header-type="${galleryType}"]`);
+                    if (container) {
+                         const newItemSelected = templates.selectedListItem(name, img, notes, qty, true);
+                         container.insertAdjacentHTML('beforeend', newItemSelected);
+                         header.style.display = 'flex';
+                    }
+                    
+                    showNotification(`${name} created and added!`);
                     closeModal();
                 };
             }
@@ -861,7 +931,7 @@
         itemModal.addEventListener('click', (e) => {
             if (e.target === itemModal) closeModal();
 
-            if (e.target.matches('.quantity-btn')) {
+            if (e.target.matches('.modal-quantity-selector button')) {
                 const action = e.target.dataset.action;
                 const input = e.target.parentElement.querySelector('input');
                 let value = parseInt(input.value);
@@ -891,3 +961,4 @@
 
 </body>
 </html>
+�
