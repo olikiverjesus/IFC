@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3+ Revamp - Interface Unificada</title>
+    <title>3+ Revamp - Unified Interface</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -37,7 +37,7 @@
             margin: auto;
         }
 
-        /* --- Cabeçalho Mobile --- */
+        /* --- Mobile Header --- */
         .mobile-header {
             display: none;
             align-items: center;
@@ -65,7 +65,7 @@
         }
         .mobile-header .user-actions .user-avatar { width: 32px; height: 32px; border-radius: 50%;}
 
-        /* --- Componentes Gerais --- */
+        /* --- General Components --- */
         .page-header {
             margin-bottom: 24px;
         }
@@ -106,7 +106,7 @@
         .tabs::-webkit-scrollbar { display: none; }
         .tabs { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- Seções Retráteis --- */
+        /* --- Collapsible Sections --- */
         .collapsible-section {
             background-color: var(--white-color);
             border: 1px solid var(--medium-gray);
@@ -134,7 +134,7 @@
             color: var(--dark-gray);
             transition: transform 0.3s ease;
         }
-        .collapsible-section.open .collapsible-header .chevron {
+        .collapsible-section.open > .collapsible-header .chevron {
             transform: rotate(180deg);
         }
         .collapsible-content {
@@ -143,12 +143,74 @@
             transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
             padding: 0 16px;
         }
-        .collapsible-section.open .collapsible-content {
-            max-height: 5000px; /* Suficientemente grande para o conteúdo */
-            padding: 0 16px 16px 16px;
+        .collapsible-section.open > .collapsible-content {
+            max-height: 5000px; /* Large enough for content */
+            padding: 16px;
             border-top: 1px solid var(--medium-gray);
         }
+        .collapsible-section.open > .collapsible-content.no-padding-top {
+             padding-top: 0;
+        }
         .collapsible-content h4 { margin-top: 16px; margin-bottom: 12px; font-size: 14px; font-weight:700; color: var(--dark-gray); text-transform: uppercase;}
+        
+        /* --- Nested Trades Accordion --- */
+        .nested-trade {
+            margin-top: 8px;
+        }
+        .nested-trade:first-child {
+            margin-top: 0;
+        }
+        .nested-trade .collapsible-header {
+            background-color: var(--white-color);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+        }
+        .nested-trade .collapsible-header .title {
+            font-weight: 600;
+            text-transform: none;
+        }
+        .nested-trade .collapsible-header .title .trade-emojis {
+            margin-left: 8px;
+        }
+        .nested-trade.open > .collapsible-header {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .nested-trade > .collapsible-content {
+            padding: 16px;
+            border: 1px solid var(--medium-gray);
+            border-top: none;
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .trade-content-wrapper {
+            padding: 0;
+        }
+        .trade-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .trade-actions .btn {
+            flex: 1;
+        }
+        .approval-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--medium-gray);
+        }
+        .approval-section label {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+        .approval-section .btn {
+            margin-left: auto; /* Push approve button to the right */
+        }
         
         /* --- Modal --- */
         .modal-overlay {
@@ -196,7 +258,7 @@
             gap: 12px;
         }
         
-        /* --- Componentes de Formulário e Botões --- */
+        /* --- Form & Button Components --- */
         .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
         .btn-primary { background-color: var(--dark-blue); color: white; }
         .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); }
@@ -208,7 +270,7 @@
         }
         .form-group textarea { min-height: 100px; resize: vertical; }
 
-        /* --- Galeria de Itens (In-Page) --- */
+        /* --- Item Gallery (In-Page) --- */
         .item-gallery {
             display: flex;
             gap: 16px;
@@ -243,7 +305,7 @@
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item .name { font-weight: 500; font-size: 13px; padding: 8px; flex-grow: 1; display: flex; align-items: center; justify-content: center;}
         
-        /* --- Lista de Itens Selecionados (In-Page) --- */
+        /* --- Selected Items List (In-Page) --- */
         .selected-items-header { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--medium-gray);}
         .view-toggle button { background: none; border: 1px solid var(--medium-gray); padding: 4px 8px; border-radius: 4px; cursor: pointer; }
         .view-toggle button.active { background-color: var(--medium-gray); }
@@ -279,21 +341,15 @@
         }
         .section-save-action .btn { width: 100%; }
 
-        /* --- Componentes do Modal --- */
+        /* --- Modal Components --- */
         .logged-notes-container { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
         .logged-note { background-color: var(--white-color); padding: 12px; border-radius: 8px; border: 1px solid var(--medium-gray); }
         .logged-note-meta { font-size: 12px; color: var(--dark-gray); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
         .logged-note-meta .author { font-weight: 600; }
         .logged-note-meta .actions span { cursor: pointer; margin-left: 8px; font-weight: 500; }
         .logged-note-content { font-size: 14px; white-space: pre-wrap; }
-        .modal-body .structured-item-modal {
-             padding: 12px; background-color: var(--white-color); border: 1px solid var(--medium-gray);
-             border-radius: 8px; margin-bottom: 8px; cursor: pointer; display: flex;
-             justify-content: space-between; align-items: center; font-weight: 500;
-        }
-        .modal-body .structured-item-modal:hover { background-color: #f0f3f7; }
 
-        /* --- Notificação Toast --- */
+        /* --- Toast Notification --- */
         .toast-notification {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
             background-color: var(--success-color); color: white;
@@ -343,7 +399,7 @@
 
             <div class="project-header-container">
                 <div class="project-header">
-                    <img src="https://placehold.co/100x100/EFEFEF/333333?text=House" alt="Foto da casa" class="profile-pic">
+                    <img src="https://placehold.co/100x100/EFEFEF/333333?text=House" alt="House photo" class="profile-pic">
                     <div class="header-content">
                         <div class="contact-info">
                             <h1>Julian Ortiz</h1>
@@ -360,9 +416,9 @@
                     </div>
                 </div>
                  <div class="project-actions">
-                    <button class="icon-btn" title="Ação 1">📸</button>
-                    <button class="icon-btn" title="Ação 2">📄</button>
-                    <button class="icon-btn" title="Ação 3">➕</button>
+                    <button class="icon-btn" title="Action 1">📸</button>
+                    <button class="icon-btn" title="Action 2">📄</button>
+                    <button class="icon-btn" title="Action 3">➕</button>
                 </div>
             </div>
 
@@ -374,7 +430,7 @@
             <div class="main-content">
                 <h2 class="main-title" style="font-size: 18px; font-weight: 600; margin-top: 32px;">3+ GamePlan</h2>
                 <div id="gamePlanSections">
-                    <!-- Seções que abrem MODAIS -->
+                    <!-- Sections that open MODALS -->
                     <div class="collapsible-section" data-type="modal-brain-dump" data-title="What Are We Going After">
                         <div class="collapsible-header"><span class="title">What Are We Going After</span><span class="chevron">›</span></div>
                     </div>
@@ -382,7 +438,7 @@
                         <div class="collapsible-header"><span class="title">@billhome</span><span class="chevron">›</span></div>
                     </div>
 
-                    <!-- Seções que expandem NA PÁGINA -->
+                    <!-- Sections that expand IN-PAGE -->
                     <div class="collapsible-section" data-type="in-page-visual-list" data-title="SUPPLEMENT GAMEPLAN">
                         <div class="collapsible-header"><span class="title">Supplement GamePlan</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
@@ -392,9 +448,10 @@
                         <div class="collapsible-content"></div>
                     </div>
                     
-                    <!-- Seção de Trades adicionada -->
-                    <div class="collapsible-section" data-type="modal-list" data-title="Trades">
-                        <div class="collapsible-header"><span class="title">Trades</span><span class="chevron">›</span></div>
+                    <!-- Trades section with Nested Accordion -->
+                    <div class="collapsible-section" data-type="in-page-accordion" data-title="Trades">
+                        <div class="collapsible-header"><span class="title">Trades</span><span class="chevron">⌄</span></div>
+                        <div class="collapsible-content no-padding-top"></div>
                     </div>
 
                 </div>
@@ -402,7 +459,7 @@
         </div>
     </div>
 
-    <!-- MODAL ÚNICO E FLEXÍVEL -->
+    <!-- SINGLE FLEXIBLE MODAL -->
     <div id="itemModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -414,7 +471,7 @@
         </div>
     </div>
 
-    <!-- NOTIFICAÇÃO TOAST -->
+    <!-- TOAST NOTIFICATION -->
     <div id="notificationToast" class="toast-notification"></div>
 
     <script>
@@ -428,23 +485,28 @@
 
         // --- Mock Data ---
         const roofItems = [
-            { name: "Roof Material", img: "https://placehold.co/140x80/c0392b/ffffff?text=Material" },
+            { name: "@ROOF", img: "https://placehold.co/140x80/c0392b/ffffff?text=Roof" },
             { name: "Decking", img: "https://placehold.co/140x80/e67e22/ffffff?text=Decking" },
             { name: "Drip Edge", img: "https://placehold.co/140x80/f1c40f/ffffff?text=Drip+Edge" },
             { name: "Pipe Jacks", img: "https://i.imgur.com/gY8GvOD.png" }, { name: "HVAC Caps", img: "https://i.imgur.com/sA7x4h4.png" },
             { name: "Turtles/750", img: "https://i.imgur.com/J1y9xG1.png" }, { name: "Exhaust w/ Cap", img: "https://i.imgur.com/2s3fJ7w.png" },
         ];
-         const tradeItemsData = [ 
-            { name: "Gutters", img: "https://placehold.co/140x80/3498db/ffffff?text=Gutters" },
-            { name: "Windows", img: "https://placehold.co/140x80/9b59b6/ffffff?text=Windows" },
-            { name: "Siding", img: "https://placehold.co/140x80/34495e/ffffff?text=Siding" },
-            { name: "Fence", img: "https://placehold.co/140x80/2ecc71/ffffff?text=Fence" },
+        const tradeItemsData = [ 
+            { name: "@Gutters", emojis: "👍🛑", img: "https://placehold.co/140x80/3498db/ffffff?text=Gutters" },
+            { name: "@Windows & Screens", emojis: "👍🛑", img: "https://placehold.co/140x80/9b59b6/ffffff?text=Windows" },
+            { name: "@Garage Door", emojis: "👍💰", img: "https://placehold.co/140x80/1abc9c/ffffff?text=Garage" },
+            { name: "@Skylight", emojis: "👍💰", img: "https://placehold.co/140x80/f39c12/ffffff?text=Skylight" },
+            { name: "@Fences Stain/Paint", emojis: "👎🛑", img: "https://placehold.co/140x80/d35400/ffffff?text=Fence" },
+            { name: "@Interior", emojis: "👍", img: "https://placehold.co/140x80/8e44ad/ffffff?text=Interior" },
+            { name: "@Chimney Cap", emojis: "👍🛑", img: "https://placehold.co/140x80/c0392b/ffffff?text=Chimney" },
+            { name: "@Siding/Painting", emojis: "👍💰", img: "https://placehold.co/140x80/2980b9/ffffff?text=Siding" },
+            { name: "@Electrical", emojis: "👍🛑", img: "https://placehold.co/140x80/2c3e50/ffffff?text=Electrical" },
         ];
         const projectDetailItems = [
             { name: "Project Details", img: "https://placehold.co/140x80/7f8c8d/ffffff?text=Details" }
         ];
 
-        // --- Templates HTML ---
+        // --- HTML Templates ---
         const templates = {
             inPageVisualList: (title) => {
                 const isConstruction = title === 'CONSTRUCTION GAMEPLAN';
@@ -541,7 +603,33 @@
                     </div>
                     <div class="logged-note-content">${text}</div>
                 </div>`,
-            modalList: (items) => items.map(item => `<div class="structured-item-modal" data-item-name="${item.name}">${item.name}</div>`).join(''),
+            tradeAccordion: (trades) => trades.map(trade => templates.tradeAccordionItem(trade)).join(''),
+            tradeAccordionItem: (trade) => `
+                <div class="collapsible-section nested-trade" data-trade-name="${trade.name}">
+                    <div class="collapsible-header">
+                        <span class="title">${trade.name}<span class="trade-emojis">${trade.emojis || ''}</span></span>
+                        <span class="chevron">⌄</span>
+                    </div>
+                    <div class="collapsible-content"></div>
+                </div>`,
+            guttersContent: () => `
+                <div class="trade-content-wrapper">
+                    <div class="form-group">
+                        <input type="text" placeholder="Color">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Notes">
+                    </div>
+                    <div class="trade-actions">
+                        <button class="btn btn-primary">SAVE DRAFT</button>
+                        <button class="btn" style="background-color: var(--dark-blue); color: white;">SEND</button>
+                    </div>
+                    <div class="approval-section">
+                        <input type="checkbox" id="guttersLooksGood">
+                        <label for="guttersLooksGood">Looks good</label>
+                        <button class="btn btn-secondary" disabled>APPROVE</button>
+                    </div>
+                </div>`,
             modalConfigItem: (name, isConstruction) => {
                 let fields = `
                     <div class="form-group"><label>Quantity</label><div class="quantity-selector" style="border:none"><button class="quantity-btn" data-action="minus">-</button><input type="text" value="1" readonly><button class="quantity-btn" data-action="plus">+</button></div></div>`;
@@ -572,7 +660,7 @@
             modalConfigFooter: `<button class="btn btn-primary" id="addItemToListBtn">ADD</button>`
         };
 
-        // --- Funções Auxiliares ---
+        // --- Helper Functions ---
         const showNotification = (message) => {
             notificationToast.textContent = message;
             notificationToast.classList.add('visible');
@@ -599,7 +687,7 @@
             }
         };
         
-        // --- Lógica Principal de Eventos ---
+        // --- Main Event Logic ---
         document.getElementById('gamePlanSections').addEventListener('click', (e) => {
             const header = e.target.closest('.collapsible-header');
             if (header) {
@@ -619,8 +707,12 @@
                             textarea.value = '';
                         }
                     };
-                } else if (type === 'modal-list') {
-                     openModal(title, templates.modalList(tradeItemsData));
+                } else if (type === 'in-page-accordion') {
+                    const content = section.querySelector('.collapsible-content');
+                    section.classList.toggle('open');
+                    if (section.classList.contains('open') && !content.innerHTML) {
+                        content.innerHTML = templates.tradeAccordion(tradeItemsData);
+                    }
                 } else if (type === 'in-page-visual-list') {
                     const content = section.querySelector('.collapsible-content');
                     section.classList.toggle('open');
@@ -631,13 +723,29 @@
                 }
             }
 
-            // --- Lógica para conteúdo DENTRO das seções expandidas ---
+            // --- Logic for content INSIDE expanded sections ---
             const sectionContent = e.target.closest('.collapsible-content');
             if (!sectionContent) return;
             
+            // Logic for the nested Trades accordion
+            const nestedHeader = e.target.closest('.nested-trade .collapsible-header');
+            if (nestedHeader) {
+                const nestedSection = nestedHeader.parentElement;
+                const nestedContent = nestedSection.querySelector('.collapsible-content');
+                nestedSection.classList.toggle('open');
+                if (nestedSection.classList.contains('open') && !nestedContent.innerHTML) {
+                    const tradeName = nestedSection.dataset.tradeName;
+                    if (tradeName === '@Gutters') {
+                        nestedContent.innerHTML = templates.guttersContent();
+                    } else {
+                        nestedContent.innerHTML = `<p>Content for ${tradeName} coming soon.</p>`;
+                    }
+                }
+            }
+            
             const isConstructionPlan = sectionContent.parentElement.dataset.title === 'CONSTRUCTION GAMEPLAN';
 
-            // Adicionar item da galeria (clicando no card todo)
+            // Add item from gallery (by clicking the whole card)
             const galleryItem = e.target.closest('.gallery-item');
             if (galleryItem) {
                 const itemName = galleryItem.dataset.name;
@@ -653,14 +761,14 @@
                 };
             }
 
-            // Deletar item selecionado
+            // Delete selected item
             if (e.target.matches('.delete-btn') || e.target.closest('.delete-btn')) {
                 const itemToDelete = e.target.closest('.selected-item');
                 showNotification(`${itemToDelete.dataset.name} removed.`);
                 itemToDelete.remove();
             }
 
-            // Editar item selecionado
+            // Edit selected item
             if (e.target.matches('.edit-btn') || e.target.closest('.edit-btn')) {
                  const item = e.target.closest('.selected-item');
                  openModal(`Edit ${item.dataset.name}`, templates.modalConfigItem(item.dataset.name, isConstructionPlan), `<button class="btn btn-primary" id="saveEditBtn">Save Changes</button>`);
@@ -685,7 +793,7 @@
                  };
             }
 
-            // Mudar quantidade
+            // Change quantity
             if (e.target.matches('.quantity-btn')) {
                 const action = e.target.dataset.action;
                 const input = e.target.parentElement.querySelector('input');
@@ -695,7 +803,7 @@
                 input.value = value;
             }
 
-            // Adicionar foto específica do trabalho
+            // Add job-specific photo
             if (e.target.matches('.add-photo-btn')) {
                 const gallery = e.target.parentElement;
                 const newPhoto = document.createElement('img');
@@ -705,7 +813,7 @@
                 gallery.insertBefore(newPhoto, e.target);
             }
 
-            // Mudar visualização (lista/galeria)
+            // Change view (list/gallery)
             if (e.target.matches('.view-toggle button')) {
                 const view = e.target.dataset.view;
                 const container = e.target.closest('.selected-items-header').nextElementSibling;
@@ -714,7 +822,7 @@
                 container.className = `selected-items-container ${view}-view`;
             }
             
-            // Salvar e Sincronizar
+            // Save and Sync
             if (e.target.matches('.btn-save-section')) {
                 const supplementSection = document.querySelector('[data-title="SUPPLEMENT GAMEPLAN"]');
                 const constructionSection = document.querySelector('[data-title="CONSTRUCTION GAMEPLAN"]');
@@ -724,7 +832,7 @@
                     constructionSection.querySelector('.collapsible-header').click();
                 }
 
-                // Limpa o plano de construção antes de sincronizar
+                // Clear the construction plan before syncing
                 constructionContent.querySelectorAll('.selected-item').forEach(item => item.remove());
                 constructionContent.querySelectorAll('.selected-items-header').forEach(h => h.style.display = 'none');
 
@@ -743,27 +851,9 @@
             }
         });
 
-        // --- Lógica para cliques DENTRO do modal ---
+        // --- Logic for clicks INSIDE the modal ---
         itemModal.addEventListener('click', (e) => {
             if (e.target === itemModal) closeModal();
-            
-            const tradeListItem = e.target.closest('.structured-item-modal');
-            if (tradeListItem) {
-                const tradeTitle = tradeListItem.dataset.itemName;
-                closeModal();
-                setTimeout(() => {
-                    openModal(tradeTitle, templates.modalBrainDump(tradeTitle), '');
-                    document.getElementById('saveLogBtn').onclick = () => {
-                        const textarea = document.getElementById('brainDumpText');
-                        const text = textarea.value.trim();
-                        if (text) {
-                            const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
-                            document.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
-                            textarea.value = '';
-                        }
-                    };
-                }, 300);
-            }
 
             if (e.target.matches('.quantity-btn')) {
                 const action = e.target.dataset.action;
@@ -786,7 +876,7 @@
 
         closeModalBtn.addEventListener('click', closeModal);
         
-        // Inicia com as seções de lista visual já abertas para melhor visibilidade
+        // Starts with the visual list sections already open for better visibility
         document.querySelectorAll('.collapsible-section[data-type="in-page-visual-list"]').forEach(section => {
             section.querySelector('.collapsible-header').click();
         });
