@@ -200,7 +200,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background-color: var(--light-gray);
+            background-color: var(--white-color);
             border-radius: var(--border-radius);
             border: 1px solid var(--medium-gray);
         }
@@ -221,7 +221,7 @@
         }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content {
-            background: var(--light-gray);
+            background: var(--white-color);
             border-radius: var(--border-radius);
             width: 90%;
             max-width: 600px;
@@ -234,8 +234,8 @@
         .modal-overlay.active .modal-content { transform: scale(1); }
         .modal-header {
             padding: 16px 24px;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 600;
             border-bottom: 1px solid var(--medium-gray);
             display: flex;
             justify-content: space-between;
@@ -244,8 +244,8 @@
             border-top-left-radius: var(--border-radius);
             border-top-right-radius: var(--border-radius);
         }
-        .modal-header .close-btn { font-size: 24px; cursor: pointer; color: var(--dark-gray); }
-        .modal-body { flex-grow: 1; padding: 24px; overflow-y: auto; }
+        .modal-header .close-btn { font-size: 24px; cursor: pointer; color: var(--dark-gray); border: 1px solid var(--medium-gray); border-radius: 50%; width: 28px; height: 28px; display:flex; align-items:center; justify-content:center; line-height: 1;}
+        .modal-body { flex-grow: 1; padding: 24px; background-color: var(--light-gray); }
         .modal-footer {
             padding: 16px 24px;
             border-top: 1px solid var(--medium-gray);
@@ -262,6 +262,7 @@
         .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
         .btn-primary { background-color: var(--dark-blue); color: white; }
         .btn-secondary { background-color: var(--white-color); border-color: var(--medium-gray); }
+        .btn:disabled { background-color: #d3dce6; color: #a4b0be; cursor: not-allowed; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 14px; }
         .form-group input, .form-group textarea, .form-group select {
@@ -508,7 +509,7 @@
             { name: "@Fences Stain/Paint", emojis: "👎🛑", img: "https://placehold.co/140x80/d35400/ffffff?text=Fence" },
             { name: "@Interior", emojis: "👍", img: "https://placehold.co/140x80/8e44ad/ffffff?text=Interior" },
             { name: "@Chimney Cap", emojis: "👍🛑", img: "https://placehold.co/140x80/c0392b/ffffff?text=Chimney" },
-            { name: "@Siding/Painting", emojis: "👍�", img: "https://placehold.co/140x80/2980b9/ffffff?text=Siding" },
+            { name: "@Siding/Painting", emojis: "👍💰", img: "https://placehold.co/140x80/2980b9/ffffff?text=Siding" },
             { name: "@Electrical", emojis: "👍🛑", img: "https://placehold.co/140x80/2c3e50/ffffff?text=Electrical" },
         ];
         const projectDetailItems = [
@@ -796,7 +797,7 @@
                 
                 document.getElementById('addItemToListBtn').onclick = () => {
                     const notes = document.getElementById('itemNotes')?.value || "";
-                    const qty = itemModal.querySelector('.quantity-selector input').value;
+                    const qty = itemModal.querySelector('.modal-quantity-selector input').value;
                     const containerType = galleryItem.closest('.item-gallery').dataset.galleryType;
                     const container = sectionContent.querySelector(`.selected-items-container[data-container-type="${containerType}"]`);
                     const header = sectionContent.querySelector(`.selected-items-header[data-header-type="${containerType}"]`);
@@ -961,4 +962,3 @@
 
 </body>
 </html>
-�
