@@ -430,15 +430,15 @@
             <div class="main-content">
                 <h2 class="main-title" style="font-size: 18px; font-weight: 600; margin-top: 32px;">3+ GamePlan</h2>
                 <div id="gamePlanSections">
-                    <!-- Sections that open MODALS -->
-                    <div class="collapsible-section" data-type="modal-brain-dump" data-title="What Are We Going After">
-                        <div class="collapsible-header"><span class="title">What Are We Going After</span><span class="chevron">›</span></div>
-                    </div>
-                    <div class="collapsible-section" data-type="modal-brain-dump" data-title="@billhome">
-                        <div class="collapsible-header"><span class="title">@billhome</span><span class="chevron">›</span></div>
-                    </div>
-
                     <!-- Sections that expand IN-PAGE -->
+                    <div class="collapsible-section" data-type="in-page-simple-form" data-title="What Are We Going After">
+                        <div class="collapsible-header"><span class="title">What Are We Going After</span><span class="chevron">⌄</span></div>
+                        <div class="collapsible-content"></div>
+                    </div>
+                    <div class="collapsible-section" data-type="in-page-log-form" data-title="@billhome">
+                        <div class="collapsible-header"><span class="title">@billhome</span><span class="chevron">⌄</span></div>
+                        <div class="collapsible-content"></div>
+                    </div>
                     <div class="collapsible-section" data-type="in-page-visual-list" data-title="SUPPLEMENT GAMEPLAN">
                         <div class="collapsible-header"><span class="title">Supplement GamePlan</span><span class="chevron">⌄</span></div>
                         <div class="collapsible-content"></div>
@@ -579,12 +579,18 @@
                         <div class="extra-fields"></div>
                     </div>
                 </div>`,
-            modalBrainDump: (title) => `
+            simpleFormContent: () => `
                 <div class="form-group">
-                    <label for="brainDumpText">New Log Entry for ${title}</label>
-                    <textarea id="brainDumpText" placeholder="Type whatever you want here..."></textarea>
+                    <textarea placeholder="Type a note..."></textarea>
                 </div>
-                <div class="modal-footer" style="padding: 0; border: none; background: none; margin-top: 12px;">
+                <button class="btn btn-primary" style="width: 100%;">SAVE</button>
+            `,
+            logFormContent: (title) => `
+                <div class="form-group">
+                    <label for="logFormText">New Log Entry for ${title}</label>
+                    <textarea id="logFormText" placeholder="Type whatever you want here..."></textarea>
+                </div>
+                <div style="text-align: right;">
                     <button class="btn btn-primary" id="saveLogBtn">Save</button>
                 </div>
                 <hr style="margin: 24px 0;">
@@ -695,30 +701,30 @@
                 const type = section.dataset.type;
                 const title = section.dataset.title;
 
-                if (type === 'modal-brain-dump') {
-                    openModal(title, templates.modalBrainDump(title), '');
-                    
-                    document.getElementById('saveLogBtn').onclick = () => {
-                        const textarea = document.getElementById('brainDumpText');
-                        const text = textarea.value.trim();
-                        if (text) {
-                            const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
-                            document.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
-                            textarea.value = '';
+                if (type === 'modal-brain-dump') { // This type is no longer used by main sections but kept for flexibility
+                    openModal(title, templates.logFormContent(title), '');
+                } else if (type === 'in-page-accordion' || type === 'in-page-simple-form' || type === 'in-page-log-form' || type === 'in-page-visual-list') {
+                    const content = section.querySelector('.collapsible-content');
+                    section.classList.toggle('open');
+                    if (section.classList.contains('open') && !content.innerHTML) {
+                        if (type === 'in-page-accordion') {
+                            content.innerHTML = templates.tradeAccordion(tradeItemsData);
+                        } else if (type === 'in-page-visual-list') {
+                            content.innerHTML = templates.inPageVisualList(title, []);
+                        } else if (type === 'in-page-simple-form') {
+                            content.innerHTML = templates.simpleFormContent();
+                        } else if (type === 'in-page-log-form') {
+                            content.innerHTML = templates.logFormContent(title);
+                            content.querySelector('#saveLogBtn').onclick = () => {
+                                const textarea = content.querySelector('#logFormText');
+                                const text = textarea.value.trim();
+                                if (text) {
+                                    const newLog = templates.loggedNoteItem(text, 'Will M.', 'just now');
+                                    content.querySelector('.logged-notes-container').insertAdjacentHTML('afterbegin', newLog);
+                                    textarea.value = '';
+                                }
+                            };
                         }
-                    };
-                } else if (type === 'in-page-accordion') {
-                    const content = section.querySelector('.collapsible-content');
-                    section.classList.toggle('open');
-                    if (section.classList.contains('open') && !content.innerHTML) {
-                        content.innerHTML = templates.tradeAccordion(tradeItemsData);
-                    }
-                } else if (type === 'in-page-visual-list') {
-                    const content = section.querySelector('.collapsible-content');
-                    section.classList.toggle('open');
-                    
-                    if (section.classList.contains('open') && !content.innerHTML) {
-                        content.innerHTML = templates.inPageVisualList(title, []);
                     }
                 }
             }
