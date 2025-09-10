@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFC/Roofing - Dashboards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(to bottom, #2c3e50, #1a2530);
+            color: white;
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #3a4a5f;
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .search-project {
+            padding: 0 20px;
+            margin-bottom: 25px;
+        }
+        
+        .search-project h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #a0b3c6;
+        }
+        
+        .menu-items {
+            list-style: none;
+        }
+        
+        .menu-items li {
+            padding: 12px 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-items li:hover {
+            background-color: #3a4a5f;
+        }
+        
+        .menu-items li.active {
+            background-color: #3498db;
+            border-left: 4px solid #fff;
+        }
+        
+        .menu-items li i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .user-info {
+            padding: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #3a4a5f;
+        }
+        
+        .user-info h3 {
+            font-size: 14px;
+            color: #a0b3c6;
+            margin-bottom: 5px;
+        }
+        
+        .user-info p {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .logout {
+            padding: 0 20px;
+            margin-top: 10px;
+            color: #a0b3c6;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .logout:hover {
+            color: white;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 25px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .header h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 6px;
+            padding: 8px 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 300px;
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 5px;
+            font-size: 14px;
+        }
+        
+        /* Dashboard List Styles */
+        .dashboard-list {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        
+        .dashboard-item {
+            padding: 15px;
+            border-bottom: 1px solid #eaecef;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .dashboard-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .dashboard-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dashboard-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #3498db;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .dashboard-details {
+            flex: 1;
+        }
+        
+        .dashboard-details h3 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .dashboard-details p {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .dashboard-link {
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .dashboard-link:hover {
+            background: #2980b9;
+        }
+        
+        /* Add Dashboard Form */
+        .add-dashboard {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 25px;
+        }
+        
+        .add-dashboard h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #a0b3c6;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+        
+        .btn-remove {
+            padding: 8px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>IFC/Roofing</h1>
+            </div>
+            
+            <div class="search-project">
+                <h2>MAIN MENU</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search project">
+                </div>
+            </div>
+            
+            <ul class="menu-items">
+                <li><i class="fas fa-home"></i> Feed</li>
+                <li><i class="fas fa-table-columns"></i> Boards</li>
+                <li><i class="fas fa-tasks"></i> My Tasks</li>
+                <li><i class="fas fa-comments"></i> Convos</li>
+                <li><i class="fas fa-folder-open"></i> Projects</li>
+                <li><i class="fas fa-address-book"></i> Contacts</li>
+                <li><i class="fas fa-building"></i> Organizations</li>
+                <li><i class="fas fa-star"></i> My Subs</li>
+                <li><i class="fas fa-cog"></i> Manage Subs</li>
+                <li><i class="fas fa-users"></i> IFC Team</li>
+                <li><i class="fas fa-ticket"></i> Tickets</li>
+                <li><i class="fas fa-diagram-project"></i> Workflows</li>
+                <li class="active"><i class="fas fa-chart-line"></i> Dashboards</li>
+            </ul>
+            
+            <div class="user-info">
+                <h3>Logged as</h3>
+                <p>Olliver Barros</p>
+            </div>
+            
+            <div class="logout">
+                <i class="fas fa-sign-out-alt"></i> LOGOUT
+            </div>
+        </div>
+        
+        <!-- Main Content - Only Dashboards -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Dashboards</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search dashboards..." id="dashboard-search">
+                </div>
+            </div>
+            
+            <!-- Dashboard List -->
+            <div class="dashboard-list">
+                <h3>Looker Studio Dashboards</h3>
+                
+                <div id="dashboards-container">
+                    <!-- Dashboards will be added here -->
+                    <div class="empty-state" id="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No dashboards added yet</p>
+                        <p>Add your first Looker Studio dashboard using the form below</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Dashboard Form -->
+            <div class="add-dashboard">
+                <h3>Add New Dashboard</h3>
+                <div class="form-group">
+                    <label for="dashboard-name">Dashboard Name</label>
+                    <input type="text" id="dashboard-name" placeholder="Enter dashboard name">
+                </div>
+                <div class="form-group">
+                    <label for="dashboard-url">Looker Studio URL</label>
+                    <input type="text" id="dashboard-url" placeholder="Paste Looker Studio URL">
+                </div>
+                <button class="btn" onclick="addDashboard()">
+                    <i class="fas fa-plus"></i> Add Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store dashboards in local storage
+        let dashboards = JSON.parse(localStorage.getItem('ifcDashboards')) || [];
+        
+        // Sample dashboards for demonstration
+        if (dashboards.length === 0) {
+            dashboards = [
+                {
+                    id: 1,
+                    name: "Sales Performance",
+                    url: "https://lookerstudio.google.com/sample-sales"
+                },
+                {
+                    id: 2,
+                    name: "Project Tracking",
+                    url: "https://lookerstudio.google.com/sample-projects"
+                }
+            ];
+            localStorage.setItem('ifcDashboards', JSON.stringify(dashboards));
+        }
+        
+        // Display existing dashboards on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDashboards();
+            
+            // Add search functionality
+            const searchInput = document.getElementById('dashboard-search');
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredDashboards = dashboards.filter(dashboard => 
+                    dashboard.name.toLowerCase().includes(searchTerm)
+                );
+                renderDashboards(filteredDashboards);
+            });
+        });
+        
+        // Function to add a new dashboard
+        function addDashboard() {
+            const nameInput = document.getElementById('dashboard-name');
+            const urlInput = document.getElementById('dashboard-url');
+            
+            const name = nameInput.value.trim();
+            const url = urlInput.value.trim();
+            
+            if (!name || !url) {
+                alert('Please enter both a name and URL for the dashboard');
+                return;
+            }
+            
+            // Add the new dashboard
+            dashboards.push({
+                id: Date.now(), // unique ID
+                name: name,
+                url: url
+            });
+            
+            // Save to local storage
+            localStorage.setItem('ifcDashboards', JSON.stringify(dashboards));
+            
+            // Clear the form
+            nameInput.value = '';
+            urlInput.value = '';
+            
+            // Refresh the dashboard list
+            renderDashboards();
+        }
+        
+        // Function to render all dashboards
+        function renderDashboards(dashboardsToRender = dashboards) {
+            const container = document.getElementById('dashboards-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Clear the container
+            container.innerHTML = '';
+            
+            if (dashboardsToRender.length === 0) {
+                // Show empty state if no dashboards
+                container.appendChild(emptyState);
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            // Hide empty state
+            emptyState.style.display = 'none';
+            
+            // Add each dashboard to the list
+            dashboardsToRender.forEach(dashboard => {
+                const dashboardElement = document.createElement('div');
+                dashboardElement.className = 'dashboard-item';
+                
+                // Create a random icon for each dashboard
+                const icons = ['fa-chart-line', 'fa-chart-bar', 'fa-chart-pie', 'fa-chart-area'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                dashboardElement.innerHTML = `
+                    <div class="dashboard-icon">
+                        <i class="fas ${randomIcon}"></i>
+                    </div>
+                    <div class="dashboard-details">
+                        <h3>${dashboard.name}</h3>
+                        <p>Looker Studio Dashboard</p>
+                    </div>
+                    <a href="${dashboard.url}" target="_blank" class="dashboard-link">
+                        Open <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    <button class="btn-remove" onclick="removeDashboard(${dashboard.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                
+                container.appendChild(dashboardElement);
+            });
+        }
+        
+        // Function to remove a dashboard
+        function removeDashboard(id) {
+            if (confirm('Are you sure you want to remove this dashboard?')) {
+                dashboards = dashboards.filter(dashboard => dashboard.id !== id);
+                localStorage.setItem('ifcDashboards', JSON.stringify(dashboards));
+                renderDashboards();
+            }
+        }
+    </script>
+</body>
+</html>
